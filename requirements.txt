@@ -1,0 +1,6 @@
+python-daemon
+pycryptodome
+protobuf
+grpcio
+pyyaml
+cherrypy
