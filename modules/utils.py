@@ -214,11 +214,12 @@ class ShellExecutor(Logger):
     def __init__(self):
         Logger.__init__(self)
 
-    def _executor(self, cmd):
+    def _executor(self, cmd, timeout):
         try:
             self._logger.info('Executing shell command %s' % cmd)
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=False, shell=True)
-            stdout, stderr = p.communicate()
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=False,
+                                 shell=True, preexec_fn=os.setsid, env=os.environ.copy(), bufsize=0)
+            stdout, stderr = p.communicate(timeout=timeout)
             retcode = p.wait()
             self._logger.info('Shell command execution result: retcode %s, stdout %s, stderr %s' %
                               (retcode, stdout, stderr,))

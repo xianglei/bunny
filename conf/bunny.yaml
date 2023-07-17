@@ -1,7 +1,0 @@
-agent:
-  agent_http_port: 7181
-  agent_rpc_port: 7182
-  bind: 0.0.0.0
-server:
-  host: localhost
-  server_rpc_port: 7182

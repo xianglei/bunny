@@ -14,6 +14,7 @@ DEFAULT_CONFIG = {
         "agent_rpc_port": 7182,
         "agent_http_port": 7181,
         "agent_http_thread_pool": 30,
+        "version": "1.0.0",
     },
     "server": {
         "host": "localhost",
@@ -44,6 +45,21 @@ def compare_dict(dict1, dict2):
 
 def config_parser():
     config_file = CONFIG_DIR + 'bunny.yaml'
+    if not os.path.exists(CONFIG_DIR):
+        try:
+            os.mkdir(CONFIG_DIR, mode=0o664)
+        except OSError as e:
+            print(e)
+    if not os.path.exists(SCRIPT_DIR):
+        try:
+            os.mkdir(SCRIPT_DIR, mode=0o664)
+        except OSError as e:
+            print(e)
+    if not os.path.exists(LOGS_DIR):
+        try:
+            os.mkdir(LOGS_DIR, mode=0o664)
+        except OSError as e:
+            print(e)
     if not os.path.exists(config_file):
         try:
             with open(config_file, encoding='utf-8', mode='w') as f:
@@ -53,6 +69,7 @@ def config_parser():
             print(e)
         finally:
             f.close()
+
     try:
         with open(config_file, encoding='utf-8', mode='r') as f:
             config = yaml.load(f.read(), Loader=yaml.FullLoader)

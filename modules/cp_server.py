@@ -38,7 +38,7 @@ class BunnyCherrypyServer(Logger):
             HTTP_SERVER.socket_host = DEFAULT_CONFIG['agent']['bind']
             HTTP_SERVER.socket_port = DEFAULT_CONFIG['agent']['agent_http_port']
             HTTP_SERVER.thread_pool = DEFAULT_CONFIG['agent']['agent_http_thread_pool']
-            HTTP_SERVER.max_request_body_size = 300 * 1024
+            HTTP_SERVER.max_request_body_size = 300 * 1024 * 1024
             HTTP_SERVER.subscribe()
             self._logger.info("Registering http server...")
             cherrypy.engine.start()
@@ -48,7 +48,7 @@ class BunnyCherrypyServer(Logger):
             self._logger.fatal(e)
             exit(1)
 
-bcp = BunnyCherrypyServer()
-bcp.start()
+#bcp = BunnyCherrypyServer()
+#bcp.start()
 
 
