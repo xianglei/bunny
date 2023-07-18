@@ -40,4 +40,13 @@ def register():
         except Exception as e:
             print(e)
 
-register()
+
+def getinfo():
+    channel = grpc.insecure_channel(SERVER_CONFIG['server']['host'] + ':' +
+                                    str(SERVER_CONFIG['server']['server_rpc_port']))
+    stub = api_pb2_grpc.RegistrationServiceStub(channel)
+    response = stub.GetInfo(api_pb2.InfoRequest(uniq_id='1'))
+    print("GetInfo cli uniq_id " + response.uniq_id)
+    print("GetInfo cli payload " + response.payload)
+
+getinfo()
