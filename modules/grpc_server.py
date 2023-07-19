@@ -8,6 +8,10 @@ from concurrent import futures
 from utils import *
 from status import *
 import json
+from pwd import getpwnam
+import hashlib
+import binascii
+import shutil
 
 
 def read_uuid():
@@ -31,6 +35,39 @@ def write_uuid(uid):
             f.close()
     except Exception as e:
         print(e)
+
+
+def file_hash_md5(filename):
+    md5 = hashlib.md5()
+    with open(filename, 'rb') as f:
+        while True:
+            data = f.read(4096)
+            if not data:
+                break
+            md5.update(data)
+    return md5.hexdigest()
+
+
+def file_hash_sha1(filename):
+    md5 = hashlib.sha1()
+    with open(filename, 'rb') as f:
+        while True:
+            data = f.read(4096)
+            if not data:
+                break
+            md5.update(data)
+    return md5.hexdigest()
+
+
+def file_crc32(filename):
+    crc = 0
+    with open(filename, 'rb') as f:
+        while True:
+            data = f.read(4096)
+            if not data:
+                break
+            crc = binascii.crc32(data, crc)
+    return crc & 0xffffffff
 
 
 class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
@@ -70,16 +107,16 @@ class RegistrationService(api_pb2_grpc.RegistrationServiceServicer, Logger):
         response = api_pb2.RegisterResponse()
         response.uniq_id = str(uniq_id)
         response.succeed = bool(succeed)
-        print(response.uniq_id)
-        print(response.succeed)
+        #print(response.uniq_id)
+        #print(response.succeed)
         return response
 
     def GetInfo(self, request, context):
         self._logger.info("getinfo: {}".format(request))
         uniq_id = request.uniq_id
-        print(uniq_id)
+        #print(uniq_id)
         local_uniq_id = read_uuid()
-        print(local_uniq_id)
+        #print(local_uniq_id)
         if uniq_id == local_uniq_id:
             response = api_pb2.InfoResponse()
             response.uniq_id = uniq_id
@@ -119,9 +156,73 @@ class RegistrationService(api_pb2_grpc.RegistrationServiceServicer, Logger):
 class FileService(api_pb2_grpc.FileServiceServicer, Logger):
     def __init__(self):
         Logger.__init__(self)
+        """
+        self.CODE = {
+            "OK": 0,
+            "DIR_NOT_EXISTS": 1,
+            "CONTENT_CHECKSUM_ERROR": 2,
+            "WRITE_NOT_ALLOWED": 3,
+            "UNKNOWN_ERROR": 4,
+        }
+        """
+        self.CODE = [
+            'OK', 'DIR_NOT_EXISTS', 'CONTENT_CHECKSUM_ERROR', 'WRITE_NOT_ALLOWED', 'UNKNOWN_ERROR'
+        ]
+        self.FILE_FORMAT = {
+            "JSON": 0,
+            "INI": 1,
+            "XML": 2,
+            "YAML": 3,
+            "BASH": 4,
+        }
+        self._return_code = None
 
     def Send(self, request, context):
-        self._logger.info("send: {}".format(request))
+        file_id = request.id
+        file_name = request.filename
+        dest_path = request.path
+        checksum = request.checksum
+        content = request.content
+        # oct() will return a string type, so use eval() to convert it to int
+        access_modes = eval(oct(int(request.access_modes, base=8)))
+        owner = request.owner
+        user = getpwnam(owner)
+        uid = user.pw_uid
+        gid = user.pw_gid
+        # format is unused now
+        format = request.format
+
+        if dest_path[-1] == '/':
+            full_filename = dest_path + file_name
+        else:
+            full_filename = dest_path + '/' + file_name
+
+        if not os.path.exists(dest_path):
+            self._return_code = self.CODE[1]
+            self._logger.fatal("send: {}".format(self._return_code))
+            try:
+                os.mkdir(dest_path, 0o755)
+            except OSError as e:
+                self._logger.fatal(e)
+                self._return_code = self.CODE[4]
+        else:
+            try:
+                with open(full_filename, 'wb') as f:
+                    f.write(content)
+                    f.close()
+                os.chmod(full_filename, access_modes)
+                os.chown(full_filename, uid, gid)
+                checksum_local = file_hash_md5(full_filename)
+                if checksum_local != checksum:
+                    self._return_code = self.CODE[2]
+                    self._logger.fatal('File checksum not equally')
+                else:
+                    self._return_code = self.CODE[0]
+                    self._logger.info('File checksum equally, file receive succeed')
+            except OSError as e:
+                self._logger.fatal(e)
+                self._return_code = self.CODE[3]
+        return api_pb2.FileResponse(status=self._return_code, message=self._return_code)
 
 
 class BunnyGrpcServer(Logger):
@@ -132,6 +233,7 @@ class BunnyGrpcServer(Logger):
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
         api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
         api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)
+        api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
         server.add_insecure_port('[::]:' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
         self._logger.info('Starting bunny grpc server on port ' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
         server.start()

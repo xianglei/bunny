@@ -49,4 +49,20 @@ def getinfo():
     print("GetInfo cli uniq_id " + response.uniq_id)
     print("GetInfo cli payload " + response.payload)
 
-getinfo()
+
+def sendfile():
+    channel = grpc.insecure_channel(SERVER_CONFIG['server']['host'] + ':' +
+                                    str(SERVER_CONFIG['server']['server_rpc_port']))
+    stub = api_pb2_grpc.FileServiceStub(channel)
+    with open('test.txt', 'rb') as f:
+        content = f.read()
+        f.close()
+    response = stub.Send(api_pb2.FileRequest(id='1', filename='test.txt',
+                                             path='/tmp/', checksum='d8e8fca2dc0f896fd7cb4cb0031ba249',
+                                             content=content, access_modes='644',
+                                             owner='xianglei', group='wheel',
+                                             format='BASH'))
+    print("SendFile cli status " + str(response.status))
+    print("SendFile cli message " + str(response.message))
+
+sendfile()

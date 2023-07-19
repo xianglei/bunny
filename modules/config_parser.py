@@ -19,7 +19,8 @@ DEFAULT_CONFIG = {
     },
     "server": {
         "host": "localhost",
-        "server_rpc_port": 7182
+        "server_rpc_port": 7182,
+        "secret": "HeavyMetalWillNeverDie!!!"
     }
 }
 
