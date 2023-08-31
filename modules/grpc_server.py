@@ -60,14 +60,14 @@ def file_hash_sha1(filename):
 
 
 def file_crc32(filename):
-    crc = 0
+    crc32 = 0
     with open(filename, 'rb') as f:
         while True:
             data = f.read(4096)
             if not data:
                 break
-            crc = binascii.crc32(data, crc)
-    return crc & 0xffffffff
+            crc32 = binascii.crc32(data, crc32)
+    return crc32 & 0xffffffff
 
 
 class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
@@ -77,7 +77,8 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
     def Exec(self, request, context):
         #print("exec_cmd: {}".format(request))
         exec_id = request.exec_id
-        cmd = ''.join(request.cmd)
+        #cmd = ''.join(request.cmd)
+        cmd = request.cmd
         self._logger.info("exec_cmd: {}".format(cmd))
         try:
             se = ShellExecutor()
@@ -87,9 +88,22 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
             response.stdout = ret['stdout']
             response.stderr = ret['stderr']
             response.exit_code = ret['retcode']
+
+
+            curdt = curdatetime(formatter='%Y%m%d%H%M%S')
+            output = '------STDOUT------\n'
+            output += ret['stdout'].decode() + '\n\n'
+            output += '------STDERR------\n'
+            output += ret['stderr'].decode() + '\n\n'
+            output += '------EXIT_CODE------\n'
+            output += str(ret['retcode']) + '\n\n'
+            outfile = LOGS_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.log'
+            with open(outfile, 'w') as f:
+                f.write(output)
+                f.close()
             #print(response.exit_code)
             #print(exec_id, cmd, timeout)
-            #print(response)
+            self._logger.fatal(response)
             return response
         except:
             self._logger.fatal("exec_cmd: {}".format(cmd))
@@ -192,6 +206,8 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
         # format is unused now
         format = request.format
 
+        self._logger.info("send: {}".format(request))
+
         if dest_path[-1] == '/':
             full_filename = dest_path + file_name
         else:
@@ -213,6 +229,8 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                 os.chmod(full_filename, access_modes)
                 os.chown(full_filename, uid, gid)
                 checksum_local = file_hash_md5(full_filename)
+                self._logger.warn(checksum_local)
+                self._logger.warn(checksum)
                 if checksum_local != checksum:
                     self._return_code = self.CODE[2]
                     self._logger.fatal('File checksum not equally')
@@ -240,5 +258,5 @@ class BunnyGrpcServer(Logger):
         server.wait_for_termination()
 
 
-bgs = BunnyGrpcServer()
-bgs.serve()
+#bgs = BunnyGrpcServer()
+#bgs.serve()

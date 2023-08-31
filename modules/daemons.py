@@ -6,6 +6,8 @@ import daemon
 import sys
 import threading
 import signal
+
+import psutil
 from daemon import pidfile
 from grpc_server import *
 from cp_server import *
@@ -26,7 +28,7 @@ class BunnyDaemon(Logger):
         self.cp_server.start()
 
     def start(self):
-        if not self._check_alive():
+        if not self._check_proc_alive():
             try:
                 with daemon.DaemonContext(working_directory=BASE_DIR,
                                           umask=0o002,
@@ -49,14 +51,14 @@ class BunnyDaemon(Logger):
                 self.stop()
                 exit(1)
         else:
-            self._logger.info("Bunny is not exit correctly.")
+            self._logger.info("Bunny is not exit correctly or already started.")
             self._logger.info("Please check pid file: " + BASE_DIR + 'run/bunny.pid')
             self._logger.info("If you are sure that Bunny is not running, please restart Bunny.")
-            try:
-                os.remove(BASE_DIR + 'run/bunny.pid')
-            except Exception as e:
-                self._logger.fatal(e)
-                exit(1)
+            #try:
+            #    os.remove(BASE_DIR + 'run/bunny.pid')
+            #except Exception as e:
+            #    self._logger.fatal(e)
+            #    exit(1)
 
     def stop(self, pid=BASE_DIR + 'run/bunny.pid'):
         try:
@@ -97,29 +99,29 @@ class BunnyDaemon(Logger):
         else:
             return 'Bunny is not running.'
 
-    def _check_alive(self):
+    def _check_proc_alive(self):
         if os.path.exists(BASE_DIR + 'run/bunny.pid'):
             with open(BASE_DIR + 'run/bunny.pid', 'r') as f:
                 pid = f.read()
                 print('pid: ' + pid)
-            try:
-                os.kill(int(pid), 0)
-            except OSError as e:
-                print(e)
-                print('Bunny is not running.')
-                try:
-                    os.remove(BASE_DIR + 'run/bunny.pid')
-                except OSError as e:
-                    print(e)
-                return False
-            else:
+            if psutil.pid_exists(int(pid)):
                 print('Bunny is running on pid ' + pid)
                 return True
+            else:
+                try:
+                    os.kill(int(pid), 0)
+                except OSError as e:
+                    print(e)
+                    try:
+                        os.remove(BASE_DIR + 'run/bunny.pid')
+                    except OSError as e:
+                        print(e)
+                    return False
         else:
             print('Bunny is not running.')
             return False
 
 
-#bd = BunnyDaemon()
-#bd.stop()
+bd = BunnyDaemon()
+bd.stop()
 

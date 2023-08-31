@@ -10,7 +10,7 @@ def exec():
     channel = grpc.insecure_channel(SERVER_CONFIG['server']['host'] + ':' +
                                     str(SERVER_CONFIG['server']['server_rpc_port']))
     stub = api_pb2_grpc.ExecServiceStub(channel)
-    response = stub.Exec(api_pb2.ExecRequest(exec_id='1', cmd='ls -l', timeout=120))
+    response = stub.Exec(api_pb2.ExecRequest(exec_id='1', cmd='ls /root', timeout=120))
     print("Exec cli exec_id " + response.exec_id)
     print("Exec cli stdout " + response.stdout)
     print("Exec cli stderr " + str(response.stderr))
