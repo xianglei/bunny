@@ -122,6 +122,9 @@ class BunnyDaemon(Logger):
             return False
 
 
-bd = BunnyDaemon()
-bd.stop()
+
+
+
+
+
 
