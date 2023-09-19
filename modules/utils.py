@@ -3,7 +3,7 @@
 # author: xianglei
 
 import hashlib
-from config_parser import *
+from .config_parser import *
 import string
 import logging
 import logzero

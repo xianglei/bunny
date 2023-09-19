@@ -2,11 +2,11 @@
 # coding: utf-8
 
 import uuid
-from grpc_module import api_pb2_grpc, api_pb2
+from modules.grpc_module import api_pb2_grpc, api_pb2
 import grpc
 from concurrent import futures
-from utils import *
-from status import *
+from .utils import *
+from .status import *
 import json
 from pwd import getpwnam
 import hashlib

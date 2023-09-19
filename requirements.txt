@@ -4,3 +4,5 @@ protobuf
 grpcio
 pyyaml
 cherrypy
+fabric==2.7.1
+logzero

@@ -9,10 +9,10 @@ import signal
 
 import psutil
 from daemon import pidfile
-from grpc_server import *
-from cp_server import *
+from .grpc_server import *
+from .cp_server import *
 #from grpc_client import *
-from utils import *
+from .utils import *
 
 
 class BunnyDaemon(Logger):

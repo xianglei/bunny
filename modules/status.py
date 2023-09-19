@@ -5,7 +5,7 @@ import psutil
 import socket
 import platform
 # import json
-from utils import Logger
+from .utils import Logger
 
 LOGGER = Logger()
 

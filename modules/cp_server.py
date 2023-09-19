@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from utils import *
-from status import retrieve_info
+from .utils import *
+from .status import retrieve_info
 import json
 import cherrypy
 

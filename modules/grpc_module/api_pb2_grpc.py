@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import grpc_module.api_pb2 as api__pb2
+import modules.grpc_module.api_pb2 as api__pb2
 
 
 class ExecServiceStub(object):
