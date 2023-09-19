@@ -251,6 +251,44 @@ function hdfsOperation()
     else
       echo "Invalid command"
     fi
+  elif [ $1 = "secondarynamenode" ]; then
+    if [ $2 = "start" ]; then
+      # hdfs.sh secondarynamenode start
+      echo "Starting Secondary Namenode"
+      # Start Secondary Namenode
+      sudo systemctl start hadoop-hdfs-secondarynamenode
+    elif [ $2 = "stop" ]; then
+      echo "Stopping Secondary Namenode"
+      # Stop Secondary Namenode
+      sudo systemctl stop hadoop-hdfs-secondarynamenode
+    elif [ $2 = "restart" ]; then
+      echo "Restarting Secondary Namenode"
+      # Restart Secondary Namenode
+      sudo systemctl restart hadoop-hdfs-secondarynamenode
+    elif [ $2 = "logs" ]; then
+      if [ $3 = "log" ]; then
+        echo "Tailing Secondary Namenode logs"
+        # Tail Secondary Namenode logs
+        sudo -u hdfs tail -n 200 /var/log/hadoop-hdfs/hadoop-hdfs-$1-$HOSTNAME.log
+      elif [ $3 = "out" ]; then
+        sudo -u hdfs tail -n 200 /var/log/hadoop-hdfs/hadoop-hdfs-$1-$HOSTNAME.out
+      else
+        echo "Invalid command"
+      fi
+    elif [ $2 = "mkdir" ]; then
+    # hdfs.sh secondarynamenode mkdir $dirs(comma seperated)
+          TMP=$3
+          DIRS=${TMP//,/ }
+          for DIR in $DIRS; do
+            sudo mkdir -p $DIR
+            sudo chown -R hdfs:hadoop $DIR
+            sudo chmod -R 755 $DIR
+          done
+    else
+      echo "Invalid command"
+    fi
+  else
+    echo "Invalid command"
   fi
 }
 
