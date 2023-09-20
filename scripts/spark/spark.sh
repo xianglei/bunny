@@ -1,7 +1,5 @@
 #!/bin/bash
 
-BIGTOP_DEFAULTS_DIR=${BIGTOP_DEFAULTS_DIR-/etc/default}
-[ -n "${BIGTOP_DEFAULTS_DIR}" -a -r ${BIGTOP_DEFAULTS_DIR}/bigtop-utils ] && . ${BIGTOP_DEFAULTS_DIR}/bigtop-utils
 
 JAVA8_HOME_CANDIDATES=(
     '/usr/java/jdk1.8'
