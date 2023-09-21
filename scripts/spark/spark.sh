@@ -56,5 +56,24 @@ if [ -z "${JAVA_HOME}" ]; then
 fi
 
 function sparkOperation() {
-    
+  if [ $1 = "historyserver" ];then
+    if [ $2 = "start" ]; then
+      echo "Starting Spark History Server"
+      sudo -u spark /usr/lib/spark/sbin/start-history-server.sh
+    elif [ $2 = "stop" ]; then
+      echo "Stopping Spark History Server"
+      sudo -u spark /usr/lib/spark/sbin/stop-history-server.sh
+    else
+      echo "Invalid operation"
+    fi
+  elif [ $1 = "yarnshuffle" ]; then
+    if [ -f /usr/lib/hadoop-yarn/lib/spark-yarn-shuffle.jar ]; then
+      echo "Spark Yarn Shuffle jar already exists"
+    else
+      echo "Copying Spark Yarn Shuffle jar"
+      sudo cp /usr/lib/spark/yarn/lib/spark-yarn-shuffle.jar /usr/lib/hadoop-yarn/lib/
+    fi
+  else
+    echo "Invalid operation"
+  fi
 }
