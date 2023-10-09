@@ -3,16 +3,16 @@
 
 import grpc
 import platform
-from utils import *
-from grpc_module import api_pb2_grpc, api_pb2
+from modules.utils import *
+from modules.grpc_module import api_pb2_grpc, api_pb2
 
 def exec():
     channel = grpc.insecure_channel(SERVER_CONFIG['server']['host'] + ':' +
                                     str(SERVER_CONFIG['server']['server_rpc_port']))
     stub = api_pb2_grpc.ExecServiceStub(channel)
-    response = stub.Exec(api_pb2.ExecRequest(exec_id='1', cmd='ls /tmp', timeout=120))
+    response = stub.Exec(api_pb2.ExecRequest(exec_id='1', cmd='ls /root', timeout=120))
     print("Exec cli exec_id " + response.exec_id)
-    print("Exec cli stdout " + response.stdout)
+    print("Exec cli stdout " + str(response.stdout))
     print("Exec cli stderr " + str(response.stderr))
     print("Exec cli exit_code" + str(response.exit_code))
 
