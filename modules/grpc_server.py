@@ -103,7 +103,9 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
                 f.close()
             #print(response.exit_code)
             #print(exec_id, cmd, timeout)
-            self._logger.fatal(response)
+            self._logger.info("stdout: " +response.stdout.decode())
+            self._logger.info("stderr: " + response.stderr.decode())
+            self._logger.info("exit code: " + response.exit_code)
             return response
         except:
             self._logger.fatal("exec_cmd: {}".format(cmd))
