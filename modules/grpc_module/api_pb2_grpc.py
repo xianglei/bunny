@@ -70,7 +70,7 @@ class ExecService(object):
 
 
 class RegistrationServiceStub(object):
-    """registration 
+    """registration
     """
 
     def __init__(self, channel):
@@ -92,7 +92,7 @@ class RegistrationServiceStub(object):
 
 
 class RegistrationServiceServicer(object):
-    """registration 
+    """registration
     """
 
     def Register(self, request, context):
@@ -129,7 +129,7 @@ def add_RegistrationServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class RegistrationService(object):
-    """registration 
+    """registration
     """
 
     @staticmethod
