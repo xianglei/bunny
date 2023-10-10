@@ -108,8 +108,10 @@ function hdfsOperation()
       # formatted
       if [ -f /var/lib/hadoop-hdfs/formatted ]; then
         echo "Namenode already formatted"
+        exit 126
       else
         sudo -u hdfs hdfs namenode -format
+        exit $? # exit with the same status as the format command
         sudo touch /var/lib/hadoop-hdfs/formatted
       fi
     # Tail namenode logs
@@ -128,14 +130,17 @@ function hdfsOperation()
       echo "Starting Namenode"
       # Start Namenode
       sudo systemctl start hadoop-hdfs-namenode
+      exit $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Namenode"
       # Stop Namenode
       sudo systemctl stop hadoop-hdfs-namenode
+      exit $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Namenode"
       # Restart Namenode
       sudo systemctl restart hadoop-hdfs-namenode
+      exit $?
     # mkdir hdfs dirs
     elif [ $2 = "mkhdfsdirs" ]; then
       echo "Making HDFS directories"
@@ -177,14 +182,17 @@ function hdfsOperation()
       echo "Starting Datanode"
       # Start Datanode
       sudo systemctl start hadoop-hdfs-datanode
+      exit $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Datanode"
       # Stop Datanode
       sudo systemctl stop hadoop-hdfs-datanode
+      exit $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Datanode"
       # Restart Datanode
       sudo systemctl restart hadoop-hdfs-datanode
+      exit $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing Datanode logs"
@@ -213,14 +221,17 @@ function hdfsOperation()
       echo "Starting Journalnode"
       # Start Journalnode
       sudo systemctl start hadoop-hdfs-journalnode
+      exit $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Journalnode"
       # Stop Journalnode
       sudo systemctl stop hadoop-hdfs-journalnode
+      exit $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Journalnode"
       # Restart Journalnode
       sudo systemctl restart hadoop-hdfs-journalnode
+      exit $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing Journalnode logs"
@@ -240,14 +251,17 @@ function hdfsOperation()
       echo "Starting ZKFC"
       # Start ZKFC
       sudo systemctl start hadoop-hdfs-zkfc
+      exit $?
     elif [ $2 = "stop" ]; then
       echo "Stopping ZKFC"
       # Stop ZKFC
       sudo systemctl stop hadoop-hdfs-zkfc
+      exit $?
     elif [ $2 = "restart" ]; then
       echo "Restarting ZKFC"
       # Restart ZKFC
       sudo systemctl restart hadoop-hdfs-zkfc
+      exit $?
     elif [ $2 = "logs" ]; then
       echo "Tailing ZKFC logs"
       # Tail ZKFC logs
@@ -278,10 +292,13 @@ function hdfsOperation()
     '
     if [ $2 = "shareedits" ]; then
       sudo -u hdfs hdfs namenode -initializeSharedEdits
+      exit $?
     elif [ $2 = "bootstrap" ]; then
       sudo -u hdfs hdfs namenode -bootstrapStandby
+      exit $?
     elif [ $2 = "formatZK" ]; then
       sudo -u hdfs hdfs zkfc -formatZK
+      exit $?
     else
       echo "Invalid command"
     fi
@@ -291,14 +308,17 @@ function hdfsOperation()
       echo "Starting Secondary Namenode"
       # Start Secondary Namenode
       sudo systemctl start hadoop-hdfs-secondarynamenode
+      exit $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Secondary Namenode"
       # Stop Secondary Namenode
       sudo systemctl stop hadoop-hdfs-secondarynamenode
+      exit $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Secondary Namenode"
       # Restart Secondary Namenode
       sudo systemctl restart hadoop-hdfs-secondarynamenode
+      exit $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing Secondary Namenode logs"

@@ -15,6 +15,11 @@ from .cp_server import *
 from .utils import *
 
 
+def exception_callback(e):
+    # handle the exception
+    print("Caught an exception in thread:", e)
+
+
 class BunnyDaemon(Logger):
     def __init__(self):
         Logger.__init__(self)
@@ -39,6 +44,21 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting Bunny...")
                     self._logger.info("Starting Cherrypy server...")
                     self._logger.info("Starting gRPC server...")
+
+                    threads = []
+                    for i in range(4):
+                        grpc_server_thread = threading.Thread(target=self._run_grpc_server)
+                        threads.append(grpc_server_thread)
+                        grpc_server_thread.daemon = True
+                        grpc_server_thread.start()
+                    cherrypy_thread = threading.Thread(target=self._run_cp_server)
+                    threads.append(cherrypy_thread)
+                    cherrypy_thread.daemon = True
+                    cherrypy_thread.start()
+                    for t in threads:
+                        t.join()
+
+                    '''
                     grpc_thread = threading.Thread(target=self._run_grpc_server)
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)
                     threads = [grpc_thread, cherrypy_thread]
@@ -46,6 +66,7 @@ class BunnyDaemon(Logger):
                         t.daemon = True
                         t.start()
                     t.join()
+                    '''
             except Exception as e:
                 self._logger.fatal(e)
                 self.stop()
