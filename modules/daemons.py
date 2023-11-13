@@ -9,9 +9,9 @@ import signal
 
 import psutil
 from daemon import pidfile
-from .grpc_server import *
+# from .grpc_server import *
 from .cp_server import *
-#from grpc_client import *
+# from grpc_client import *
 from .utils import *
 
 
@@ -23,11 +23,11 @@ def exception_callback(e):
 class BunnyDaemon(Logger):
     def __init__(self):
         Logger.__init__(self)
-        self.grpc_server = BunnyGrpcServer()
+        # self.grpc_server = BunnyGrpcServer()
         self.cp_server = BunnyCherrypyServer()
 
-    def _run_grpc_server(self):
-        self.grpc_server.serve()
+    # def _run_grpc_server(self):
+    #     self.grpc_server.serve()
 
     def _run_cp_server(self):
         self.cp_server.start()
@@ -46,11 +46,11 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting gRPC server...")
 
                     threads = []
-                    for i in range(4):
-                        grpc_server_thread = threading.Thread(target=self._run_grpc_server)
-                        threads.append(grpc_server_thread)
-                        grpc_server_thread.daemon = True
-                        grpc_server_thread.start()
+                    # for i in range(4):
+                    #     grpc_server_thread = threading.Thread(target=self._run_grpc_server)
+                    #     threads.append(grpc_server_thread)
+                    #     grpc_server_thread.daemon = True
+                    #     grpc_server_thread.start()
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)
                     threads.append(cherrypy_thread)
                     cherrypy_thread.daemon = True

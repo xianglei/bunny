@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import uuid
+import asyncio
 from modules.grpc_module import api_pb2_grpc, api_pb2
 import grpc
 from concurrent import futures
@@ -70,6 +71,15 @@ def file_crc32(filename):
     return crc32 & 0xffffffff
 
 
+"""
+class Greeter(MultiGreeterServicer):
+    async def sayHello(
+        self, request: HelloRequest, context: grpc.aio.ServicerContext
+    ) -> HelloReply:
+        logging.info("Serving sayHello request %s", request)
+        for i in range(NUMBER_OF_REPLY):
+            yield HelloReply(message=f"Hello number {i}, {request.name}!")
+"""
 class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
     def __init__(self):
         Logger.__init__(self)
