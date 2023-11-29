@@ -139,9 +139,9 @@ class FileServiceHandler(Logger):
         gid = user.pw_gid
         group = request.group
         file_format = request.format
-        self._logger.info("id: {}, filename: {}, path: {}, checksum: {}, content: {}, "
-                          "access_mode: {}, owner: {}, group: {}, formate: {}".
-                          format(file_id, file_name, dest_path, checksum, content,
+        self._logger.info("id: {}, filename: {}, path: {}, checksum: {}, "
+                          "access_mode: {}, owner: {}, group: {}, format: {}".
+                          format(file_id, file_name, dest_path, checksum,
                                  access_mode, owner, group, file_format))
 
         if dest_path[-1] == '/':
