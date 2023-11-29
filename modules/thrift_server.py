@@ -3,8 +3,6 @@
 
 import uuid
 import binascii
-import os
-import hashlib
 from .utils import *
 from .status import *
 import json
@@ -213,26 +211,28 @@ class RegistrationServiceHandler(Logger):
             return None
 
 
+class BunnyThriftServer(Logger):
+    def serve(self):
+        exec_handler = ExecServiceHandler()
+        exec_processor = ExecService.Processor(exec_handler)
+        file_handler = FileServiceHandler()
+        file_processor = FileService.Processor(file_handler)
+        register_handler = RegistrationServiceHandler()
+        register_processor = RegistrationService.Processor(register_handler)
 
+        transport = TSocket.TServerSocket(host=SERVER_CONFIG['agent']['bind'], port=SERVER_CONFIG['agent']['agent_rpc_port'])
+        tfactory = TTransport.TBufferedTransportFactory()
+        pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+        processor = TMultiplexedProcessor()
+        processor.registerProcessor('ExecService', exec_processor)
+        processor.registerProcessor('FileService', file_processor)
+        processor.registerProcessor('RegistrationService', register_processor)
 
-exec_handler = ExecServiceHandler()
-exec_processor = ExecService.Processor(exec_handler)
-file_handler = FileServiceHandler()
-file_processor = FileService.Processor(file_handler)
-register_handler = RegistrationServiceHandler()
-register_processor = RegistrationService.Processor(register_handler)
+        server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory)
+        server.setNumThreads(10)
+        self._logger.info('Starting bunny thrift server on port ' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
+        server.serve()
 
-transport = TSocket.TServerSocket(host='localhost', port=9090)
-tfactory = TTransport.TBufferedTransportFactory()
-pfactory = TBinaryProtocol.TBinaryProtocolFactory()
-processor = TMultiplexedProcessor()
-processor.registerProcessor('ExecService', exec_processor)
-processor.registerProcessor('FileService', file_processor)
-processor.registerProcessor('RegistrationService', register_processor)
-
-server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory)
-server.setNumThreads(10)
-server.serve()
 
 
 

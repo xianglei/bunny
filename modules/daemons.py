@@ -10,6 +10,7 @@ import signal
 import psutil
 from daemon import pidfile
 # from .grpc_server import *
+from .thrift_server import *
 from .cp_server import *
 # from grpc_client import *
 from .utils import *
@@ -25,9 +26,13 @@ class BunnyDaemon(Logger):
         Logger.__init__(self)
         # self.grpc_server = BunnyGrpcServer()
         self.cp_server = BunnyCherrypyServer()
+        self.thrift_server = BunnyThriftServer()
 
     # def _run_grpc_server(self):
     #     self.grpc_server.serve()
+
+    def _run_thrift_server(self):
+        self.thrift_server.serve()
 
     def _run_cp_server(self):
         self.cp_server.start()
@@ -51,6 +56,10 @@ class BunnyDaemon(Logger):
                     #     threads.append(grpc_server_thread)
                     #     grpc_server_thread.daemon = True
                     #     grpc_server_thread.start()
+                    thrift_server_thread = threading.Thread(target=self._run_thrift_server)
+                    threads.append(thrift_server_thread)
+                    thrift_server_thread.daemon = True
+                    thrift_server_thread.start()
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)
                     threads.append(cherrypy_thread)
                     cherrypy_thread.daemon = True
@@ -88,7 +97,7 @@ class BunnyDaemon(Logger):
             cherrypy.engine.stop()
             cherrypy.engine.exit()
             self._logger.info("CherryPy server stopped...")
-            self._logger.info("Stopping gRPC server...")
+            self._logger.info("Stopping thrift server...")
             with open(pid, 'r') as f:
                 pid = int(f.read())
             try:
@@ -96,7 +105,7 @@ class BunnyDaemon(Logger):
                 self._logger.info("pid file removed...")
             except OSError as e:
                 self._logger.fatal(e)
-            self._logger.info("gRPC server stopped...")
+            self._logger.info("thrift server stopped...")
             try:
                 self._logger.info("Bunny Agent Server stopped...")
                 os.kill(pid, signal.SIGTERM)
