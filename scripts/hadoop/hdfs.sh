@@ -221,6 +221,7 @@ function hdfsOperation()
   elif [ $1 = "journalnode" ]; then
     if [ $2 = "mkdir" ]; then
       # hdfs.sh journalnode mkdir $dirs(comma seperated)
+      # hdfs.sh journalnode mkdir /dfs1/jn,/dfs2/jn
       TMP=$3
       DIRS=${TMP//,/ }
       for DIR in $DIRS; do
