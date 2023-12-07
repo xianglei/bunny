@@ -87,6 +87,12 @@ function yarnOperation() {
         mkdir -p $DIR
         chown -R yarn:yarn $DIR
       done
+    elif [ $2 = 'enable' ]; then
+      echo 'enable hadoop-yarn-nodemanager service'
+      systemctl enable hadoop-yarn-nodemanager
+    elif [ $2 = 'disable' ]; then
+      echo 'disable hadoop-yarn-nodemanager service'
+      systemctl disable hadoop-yarn-nodemanager
     elif [ $2 = "start" ]; then
       echo "Starting NodeManager"
       sudo systemctl start hadoop-yarn-nodemanager
@@ -119,6 +125,12 @@ function yarnOperation() {
     elif [ $2 = "restart" ]; then
       echo "Restarting ResourceManager"
       sudo systemctl restart hadoop-yarn-resourcemanager
+    elif [ $2 = 'enable' ]; then
+      echo 'enable hadoop-yarn-resourcemanager service'
+      systemctl enable hadoop-yarn-resourcemanager
+    elif [ $2 = 'disable' ]; then
+      echo 'disable hadoop-yarn-resourcemanager service'
+      systemctl disable hadoop-yarn-resourcemanager
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing ResourceManager log"
@@ -139,6 +151,12 @@ function yarnOperation() {
       sudo systemctl stop hadoop-mapreduce-historyserver
     elif [ $2 = "restart" ]; then
       sudo systemctl restart hadoop-mapreduce-historyserver
+    elif [ $2 = 'enable' ]; then
+      echo 'enable hadoop-mapreduce-historyserver service'
+      systemctl enable hadoop-mapreduce-historyserver
+    elif [ $2 = 'disable' ]; then
+      echo 'disable hadoop-mapreduce-historyserver service'
+      systemctl disable hadoop-mapreduce-historyserver
     elif [ $2 = "logs" ]; then
       if [ $3 = "out" ]; then
         echo "Tailing JobHistory out"

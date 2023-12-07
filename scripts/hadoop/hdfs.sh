@@ -125,6 +125,12 @@ function hdfsOperation()
       else
         echo "Invalid command"
       fi
+    elif [ $2 = 'enable' ]; then
+      echo 'enable service'
+      systemctl enable hadoop-hdfs-namenode
+    elif [ $2 = 'disable' ]; then
+      echo 'disable service'
+      systemctl disable hadoop-hdfs-namenode
     # Start namenode
     elif [ $2 = "start" ]; then
       echo "Starting Namenode"
@@ -177,6 +183,12 @@ function hdfsOperation()
         sudo chown -R hdfs:hadoop $DIR
         sudo chmod -R 755 $DIR
       done
+    elif [ $2 = 'enable' ]; then
+      echo 'enable service'
+      systemctl enable hadoop-hdfs-datanode
+    elif [ $2 = 'disable' ]; then
+      echo 'disable service'
+      systemctl disable hadoop-hdfs-datanode
     elif [ $2 = "start" ]; then
       # hdfs.sh datanode start
       echo "Starting Datanode"
@@ -216,6 +228,12 @@ function hdfsOperation()
         sudo chown -R hdfs:hadoop $DIR
         sudo chmod -R 755 $DIR
       done
+    elif [ $2 = 'enable' ]; then
+      echo 'enable service'
+      systemctl enable hadoop-hdfs-journalnode
+    elif [ $2 = 'disable' ]; then
+      echo 'disable service'
+      systemctl disable hadoop-hdfs-journalnode
     elif [ $2 = "start" ]; then
       # hdfs.sh journalnode start
       echo "Starting Journalnode"
@@ -266,6 +284,12 @@ function hdfsOperation()
       echo "Tailing ZKFC logs"
       # Tail ZKFC logs
       sudo -u hdfs tail -n 200 /var/log/hadoop-hdfs/hadoop-hdfs-$1-$HOSTNAME.log
+    elif [ $2 = 'enable' ]; then
+      echo 'enable service'
+      systemctl enable hadoop-hdfs-zkfc
+    elif [ $2 = 'disable' ]; then
+      echo 'disable service'
+      systemctl disable hadoop-hdfs-zkfc
     else
       echo "Invalid command"
     fi
