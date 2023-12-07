@@ -78,19 +78,29 @@ function initZookeeper() {
 function startZookeeper() {
   echo "Starting Zookeeper"
   # Start Zookeeper
-  sudo -u systemctl start zookeeper
+  sudo systemctl start zookeeper-server
 }
 
 function stopZookeeper() {
   echo "Stopping Zookeeper"
   # Stop Zookeeper
-  sudo -u systemctl stop zookeeper
+  sudo systemctl stop zookeeper-server
 }
 
 function restartZookeeper() {
   echo "Restarting Zookeeper"
   # Restart Zookeeper
-  sudo -u systemctl restart zookeeper
+  sudo systemctl restart zookeeper-server
+}
+
+function enableZookeeper() {
+  echo 'enable zookeeper'
+  sudo systemctl enable zookeeper-server
+}
+
+function disableZookeeper() {
+  echo 'enable zookeeper'
+  sudo systemctl disable zookeeper-server
 }
 
 if [ $1 = "init" ]; then
@@ -102,6 +112,10 @@ elif [ $1 == "stop" ]; then
   stopZookeeper
 elif [ $1 == "restart" ]; then
   restartZookeeper
+elif [ $1 = 'enable' ]; then
+  enableZookeeper
+elif [ $1 = 'disable' ]; then
+  disableZookeeper
 else
   echo "Invalid command"
   exit 1
