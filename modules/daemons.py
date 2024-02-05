@@ -9,9 +9,9 @@ import signal
 
 import psutil
 from daemon import pidfile
-# from .grpc_server import *
-from .thrift_server import *
-from .cp_server import *
+from modules.grpc_server import *
+# from .thrift_server import *
+from modules.cp_server import *
 # from grpc_client import *
 from .utils import *
 
@@ -24,12 +24,15 @@ def exception_callback(e):
 class BunnyDaemon(Logger):
     def __init__(self):
         Logger.__init__(self)
-        # self.grpc_server = BunnyGrpcServer()
+        self.grpc_server = BunnyGrpcServer()
         self.cp_server = BunnyCherrypyServer()
-        self.thrift_server = BunnyThriftServer()
+        # self.thrift_server = BunnyThriftServer()
 
-    # def _run_grpc_server(self):
-    #     self.grpc_server.serve()
+    def _run_grpc_server(self):
+        try:
+            self.grpc_server.serve()
+        except Exception as e:
+            self._logger.fatal(e)
 
     def _run_thrift_server(self):
         self.thrift_server.serve()
@@ -51,15 +54,16 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting gRPC server...")
 
                     threads = []
-                    # for i in range(4):
-                    #     grpc_server_thread = threading.Thread(target=self._run_grpc_server)
-                    #     threads.append(grpc_server_thread)
-                    #     grpc_server_thread.daemon = True
-                    #     grpc_server_thread.start()
-                    thrift_server_thread = threading.Thread(target=self._run_thrift_server)
-                    threads.append(thrift_server_thread)
-                    thrift_server_thread.daemon = True
-                    thrift_server_thread.start()
+                    # gRPC not used for now, but DON'T REMOVE IT
+                    for i in range(4):
+                        grpc_server_thread = threading.Thread(target=self._run_grpc_server)
+                        threads.append(grpc_server_thread)
+                        grpc_server_thread.daemon = True
+                        grpc_server_thread.start()
+                    # thrift_server_thread = threading.Thread(target=self._run_thrift_server)
+                    # threads.append(thrift_server_thread)
+                    # thrift_server_thread.daemon = True
+                    # thrift_server_thread.start()
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)
                     threads.append(cherrypy_thread)
                     cherrypy_thread.daemon = True

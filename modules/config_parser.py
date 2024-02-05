@@ -8,6 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/'
 CONFIG_DIR = BASE_DIR + 'conf/'
 SCRIPT_DIR = BASE_DIR + 'scripts/'
 LOGS_DIR = BASE_DIR + 'logs/'
+LOGS_EXEC_DIR = LOGS_DIR + 'exec/'
 RUN_DIR = BASE_DIR + 'run/'
 DEFAULT_CONFIG = {
     "agent": {

@@ -5,7 +5,7 @@ import psutil
 import socket
 import platform
 # import json
-from .utils import Logger
+from modules.utils import Logger
 
 LOGGER = Logger()
 
@@ -151,11 +151,13 @@ def get_system_info():
         system_info['architecture'] = list(platform.architecture())
         system_info['platform'] = platform.platform()
         system_info['processor'] = platform.processor()
-        system_info['release'] = platform.release()
+        system_info['kernel_release'] = platform.release()
         system_info['system'] = platform.system()
         system_info['uname'] = list(platform.uname())
         system_info['version'] = platform.version()
         system_info['hostname'] = socket.gethostname()
+        system_info['distribution'] = platform.dist()[0]
+        system_info['distribution_version'] = platform.dist()[1]
         try:
             system_info['ip'] = socket.gethostbyname(system_info['hostname'])
         except socket.gaierror:

@@ -4,7 +4,7 @@
 import grpc
 import platform
 from utils import *
-from grpc_module import api_pb2_grpc, api_pb2
+from modules.grpc_module import api_pb2_grpc, api_pb2
 
 def exec():
     channel = grpc.insecure_channel(SERVER_CONFIG['server']['host'] + ':' +

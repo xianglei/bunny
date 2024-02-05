@@ -3,7 +3,7 @@
 # author: xianglei
 
 import hashlib
-from .config_parser import *
+from modules.config_parser import *
 import string
 import logging
 import logzero
@@ -18,7 +18,9 @@ from Crypto.Cipher import AES, DES3
 from Crypto import Random
 from Crypto.Hash import MD5, SHA, SHA224, SHA256, SHA384, SHA512, HMAC
 from Crypto.PublicKey import RSA
-from fabric import Connection, SerialGroup, ThreadingGroup
+from fabric import Connection, SerialGroup
+import shlex
+import subprocess2
 
 
 class UnitFormat:
@@ -166,6 +168,7 @@ class Logger():
     def logger(self):
         return self._logger
 
+
 class SSH(Logger):
     def __init__(self, ip, port, username, password, timeout=30):
         Logger.__init__(self)
@@ -224,6 +227,43 @@ class ShellExecutor(Logger):
             self._logger.info('Shell command execution result: retcode %s, stdout %s, stderr %s' %
                               (retcode, stdout, stderr,))
             return {'retcode': retcode, 'stdout': stdout, 'stderr': stderr, 'cmd': cmd}
+        except IOError as e:
+            self._logger.error(e)
+            return e
+
+    def _executor2(self, cmd, exec_id):
+        """
+        非阻塞执行命令, 并将执行结果以stream方式写入exec_id_id_date.out和.err文件
+        :param cmd:
+        :param exec_id:
+        :return:
+        """
+        try:
+            self._logger.info('Executing shell command %s' % cmd)
+            p = subprocess2.Popen(shlex.split(cmd), stdout=subprocess2.PIPE, stderr=subprocess2.PIPE)
+            p.runInBackground()
+            curdt = curdatetime(formatter='%Y%m%d%H%M%S')
+            if not os.path.exists(LOGS_EXEC_DIR):
+                try:
+                    os.mkdir(LOGS_EXEC_DIR, mode=0o1777)
+                except OSError as e:
+                    self._logger.error(e)
+            out_file = open(LOGS_EXEC_DIR + 'execid_' + str(exec_id) + '_' + curdt + '.out', 'w')
+            err_file = open(LOGS_EXEC_DIR + 'execid_' + str(exec_id) + '_' + curdt + '.err', 'w')
+            while True:
+                stdout = p.stdout.readline()
+                stderr = p.stderr.readline()
+                if p.returncode is not None:
+                    retcode = p.returncode
+                    break
+                if stdout:
+                    out_file.write(stdout.strip().decode() + '\n')
+                if stderr:
+                    err_file.write(stderr.strip().decode() + '\n')
+            out_file.close()
+            err_file.close()
+            return retcode, curdt
+
         except IOError as e:
             self._logger.error(e)
             return e

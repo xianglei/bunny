@@ -2,16 +2,16 @@
 # coding: utf-8
 
 import uuid
-import asyncio
 from modules.grpc_module import api_pb2_grpc, api_pb2
 import grpc
 from concurrent import futures
-from .utils import *
-from .status import *
+from modules.utils import *
+from modules.status import *
 import json
 from pwd import getpwnam
 import hashlib
 import binascii
+import shlex
 import shutil
 
 
@@ -80,10 +80,16 @@ class Greeter(MultiGreeterServicer):
         for i in range(NUMBER_OF_REPLY):
             yield HelloReply(message=f"Hello number {i}, {request.name}!")
 """
+
+
 class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
     def __init__(self):
         Logger.__init__(self)
-
+        self.OutputType = (
+            'STDOUT',
+            'STDERR',
+        )
+    """
     def Exec(self, request, context):
         #print("exec_cmd: {}".format(request))
         exec_id = request.exec_id
@@ -119,6 +125,32 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
             return response
         except:
             self._logger.fatal("exec_cmd: {}".format(cmd))
+    """
+
+    def Exec(self, request, context):
+        exec_id = request.exec_id
+        cmd = request.cmd
+        self._logger.info("exec_cmd: {}".format(cmd))
+        self._logger.info("exec_id: {}".format(exec_id))
+        try:
+            se = ShellExecutor()
+            ret, curdt = se._executor2(cmd, exec_id)
+            with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.out', 'r') as out_file:
+                while True:
+                    line = out_file.readline()
+                    if not line:
+                        break
+                    yield api_pb2.ExecResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(), continued=False, exit_code=ret)
+            with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.err', 'r') as err_file:
+                while True:
+                    line = err_file.readline()
+                    if not line:
+                        break
+                    yield api_pb2.ExecResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(), continued=False, exit_code=ret)
+        except:
+            self._logger.fatal("exec_cmd: {}".format(cmd))
+
+
 
 
 class RegistrationService(api_pb2_grpc.RegistrationServiceServicer, Logger):
@@ -260,14 +292,18 @@ class BunnyGrpcServer(Logger):
         Logger.__init__(self)
 
     def serve(self):
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-        api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
-        api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)
-        api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
-        server.add_insecure_port('[::]:' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
-        self._logger.info('Starting bunny grpc server on port ' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
-        server.start()
-        server.wait_for_termination()
+        try:
+            server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+            api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
+            api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)
+            api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
+            server.add_insecure_port('[::]:' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
+            self._logger.info('Starting bunny grpc server on port ' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
+            server.start()
+            server.wait_for_termination()
+        except Exception as e:
+            self._logger.fatal(e)
+            exit(1)
 
 
 #bgs = BunnyGrpcServer()

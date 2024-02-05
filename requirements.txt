@@ -39,4 +39,4 @@ typing_extensions==4.8.0
 virtualenv==20.24.5
 zc.lockfile==3.0.post1
 watchdog==3.0.0
-inotify==0.2.10
+python-subprocess2==2.0.2
