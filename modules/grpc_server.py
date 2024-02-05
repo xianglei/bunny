@@ -135,18 +135,20 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
         try:
             se = ShellExecutor()
             ret, curdt = se._executor2(cmd, exec_id)
-            with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.out', 'r') as out_file:
-                while True:
-                    line = out_file.readline()
-                    if not line:
-                        break
-                    yield api_pb2.ExecResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(), continued=False, exit_code=ret)
-            with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.err', 'r') as err_file:
-                while True:
-                    line = err_file.readline()
-                    if not line:
-                        break
-                    yield api_pb2.ExecResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(), continued=False, exit_code=ret)
+            if ret == 0:
+                with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.out', 'r') as out_file:
+                    while True:
+                        line = out_file.readline()
+                        if not line:
+                            break
+                        yield api_pb2.ExecResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(), continued=False, exit_code=0)
+            else:
+                with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.err', 'r') as err_file:
+                    while True:
+                        line = err_file.readline()
+                        if not line:
+                            break
+                        yield api_pb2.ExecResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(), continued=False, exit_code=ret)
         except:
             self._logger.fatal("exec_cmd: {}".format(cmd))
 
