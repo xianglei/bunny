@@ -3,17 +3,14 @@
 import os
 
 import daemon
-import sys
 import threading
 import signal
 
-import psutil
 from daemon import pidfile
 from modules.grpc_server import *
-# from .thrift_server import *
+from modules.thrift_server import *
 from modules.cp_server import *
-# from grpc_client import *
-from .utils import *
+from modules.utils import *
 
 
 def exception_callback(e):
@@ -26,19 +23,25 @@ class BunnyDaemon(Logger):
         Logger.__init__(self)
         self.grpc_server = BunnyGrpcServer()
         self.cp_server = BunnyCherrypyServer()
-        # self.thrift_server = BunnyThriftServer()
+        self.thrift_server = BunnyThriftServer()
 
     def _run_grpc_server(self):
         try:
             self.grpc_server.serve()
         except Exception as e:
-            self._logger.fatal(e)
+            self._logger.error(e)
 
     def _run_thrift_server(self):
-        self.thrift_server.serve()
+        try:
+            self.thrift_server.serve()
+        except Exception as e:
+            self._logger.error(e)
 
     def _run_cp_server(self):
-        self.cp_server.start()
+        try:
+            self.cp_server.start()
+        except Exception as e:
+            self._logger.error(e)
 
     def start(self):
         if not self._check_proc_alive():
@@ -52,18 +55,19 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting Bunny...")
                     self._logger.info("Starting Cherrypy server...")
                     self._logger.info("Starting gRPC server...")
+                    self._logger.info("Starting thrift server...")
 
                     threads = []
                     # gRPC not used for now, but DON'T REMOVE IT
-                    for i in range(4):
-                        grpc_server_thread = threading.Thread(target=self._run_grpc_server)
-                        threads.append(grpc_server_thread)
-                        grpc_server_thread.daemon = True
-                        grpc_server_thread.start()
-                    # thrift_server_thread = threading.Thread(target=self._run_thrift_server)
-                    # threads.append(thrift_server_thread)
-                    # thrift_server_thread.daemon = True
-                    # thrift_server_thread.start()
+
+                    grpc_server_thread = threading.Thread(target=self._run_grpc_server)
+                    threads.append(grpc_server_thread)
+                    grpc_server_thread.daemon = True
+                    grpc_server_thread.start()
+                    thrift_server_thread = threading.Thread(target=self._run_thrift_server)
+                    threads.append(thrift_server_thread)
+                    thrift_server_thread.daemon = True
+                    thrift_server_thread.start()
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)
                     threads.append(cherrypy_thread)
                     cherrypy_thread.daemon = True
@@ -102,19 +106,15 @@ class BunnyDaemon(Logger):
             cherrypy.engine.exit()
             self._logger.info("CherryPy server stopped...")
             self._logger.info("Stopping thrift server...")
+            self._logger.info("Stopping gRpc server...")
             with open(pid, 'r') as f:
                 pid = int(f.read())
-            try:
+                self._logger.debug("pid: " + str(pid))
+                self._logger.debug("Getting pid from pid file...")
                 os.remove(BASE_DIR + 'run/bunny.pid')
                 self._logger.info("pid file removed...")
-            except OSError as e:
-                self._logger.fatal(e)
-            self._logger.info("thrift server stopped...")
-            try:
-                self._logger.info("Bunny Agent Server stopped...")
-                os.kill(pid, signal.SIGTERM)
-            except OSError as e:
-                self._logger.fatal(e)
+                self._logger.info("Kill Bunny Agent Server...")
+                os.killpg(os.getpgid(pid), signal.SIGKILL)
         except Exception as e:
             self._logger.fatal(e)
             exit(1)

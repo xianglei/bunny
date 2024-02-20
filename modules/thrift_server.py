@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-import uuid
-import binascii
-from .utils import *
-from .status import *
-import json
+from modules.utils import *
+from modules.status import *
 from pwd import getpwnam
 from modules.thrift_module.api import *
 from modules.thrift_module.api.ttypes import *
@@ -15,63 +12,7 @@ from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 from thrift.TMultiplexedProcessor import TMultiplexedProcessor
 
-
-def read_uuid():
-    if os.path.exists(RUN_DIR + 'bunny.uuid'):
-        try:
-            with open(RUN_DIR + 'bunny.uuid', 'r') as f:
-                uid = f.read().strip()
-                f.close()
-        except Exception as e:
-            print(e)
-            uid = None
-        return uid
-    else:
-        return None
-
-
-def write_uuid(uid):
-    try:
-        with open(RUN_DIR + 'bunny.uuid', 'w') as f:
-            f.write(uid)
-            f.close()
-    except Exception as e:
-        print(e)
-
-
-def file_hash_md5(filename):
-    md5 = hashlib.md5()
-    with open(filename, 'rb') as f:
-        while True:
-            data = f.read(4096)
-            if not data:
-                break
-            md5.update(data)
-    return md5.hexdigest()
-
-
-def file_hash_sha1(filename):
-    md5 = hashlib.sha1()
-    with open(filename, 'rb') as f:
-        while True:
-            data = f.read(4096)
-            if not data:
-                break
-            md5.update(data)
-    return md5.hexdigest()
-
-
-def file_crc32(filename):
-    crc32 = 0
-    with open(filename, 'rb') as f:
-        while True:
-            data = f.read(4096)
-            if not data:
-                break
-            crc32 = binascii.crc32(data, crc32)
-    return crc32 & 0xffffffff
-
-
+"""
 class ExecServiceHandler(Logger):
     def __init__(self):
         Logger.__init__(self)
@@ -109,6 +50,7 @@ class ExecServiceHandler(Logger):
     def Exec(self, request):
         resp = self.__exec_command(request)
         return resp
+"""
 
 
 class FileServiceHandler(Logger):
@@ -181,6 +123,7 @@ class FileServiceHandler(Logger):
         return resp
 
 
+"""
 class RegistrationServiceHandler(Logger):
     def __init__(self):
         Logger.__init__(self)
@@ -209,30 +152,31 @@ class RegistrationServiceHandler(Logger):
         else:
             self._logger.fatal("Local uniq_id is not equal to server uniq_id")
             return None
+"""
 
 
 class BunnyThriftServer(Logger):
     def serve(self):
-        exec_handler = ExecServiceHandler()
-        exec_processor = ExecService.Processor(exec_handler)
+        #exec_handler = ExecServiceHandler()
+        #exec_processor = ExecService.Processor(exec_handler)
         file_handler = FileServiceHandler()
-        file_processor = FileService.Processor(file_handler)
-        register_handler = RegistrationServiceHandler()
-        register_processor = RegistrationService.Processor(register_handler)
-
-        transport = TSocket.TServerSocket(host=SERVER_CONFIG['agent']['bind'], port=SERVER_CONFIG['agent']['agent_rpc_port'])
+        processor = FileService.Processor(file_handler)
+        #register_handler = RegistrationServiceHandler()
+        #register_processor = RegistrationService.Processor(register_handler)
+        print(SERVER_CONFIG['agent']['agent_thrift_port'])
+        transport = TSocket.TServerSocket(host=SERVER_CONFIG['agent']['bind'],
+                                          port=SERVER_CONFIG['agent']['agent_thrift_port'])
         tfactory = TTransport.TBufferedTransportFactory()
         pfactory = TBinaryProtocol.TBinaryProtocolFactory()
-        processor = TMultiplexedProcessor()
-        processor.registerProcessor('ExecService', exec_processor)
-        processor.registerProcessor('FileService', file_processor)
-        processor.registerProcessor('RegistrationService', register_processor)
+
+        #processor.registerProcessor('ExecService', exec_processor)
+        #processor.registerProcessor('FileService', file_processor)
+        #processor.registerProcessor('RegistrationService', register_processor)
 
         server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory)
-        server.setNumThreads(10)
-        self._logger.info('Starting bunny thrift server on port ' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
+        server.setNumThreads(4)
+        self._logger.info('Starting bunny thrift server on port ' + str(SERVER_CONFIG['agent']['agent_thrift_port']))
         server.serve()
-
 
 
 

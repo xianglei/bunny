@@ -14,6 +14,7 @@ DEFAULT_CONFIG = {
     "agent": {
         "bind": "0.0.0.0",
         "agent_rpc_port": 7182,
+        "agent_thrift_port": 7183,
         "agent_http_port": 7181,
         "agent_http_thread_pool": 30,
         "version": "1.0.0",
@@ -21,6 +22,8 @@ DEFAULT_CONFIG = {
     "server": {
         "host": "localhost",
         "server_rpc_port": 7182,
+        "server_thrift_port": 7183,
+        "server_http_port": 7181,
         "secret": "HeavyMetalWillNeverDie!!!"
     }
 }

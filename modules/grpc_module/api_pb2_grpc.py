@@ -15,10 +15,15 @@ class ExecServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Exec = channel.unary_stream(
+        self.Exec = channel.unary_unary(
                 '/runtime.v1.grpc.api.ExecService/Exec',
                 request_serializer=api__pb2.ExecRequest.SerializeToString,
                 response_deserializer=api__pb2.ExecResponse.FromString,
+                )
+        self.StreamExec = channel.unary_stream(
+                '/runtime.v1.grpc.api.ExecService/StreamExec',
+                request_serializer=api__pb2.ExecRequest.SerializeToString,
+                response_deserializer=api__pb2.ExecStreamResponse.FromString,
                 )
 
 
@@ -32,13 +37,24 @@ class ExecServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def StreamExec(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ExecServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Exec': grpc.unary_stream_rpc_method_handler(
+            'Exec': grpc.unary_unary_rpc_method_handler(
                     servicer.Exec,
                     request_deserializer=api__pb2.ExecRequest.FromString,
                     response_serializer=api__pb2.ExecResponse.SerializeToString,
+            ),
+            'StreamExec': grpc.unary_stream_rpc_method_handler(
+                    servicer.StreamExec,
+                    request_deserializer=api__pb2.ExecRequest.FromString,
+                    response_serializer=api__pb2.ExecStreamResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,78 +78,14 @@ class ExecService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/runtime.v1.grpc.api.ExecService/Exec',
+        return grpc.experimental.unary_unary(request, target, '/runtime.v1.grpc.api.ExecService/Exec',
             api__pb2.ExecRequest.SerializeToString,
             api__pb2.ExecResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
-
-class RegistrationServiceStub(object):
-    """registration
-    """
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.Register = channel.unary_unary(
-                '/runtime.v1.grpc.api.RegistrationService/Register',
-                request_serializer=api__pb2.RegisterRequest.SerializeToString,
-                response_deserializer=api__pb2.RegisterResponse.FromString,
-                )
-        self.GetInfo = channel.unary_unary(
-                '/runtime.v1.grpc.api.RegistrationService/GetInfo',
-                request_serializer=api__pb2.InfoRequest.SerializeToString,
-                response_deserializer=api__pb2.InfoResponse.FromString,
-                )
-
-
-class RegistrationServiceServicer(object):
-    """registration
-    """
-
-    def Register(self, request, context):
-        """node client regist to center server
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_RegistrationServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'Register': grpc.unary_unary_rpc_method_handler(
-                    servicer.Register,
-                    request_deserializer=api__pb2.RegisterRequest.FromString,
-                    response_serializer=api__pb2.RegisterResponse.SerializeToString,
-            ),
-            'GetInfo': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetInfo,
-                    request_deserializer=api__pb2.InfoRequest.FromString,
-                    response_serializer=api__pb2.InfoResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'runtime.v1.grpc.api.RegistrationService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
- # This class is part of an EXPERIMENTAL API.
-class RegistrationService(object):
-    """registration
-    """
-
     @staticmethod
-    def Register(request,
+    def StreamExec(request,
             target,
             options=(),
             channel_credentials=None,
@@ -143,208 +95,8 @@ class RegistrationService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/runtime.v1.grpc.api.RegistrationService/Register',
-            api__pb2.RegisterRequest.SerializeToString,
-            api__pb2.RegisterResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetInfo(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/runtime.v1.grpc.api.RegistrationService/GetInfo',
-            api__pb2.InfoRequest.SerializeToString,
-            api__pb2.InfoResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-
-class FileServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.Send = channel.unary_unary(
-                '/runtime.v1.grpc.api.FileService/Send',
-                request_serializer=api__pb2.FileRequest.SerializeToString,
-                response_deserializer=api__pb2.FileResponse.FromString,
-                )
-
-
-class FileServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def Send(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_FileServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'Send': grpc.unary_unary_rpc_method_handler(
-                    servicer.Send,
-                    request_deserializer=api__pb2.FileRequest.FromString,
-                    response_serializer=api__pb2.FileResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'runtime.v1.grpc.api.FileService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
- # This class is part of an EXPERIMENTAL API.
-class FileService(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def Send(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/runtime.v1.grpc.api.FileService/Send',
-            api__pb2.FileRequest.SerializeToString,
-            api__pb2.FileResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-
-class MonitorServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.Recv = channel.unary_stream(
-                '/runtime.v1.grpc.api.MonitorService/Recv',
-                request_serializer=api__pb2.MonitorRequest.SerializeToString,
-                response_deserializer=api__pb2.MonitorResponse.FromString,
-                )
-
-
-class MonitorServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def Recv(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_MonitorServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'Recv': grpc.unary_stream_rpc_method_handler(
-                    servicer.Recv,
-                    request_deserializer=api__pb2.MonitorRequest.FromString,
-                    response_serializer=api__pb2.MonitorResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'runtime.v1.grpc.api.MonitorService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
- # This class is part of an EXPERIMENTAL API.
-class MonitorService(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def Recv(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/runtime.v1.grpc.api.MonitorService/Recv',
-            api__pb2.MonitorRequest.SerializeToString,
-            api__pb2.MonitorResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-
-class UploaderStub(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.UploadStream = channel.stream_unary(
-                '/runtime.v1.grpc.api.Uploader/UploadStream',
-                request_serializer=api__pb2.FileStreamRequest.SerializeToString,
-                response_deserializer=api__pb2.FileResponse.FromString,
-                )
-
-
-class UploaderServicer(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def UploadStream(self, request_iterator, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_UploaderServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'UploadStream': grpc.stream_unary_rpc_method_handler(
-                    servicer.UploadStream,
-                    request_deserializer=api__pb2.FileStreamRequest.FromString,
-                    response_serializer=api__pb2.FileResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'runtime.v1.grpc.api.Uploader', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
- # This class is part of an EXPERIMENTAL API.
-class Uploader(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def UploadStream(request_iterator,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/runtime.v1.grpc.api.Uploader/UploadStream',
-            api__pb2.FileStreamRequest.SerializeToString,
-            api__pb2.FileResponse.FromString,
+        return grpc.experimental.unary_stream(request, target, '/runtime.v1.grpc.api.ExecService/StreamExec',
+            api__pb2.ExecRequest.SerializeToString,
+            api__pb2.ExecStreamResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

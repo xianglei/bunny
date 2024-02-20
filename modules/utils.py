@@ -21,6 +21,7 @@ from Crypto.PublicKey import RSA
 from fabric import Connection, SerialGroup
 import shlex
 import subprocess2
+import binascii
 
 
 class UnitFormat:
@@ -218,12 +219,24 @@ class ShellExecutor(Logger):
         Logger.__init__(self)
 
     def _executor(self, cmd, timeout):
+        """
+        阻塞执行命令, 并将执行结果写入exec_id_id_date.log文件
+        :param cmd: string
+        :param exec_id: string
+        :param timeout: int
+        :return: exec_id in string, stdout and stderr in bytes, exit_code in int
+        """
         try:
             self._logger.info('Executing shell command %s' % cmd)
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=False,
                                  shell=True, preexec_fn=os.setsid, env=os.environ.copy(), bufsize=0)
             stdout, stderr = p.communicate(timeout=timeout)
             retcode = p.wait()
+            if not os.path.exists(LOGS_EXEC_DIR):
+                try:
+                    os.mkdir(LOGS_EXEC_DIR, mode=0o1777)
+                except OSError as e:
+                    self._logger.error(e)
             self._logger.info('Shell command execution result: retcode %s, stdout %s, stderr %s' %
                               (retcode, stdout, stderr,))
             return {'retcode': retcode, 'stdout': stdout, 'stderr': stderr, 'cmd': cmd}
@@ -236,11 +249,12 @@ class ShellExecutor(Logger):
         非阻塞执行命令, 并将执行结果以stream方式写入exec_id_id_date.out和.err文件
         :param cmd:
         :param exec_id:
-        :return:
+        :return: exec_id in string, stdout and stderr in bytes, exit_code in int
         """
         try:
             self._logger.info('Executing shell command %s' % cmd)
-            p = subprocess2.Popen(shlex.split(cmd), stdout=subprocess2.PIPE, stderr=subprocess2.PIPE)
+            p = subprocess2.Popen(shlex.split(cmd), stdout=subprocess2.PIPE, stderr=subprocess2.PIPE, close_fds=False,
+            preexec_fn=os.setsid, env=os.environ.copy())
             p.runInBackground()
             curdt = curdatetime(formatter='%Y%m%d%H%M%S')
             if not os.path.exists(LOGS_EXEC_DIR):
@@ -522,9 +536,59 @@ def networktools_ip_hostname(nodename):
     return fqdn, ip
 
 
+def file_crc32(filename):
+    crc32 = 0
+    with open(filename, 'rb') as f:
+        while True:
+            data = f.read(4096)
+            if not data:
+                break
+            crc32 = binascii.crc32(data, crc32)
+    return crc32 & 0xffffffff
 
 
+def file_hash_sha1(filename):
+    md5 = hashlib.sha1()
+    with open(filename, 'rb') as f:
+        while True:
+            data = f.read(4096)
+            if not data:
+                break
+            md5.update(data)
+    return md5.hexdigest()
 
 
+def file_hash_md5(filename):
+    md5 = hashlib.md5()
+    with open(filename, 'rb') as f:
+        while True:
+            data = f.read(4096)
+            if not data:
+                break
+            md5.update(data)
+    return md5.hexdigest()
+
+
+def read_uuid():
+    if os.path.exists(RUN_DIR + 'bunny.uuid'):
+        try:
+            with open(RUN_DIR + 'bunny.uuid', 'r') as f:
+                uid = f.read().strip()
+                f.close()
+        except Exception as e:
+            print(e)
+            uid = None
+        return uid
+    else:
+        return None
+
+
+def write_uuid(uid):
+    try:
+        with open(RUN_DIR + 'bunny.uuid', 'w') as f:
+            f.write(uid)
+            f.close()
+    except Exception as e:
+        print(e)
 
 
