@@ -18,6 +18,7 @@ DEFAULT_CONFIG = {
         "agent_http_port": 7181,
         "agent_http_thread_pool": 30,
         "version": "1.0.0",
+        "heartbeat_interval": 10,
     },
     "server": {
         "host": "localhost",

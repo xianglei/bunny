@@ -10,7 +10,8 @@ from daemon import pidfile
 from modules.grpc_server import *
 from modules.thrift_server import *
 from modules.cp_server import *
-from modules.utils import *
+#
+from modules.heartbeat import *
 
 
 def exception_callback(e):
@@ -43,6 +44,13 @@ class BunnyDaemon(Logger):
         except Exception as e:
             self._logger.error(e)
 
+    def _run_heartbeat_server(self):
+        try:
+            heartbeat = Heartbeat()
+            heartbeat.heartbeat()
+        except Exception as e:
+            self._logger.error(e)
+
     def start(self):
         if not self._check_proc_alive():
             try:
@@ -56,6 +64,7 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting Cherrypy server...")
                     self._logger.info("Starting gRPC server...")
                     self._logger.info("Starting thrift server...")
+                    self._logger.info("Starting Heartbeat server...")
 
                     threads = []
                     # gRPC not used for now, but DON'T REMOVE IT
@@ -64,10 +73,17 @@ class BunnyDaemon(Logger):
                     threads.append(grpc_server_thread)
                     grpc_server_thread.daemon = True
                     grpc_server_thread.start()
+
+                    heartbeat_thread = threading.Thread(target=self._run_heartbeat_server)
+                    threads.append(heartbeat_thread)
+                    heartbeat_thread.daemon = True
+                    heartbeat_thread.start()
+
                     thrift_server_thread = threading.Thread(target=self._run_thrift_server)
                     threads.append(thrift_server_thread)
                     thrift_server_thread.daemon = True
                     thrift_server_thread.start()
+
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)
                     threads.append(cherrypy_thread)
                     cherrypy_thread.daemon = True
@@ -107,6 +123,7 @@ class BunnyDaemon(Logger):
             self._logger.info("CherryPy server stopped...")
             self._logger.info("Stopping thrift server...")
             self._logger.info("Stopping gRpc server...")
+            self._logger.info("Stopping Heartbeat server...")
             with open(pid, 'r') as f:
                 pid = int(f.read())
                 self._logger.debug("pid: " + str(pid))

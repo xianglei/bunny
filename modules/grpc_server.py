@@ -6,17 +6,23 @@ import grpc
 from concurrent import futures
 from modules.utils import *
 from modules.status import *
+import math
 
 
-"""
-class Greeter(MultiGreeterServicer):
-    async def sayHello(
-        self, request: HelloRequest, context: grpc.aio.ServicerContext
-    ) -> HelloReply:
-        logging.info("Serving sayHello request %s", request)
-        for i in range(NUMBER_OF_REPLY):
-            yield HelloReply(message=f"Hello number {i}, {request.name}!")
-"""
+class HeartbeatService(api_pb2_grpc.HeartbeatServiceServicer, Logger):
+    def __init__(self):
+        Logger.__init__(self)
+
+    def Heartbeat(self, request, context):
+        self._logger.info("heartbeat: {}".format(request))
+        response = api_pb2.HeartbeatResponse()
+        if request.ping == "ping":
+            response.pong = "pong"
+        else:
+            response.pong = "pong pong pong"
+        response.timestamp_millis = math.floor(datetime.datetime.now().timestamp() * 1000)
+        response.machine_uniq_id = request.machine_uniq_id
+        return response
 
 
 class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
@@ -70,7 +76,7 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
         self._logger.debug("exec_id: {}".format(exec_id))
         try:
             se = ShellExecutor()
-            ret, curdt = se._executor2(cmd, exec_id)
+            ret, curdt = se._executor_non_blocking(cmd, exec_id)
             if ret == 0:
                 with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.out', 'r') as out_file:
                     while True:
@@ -251,6 +257,7 @@ class BunnyGrpcServer(Logger):
         try:
             server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
             api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
+            api_pb2_grpc.add_HeartbeatServiceServicer_to_server(HeartbeatService(), server)
             #api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)
             #api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
             server.add_insecure_port('[::]:' + str(SERVER_CONFIG['agent']['agent_rpc_port']))

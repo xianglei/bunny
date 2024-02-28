@@ -244,7 +244,7 @@ class ShellExecutor(Logger):
             self._logger.error(e)
             return e
 
-    def _executor2(self, cmd, exec_id):
+    def _executor_non_blocking(self, cmd, exec_id):
         """
         非阻塞执行命令, 并将执行结果以stream方式写入exec_id_id_date.out和.err文件
         :param cmd:
