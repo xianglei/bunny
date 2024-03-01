@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from .utils import *
-from .status import retrieve_info
+from modules.utils import *
+from modules.status import *
 import json
 import cherrypy
 
@@ -22,6 +22,30 @@ class BunnyHttpService(Logger):
     @cherrypy.expose()
     def ping(self):
         return "pong"
+
+    @cherrypy.expose()
+    def installer(self):
+        return json.dumps(get_installer(), indent=4, sort_keys=True)
+
+    @cherrypy.expose()
+    def system(self):
+        return json.dumps(get_system_info(), indent=4, sort_keys=True)
+
+    @cherrypy.expose()
+    def network(self):
+        return json.dumps(get_net_if_info(), indent=4, sort_keys=True)
+
+    @cherrypy.expose()
+    def disk(self):
+        return json.dumps(get_disk_info(), indent=4, sort_keys=True)
+
+    @cherrypy.expose()
+    def memory(self):
+        return json.dumps(get_memory_info(), indent=4, sort_keys=True)
+
+    @cherrypy.expose()
+    def cpu(self):
+        return json.dumps(get_cpu_info(), indent=4, sort_keys=True)
 
 
 class BunnyCherrypyServer(Logger):

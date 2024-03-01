@@ -4,6 +4,7 @@
 import psutil
 import socket
 import platform
+import distro
 # import json
 from modules.utils import Logger
 
@@ -22,7 +23,7 @@ def get_cpu_info():
         cpu_info['cpu_times']['user'] = cpu_times.user
         cpu_info['cpu_times']['system'] = cpu_times.system
         cpu_info['cpu_times']['idle'] = cpu_times.idle
-        cpu_info['cpu_times']['iowait'] = cpu_times.iowait
+        cpu_info['cpu_times']['iowait'] = cpu_times.iowait # mac os does not have iowait
         cpu_info['cpu_times']['cores'] = []
         for per_time in psutil.cpu_times(percpu=True):
             cpu_info['cpu_times']['cores'].append(per_time._asdict())
@@ -34,7 +35,7 @@ def get_cpu_info():
         cpu_info['cpu_stats']['soft_interrupts'] = cpu_stats.soft_interrupts
         cpu_info['cpu_stats']['syscalls'] = cpu_stats.syscalls
     else:
-        raise OSError('OS not supported')
+        cpu_info['os'] = "not supported"
 
     return cpu_info
 
@@ -51,10 +52,10 @@ def get_memory_info():
         memory_info['virtual_memory']['free'] = virtual_memory.free
         memory_info['virtual_memory']['active'] = virtual_memory.active
         memory_info['virtual_memory']['inactive'] = virtual_memory.inactive
-        memory_info['virtual_memory']['buffers'] = virtual_memory.buffers
-        memory_info['virtual_memory']['cached'] = virtual_memory.cached
-        memory_info['virtual_memory']['shared'] = virtual_memory.shared
-        memory_info['virtual_memory']['slab'] = virtual_memory.slab
+        memory_info['virtual_memory']['buffers'] = virtual_memory.buffers # mac os does not have buffers
+        memory_info['virtual_memory']['cached'] = virtual_memory.cached # mac os does not have cached
+        memory_info['virtual_memory']['shared'] = virtual_memory.shared # mac os does not have shared
+        memory_info['virtual_memory']['slab'] = virtual_memory.slab # mac os does not have slab
 
         memory_info['swap_memory'] = {}
         swap_memory = psutil.swap_memory()
@@ -65,13 +66,13 @@ def get_memory_info():
         memory_info['swap_memory']['sin'] = swap_memory.sin
         memory_info['swap_memory']['sout'] = swap_memory.sout
     else:
-        raise OSError('OS not supported')
+        memory_info['os'] = "not supported"
     return memory_info
 
 
 def get_disk_info():
     disk_info = {}
-    if psutil.LINUX or psutil.MACOS:
+    if psutil.LINUX:
         disk_io_counters = psutil.disk_io_counters()
         disk_info['total_disk_io_counters'] = {}
         disk_info['total_disk_io_counters']['read_count'] = disk_io_counters.read_count
@@ -82,7 +83,7 @@ def get_disk_info():
         disk_info['total_disk_io_counters']['write_time'] = disk_io_counters.write_time
         #disk_info['total_disk_io_counters']['read_merged_count'] = disk_io_counters.read_merged_count
         #disk_info['total_disk_io_counters']['write_merged_count'] = disk_io_counters.write_merged_count
-        disk_info['total_disk_io_counters']['busy_time'] = disk_io_counters.busy_time
+        disk_info['total_disk_io_counters']['busy_time'] = disk_io_counters.busy_time # mac os does not have busy_time
 
         disk_partitions = psutil.disk_partitions()
         disk_info['disk_partitions'] = []
@@ -121,7 +122,7 @@ def get_disk_info():
             disk_info['disk_partitions'][-1]['disk_usage']['free'] = disk_usage.free
             disk_info['disk_partitions'][-1]['disk_usage']['percent'] = disk_usage.percent
     else:
-        raise OSError('OS not supported')
+        disk_info['os'] = "not supported"
     return disk_info
 
 
@@ -139,6 +140,8 @@ def get_net_if_info():
             net_if_info['net_if_addrs'][net_if_name].append(net_io_counters._asdict())
             for net_if_addr in net_if_addrs:
                 net_if_info['net_if_addrs'][net_if_name].append(net_if_addr._asdict())
+    else:
+        net_if_info['os'] = "not supported"
     return net_if_info
 
 
@@ -156,8 +159,13 @@ def get_system_info():
         system_info['uname'] = list(platform.uname())
         system_info['version'] = platform.version()
         system_info['hostname'] = socket.gethostname()
-        system_info['distribution'] = platform.dist()[0]
-        system_info['distribution_version'] = platform.dist()[1]
+        system_info['os_id'] = distro.info()['id']
+        system_info['os_version_id'] = distro.info()['version']
+        system_info['os_like'] = distro.info()['like']
+        system_info['os_codename'] = distro.info()['codename']
+        system_info['os_version_major'] = distro.info()['version_parts']['major']
+        system_info['os_version_minor'] = distro.info()['version_parts']['minor']
+        system_info['os_version_build_numer'] = distro.info()['version_parts']['build_number']
         try:
             system_info['ip'] = socket.gethostbyname(system_info['hostname'])
         except socket.gaierror:
@@ -166,8 +174,31 @@ def get_system_info():
         for user in psutil.users():
             system_info['users'].append(user._asdict())
     else:
-        raise OSError('OS not supported')
+        system_info['os'] = "not supported"
     return system_info
+
+
+def get_installer():
+    installer = {}
+    if psutil.LINUX:
+        os_name = distro.info()['id'].lower()
+        os_version = distro.info()['version']
+        if os_name == 'ubuntu' or os_name == 'debian':
+            installer['pkg_manager'] = 'apt'
+        elif os_name == 'centos' or os_name == 'redhat' or os_name == 'kylin':
+            if os_name == 'centos' or os_name == 'redhat':
+                if os_version.startswith('6'):
+                    installer['pkg_manager'] = 'yum'
+                else:
+                    installer['pkg_manager'] = 'dnf'
+            elif os_name == 'kylin':
+                installer['pkg_manager'] = 'yum'
+            installer['pkg_manager'] = 'yum'
+        else:
+            installer['pkg_manager'] = 'not supported'
+    else:
+        installer['os'] = 'not supported'
+    return installer
 
 
 def retrieve_info():
@@ -176,6 +207,8 @@ def retrieve_info():
     info['memory_info'] = get_memory_info()
     info['disk_info'] = get_disk_info()
     info['net_if_info'] = get_net_if_info()
+    info['system_info'] = get_system_info()
+    info['installer'] = get_installer()
     return info
 
 

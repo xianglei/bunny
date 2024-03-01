@@ -41,3 +41,4 @@ zc.lockfile==3.0.post1
 watchdog==4.0.0
 python-subprocess2==2.0.2
 thrift==0.16.0
+distro==1.9.0
