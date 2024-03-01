@@ -159,7 +159,18 @@ class IsText:
 
 class Logger():
     def __init__(self):
-        loglevel(logging.DEBUG)
+        if SERVER_CONFIG['server']['log_level'] == "INFO":
+            loglevel(logging.INFO)
+        elif SERVER_CONFIG['server']['log_level'] == "DEBUG":
+            loglevel(logging.DEBUG)
+        elif SERVER_CONFIG['server']['log_level'] == "WARNING":
+            loglevel(logging.WARNING)
+        elif SERVER_CONFIG['server']['log_level'] == "ERROR":
+            loglevel(logging.ERROR)
+        elif SERVER_CONFIG['server']['log_level'] == "CRITICAL":
+            loglevel(logging.CRITICAL)
+        else:
+            loglevel(logging.DEBUG)
         format = logging.Formatter('%(asctime)s %(levelname)s %(filename)s: %(funcName)s: [line:%(lineno)d]'
                                    ' - %(message)s')
         logzero.formatter(format)

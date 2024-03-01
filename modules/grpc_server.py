@@ -76,22 +76,29 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
         self._logger.debug("exec_id: {}".format(exec_id))
         try:
             se = ShellExecutor()
-            ret, curdt = se._executor_blocking(cmd, 120, exec_id)
+            ret, curdt = se._executor_blocking(cmd, 300, exec_id)
 
             with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.out', 'r') as out_file:
                 while True:
                     line = out_file.readline()
                     if not line:
-                        break
-                    yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(),
+                        yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(),
                                                          continued=False, exit_code=ret)
+                        break
+                    else:
+                        yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(),
+                                                         continued=True, exit_code=ret)
+
             with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.err', 'r') as err_file:
                 while True:
                     line = err_file.readline()
                     if not line:
-                        break
-                    yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(),
+                        yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(),
                                                          continued=False, exit_code=ret)
+                        break
+                    else:
+                        yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(),
+                                                         continued=True, exit_code=ret)
         except Exception as e:
             self._logger.fatal("exec_cmd: {}".format(cmd))
             self._logger.fatal(str(e))
