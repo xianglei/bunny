@@ -14,7 +14,7 @@ class HeartbeatService(api_pb2_grpc.HeartbeatServiceServicer, Logger):
         Logger.__init__(self)
 
     def Heartbeat(self, request, context):
-        self._logger.info("heartbeat: {}".format(request))
+        self._logger.debug("heartbeat: {}".format(request))
         response = api_pb2.HeartbeatResponse()
         if request.ping == "ping":
             response.pong = "pong"
@@ -76,22 +76,21 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
         self._logger.debug("exec_id: {}".format(exec_id))
         try:
             se = ShellExecutor()
-            ret, curdt = se._executor_non_blocking(cmd, exec_id)
-            if ret == 0:
-                with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.out', 'r') as out_file:
-                    while True:
-                        line = out_file.readline()
-                        if not line:
-                            break
-                        yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(),
-                                                         continued=False, exit_code=0)
-            else:
-                with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.err', 'r') as err_file:
-                    while True:
-                        line = err_file.readline()
-                        if not line:
-                            break
-                        yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(),
+            ret, curdt = se._executor_blocking(cmd, 120, exec_id)
+
+            with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.out', 'r') as out_file:
+                while True:
+                    line = out_file.readline()
+                    if not line:
+                        break
+                    yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[0], output=line.encode(),
+                                                         continued=False, exit_code=ret)
+            with open(LOGS_EXEC_DIR + 'execid_' + str(request.exec_id) + '_' + curdt + '.err', 'r') as err_file:
+                while True:
+                    line = err_file.readline()
+                    if not line:
+                        break
+                    yield api_pb2.ExecStreamResponse(exec_id=exec_id, type=self.OutputType[1], output=line.encode(),
                                                          continued=False, exit_code=ret)
         except Exception as e:
             self._logger.fatal("exec_cmd: {}".format(cmd))

@@ -234,12 +234,49 @@ class ShellExecutor(Logger):
             retcode = p.wait()
             if not os.path.exists(LOGS_EXEC_DIR):
                 try:
-                    os.mkdir(LOGS_EXEC_DIR, mode=0o1777)
+                    os.mkdir(LOGS_EXEC_DIR, mode=0o777)
                 except OSError as e:
                     self._logger.error(e)
             self._logger.info('Shell command execution result: retcode %s, stdout %s, stderr %s' %
                               (retcode, stdout, stderr,))
             return {'retcode': retcode, 'stdout': stdout, 'stderr': stderr, 'cmd': cmd}
+        except IOError as e:
+            self._logger.error(e)
+            return e
+
+    def _executor_blocking(self, cmd, timeout, exec_id):
+        """
+        阻塞执行命令, 并将执行结果写入exec_id_id_date.log文件
+        :param cmd: string
+        :param exec_id: string
+        :param timeout: int
+        :return: exec_id in string, stdout and stderr in bytes, exit_code in int
+        """
+        try:
+            self._logger.info('Executing shell command %s' % cmd)
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=False,
+                                 shell=True, preexec_fn=os.setsid, env=os.environ.copy(), bufsize=0)
+            stdout, stderr = p.communicate(timeout=timeout)
+            retcode = p.wait()
+            curdt = curdatetime(formatter='%Y%m%d%H%M%S')
+            if not os.path.exists(LOGS_EXEC_DIR):
+                try:
+                    os.mkdir(LOGS_EXEC_DIR, mode=0o777)
+                except OSError as e:
+                    self._logger.error(e)
+            self._logger.info('Shell command execution result: retcode %s, stdout %s, stderr %s' %
+                              (retcode, stdout, stderr,))
+            try:
+                with open(LOGS_EXEC_DIR + 'execid_' + str(exec_id) + '_' + curdt + '.out', 'w') as out_file:
+                    out_file.write(stdout.decode())
+                with open(LOGS_EXEC_DIR + 'execid_' + str(exec_id) + '_' + curdt + '.err', 'w') as err_file:
+                    err_file.write(stderr.decode())
+            except IOError as e:
+                self._logger.error(e)
+            finally:
+                out_file.close()
+                err_file.close()
+            return retcode, curdt
         except IOError as e:
             self._logger.error(e)
             return e
@@ -259,7 +296,7 @@ class ShellExecutor(Logger):
             curdt = curdatetime(formatter='%Y%m%d%H%M%S')
             if not os.path.exists(LOGS_EXEC_DIR):
                 try:
-                    os.mkdir(LOGS_EXEC_DIR, mode=0o1777)
+                    os.mkdir(LOGS_EXEC_DIR, mode=0o777)
                 except OSError as e:
                     self._logger.error(e)
             out_file = open(LOGS_EXEC_DIR + 'execid_' + str(exec_id) + '_' + curdt + '.out', 'w')
@@ -267,13 +304,13 @@ class ShellExecutor(Logger):
             while True:
                 stdout = p.stdout.readline()
                 stderr = p.stderr.readline()
-                if p.returncode is not None:
-                    retcode = p.returncode
-                    break
                 if stdout:
                     out_file.write(stdout.strip().decode() + '\n')
                 if stderr:
                     err_file.write(stderr.strip().decode() + '\n')
+                if p.returncode is not None:
+                    retcode = p.returncode
+                    break
             out_file.close()
             err_file.close()
             return retcode, curdt
