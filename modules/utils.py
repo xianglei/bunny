@@ -159,15 +159,15 @@ class IsText:
 
 class Logger():
     def __init__(self):
-        if SERVER_CONFIG['server']['log_level'] == "INFO":
+        if SERVER_CONFIG['agent']['log_level'] == "INFO":
             loglevel(logging.INFO)
-        elif SERVER_CONFIG['server']['log_level'] == "DEBUG":
+        elif SERVER_CONFIG['agent']['log_level'] == "DEBUG":
             loglevel(logging.DEBUG)
-        elif SERVER_CONFIG['server']['log_level'] == "WARNING":
+        elif SERVER_CONFIG['agent']['log_level'] == "WARNING":
             loglevel(logging.WARNING)
-        elif SERVER_CONFIG['server']['log_level'] == "ERROR":
+        elif SERVER_CONFIG['agent']['log_level'] == "ERROR":
             loglevel(logging.ERROR)
-        elif SERVER_CONFIG['server']['log_level'] == "CRITICAL":
+        elif SERVER_CONFIG['agent']['log_level'] == "CRITICAL":
             loglevel(logging.CRITICAL)
         else:
             loglevel(logging.DEBUG)
