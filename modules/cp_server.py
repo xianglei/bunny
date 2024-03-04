@@ -36,7 +36,7 @@ class BunnyHttpService(Logger):
         return json.dumps(get_net_if_info(), indent=4, sort_keys=True)
 
     @cherrypy.expose()
-    def disk(self):
+    def storage(self):
         return json.dumps(get_disk_info(), indent=4, sort_keys=True)
 
     @cherrypy.expose()
