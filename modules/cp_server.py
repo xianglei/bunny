@@ -21,7 +21,7 @@ class BunnyHttpService(Logger):
 
     @cherrypy.expose()
     def ping(self):
-        return "pong"
+        return json.dumps({"ping": "pong"}, indent=4, sort_keys=True)
 
     @cherrypy.expose()
     def installer(self):
@@ -59,9 +59,9 @@ class BunnyCherrypyServer(Logger):
             cherrypy.server.unsubscribe()
             self._logger.info("Registering new server...")
             HTTP_SERVER = cherrypy._cpserver.Server()
-            HTTP_SERVER.socket_host = DEFAULT_CONFIG['agent']['bind']
-            HTTP_SERVER.socket_port = DEFAULT_CONFIG['agent']['agent_http_port']
-            HTTP_SERVER.thread_pool = DEFAULT_CONFIG['agent']['agent_http_thread_pool']
+            HTTP_SERVER.socket_host = SERVER_CONFIG['agent']['bind']
+            HTTP_SERVER.socket_port = SERVER_CONFIG['agent']['agent_http_port']
+            HTTP_SERVER.thread_pool = SERVER_CONFIG['agent']['agent_http_thread_pool']
             HTTP_SERVER.max_request_body_size = 300 * 1024 * 1024
             HTTP_SERVER.subscribe()
             self._logger.info("Registering http server...")
