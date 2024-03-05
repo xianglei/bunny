@@ -5,7 +5,8 @@ from modules.utils import *
 from modules.status import *
 import json
 import cherrypy
-
+import cherrypy_cors
+cherrypy_cors.install()
 
 class BunnyHttpService(Logger):
     def __init__(self):
@@ -58,10 +59,17 @@ class BunnyCherrypyServer(Logger):
             self._logger.info("Unregistering previous server...")
             cherrypy.server.unsubscribe()
             self._logger.info("Registering new server...")
+            cherrypy.config.update(
+                {'cors.expose.on': True}
+            )
             HTTP_SERVER = cherrypy._cpserver.Server()
             HTTP_SERVER.socket_host = SERVER_CONFIG['agent']['bind']
             HTTP_SERVER.socket_port = SERVER_CONFIG['agent']['agent_http_port']
             HTTP_SERVER.thread_pool = SERVER_CONFIG['agent']['agent_http_thread_pool']
+            #if os.path.exists(BASE_DIR + 'ssl/server.crt') and os.path.exists(BASE_DIR + 'ssl/server.key'):
+            #    HTTP_SERVER.ssl_module = 'builtin'
+            #    HTTP_SERVER.ssl_certificate = BASE_DIR + 'ssl/cert.pem'
+            #    HTTP_SERVER.ssl_private_key = BASE_DIR + 'ssl/privkey.pem'
             HTTP_SERVER.max_request_body_size = 300 * 1024 * 1024
             HTTP_SERVER.subscribe()
             self._logger.info("Registering http server...")

@@ -4,12 +4,12 @@ bcrypt==4.0.1
 cffi==1.15.1
 cheroot==10.0.0
 CherryPy==18.9.0
-cryptography==41.0.3
+cryptography==42.0.5
 distlib==0.3.7
 docutils==0.20.1
 fabric==2.7.1
 filelock==3.12.4
-grpcio==1.60.1
+grpcio==1.62.0
 inflect==7.0.0
 invoke==1.7.3
 jaraco.collections==4.3.0
@@ -41,4 +41,8 @@ zc.lockfile==3.0.post1
 watchdog==4.0.0
 python-subprocess2==2.0.2
 thrift==0.16.0
+thrift-sasl==0.4.3
 distro==1.9.0
+cython==3.0.8
+pyopenssl==24.0.0
+cherrypy-cors==1.7.0

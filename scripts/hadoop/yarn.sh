@@ -62,14 +62,12 @@ function yarnUsage() {
   echo "Usage: yarn.sh [resourcemanager|nodemanager|jobhistory] [logs|mkdir|format|start|stop|restart|mkhdfsdirs]"
 }
 
-:<<!
 # yarn.sh resourcemanager start | stop | restart
 # yarn.sh resourcemanager logs log | out
 # yarn.sh nodemanager start | stop | restart
 # yarn.sh nodemanager logs log | out
 # yarn.sh jobhistory start | stop | restart
 # yarn.sh jobhistory logs out
-!
 
 function yarnOperation() {
   echo "Initializing YARN"

@@ -58,24 +58,36 @@ fi
 HOSTNAME=$(hostname -f)
 ROLE=$1
 
-# hdfs.sh namenode logs log tail
+# hdfs.sh namenode logs log
+# hdfs.sh namenode logs out
 # hdfs.sh namenode mkdir $dirs(comma seperated)
 # hdfs.sh namenode format
+# hdfs.sh namenode enable
+# hdfs.sh namenode disable
 # hdfs.sh namenode start
 # hdfs.sh namenode stop
 # hdfs.sh namenode restart
 # hdfs.sh namenode mkhdfsdirs
-# hdfs.sh datanode logs log tail
+# hdfs.sh datanode logs log
+# hdfs.sh datanode logs out
 # hdfs.sh datanode mkdir $dirs(comma seperated)
+# hdfs.sh datanode enable
+# hdfs.sh datanode disable
 # hdfs.sh datanode start
 # hdfs.sh datanode stop
 # hdfs.sh datanode restart
-# hdfs.sh journalnode logs log tail
+# hdfs.sh journalnode logs log
+# hdfs.sh journalnode logs out
 # hdfs.sh journalnode mkdir $dirs(comma seperated)
+# hdfs.sh journalnode enable
+# hdfs.sh journalnode disable
 # hdfs.sh journalnode start
 # hdfs.sh journalnode stop
 # hdfs.sh journalnode restart
-# hdfs.sh zkfc logs log tail
+# hdfs.sh zkfc logs log
+# hdfs.sh zkfc logs out
+# hdfs.sh zkfc enable
+# hdfs.sh zkfc disable
 # hdfs.sh zkfc start
 # hdfs.sh zkfc stop
 # hdfs.sh zkfc restart
