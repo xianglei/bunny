@@ -170,4 +170,10 @@ function yarnOperation() {
   fi
 }
 
-yarnOperation $1 $2 $3
+if [ -z $1 ]; then
+  yarnUsage
+  exit 1
+else
+  yarnOperation $1 $2 $3
+fi
+

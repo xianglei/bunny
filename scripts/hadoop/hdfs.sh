@@ -389,4 +389,9 @@ function hdfsOperation()
   fi
 }
 
-hdfsOperation $1 $2 $3
+if [ -z $1 ]; then
+  hdfsUsage
+  exit 1
+else
+  hdfsOperation $1 $2 $3
+fi

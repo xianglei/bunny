@@ -103,20 +103,24 @@ function disableZookeeper() {
   sudo systemctl disable zookeeper-server
 }
 
-if [ $1 = "init" ]; then
-  NUM=$2
-  initZookeeper ${NUM}
-elif [ $1 = "start" ]; then
-  startZookeeper
-elif [ $1 == "stop" ]; then
-  stopZookeeper
-elif [ $1 == "restart" ]; then
-  restartZookeeper
-elif [ $1 = 'enable' ]; then
-  enableZookeeper
-elif [ $1 = 'disable' ]; then
-  disableZookeeper
+if [ -z $1 ]; then
+  if [ $1 = "init" ]; then
+    NUM=$2
+    initZookeeper ${NUM}
+  elif [ $1 = "start" ]; then
+    startZookeeper
+  elif [ $1 == "stop" ]; then
+    stopZookeeper
+  elif [ $1 == "restart" ]; then
+    restartZookeeper
+  elif [ $1 = 'enable' ]; then
+    enableZookeeper
+  elif [ $1 = 'disable' ]; then
+    disableZookeeper
+  else
+    echo "Invalid command"
+    exit 1
+  fi
 else
-  echo "Invalid command"
-  exit 1
+  echo "zookeeper.sh [init|start|stop|restart|enable|disable] [1|2|3]"
 fi

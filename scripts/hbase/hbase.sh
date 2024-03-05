@@ -201,6 +201,9 @@ function hbaseOperation()
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-rest-$HOSTNAME.log
       elif [ $3 = 'out' ]; then
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-rest-$HOSTNAME.out
+      else
+        echo "Invalid command"
+      fi
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-rest service'
       sudo systemctl enable hbase-rest
@@ -215,4 +218,13 @@ function hbaseOperation()
   fi
 }
 
+function hbaseUsage() {
+  echo "Usage: hbase.sh [master|regionserver|thrift|thrift2|rest] [initHBaseHDFSDir|start|stop|restart|enable|disable]"
 }
+
+if [ -z $1 ]; then
+  hbaseUsage
+  exit 1
+else
+  hbaseOperation $1 $2 $3
+fi

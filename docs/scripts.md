@@ -63,6 +63,15 @@
   - zookeeper.sh restart
   - zookeeper.sh logs [ log | out ]
 
+# spark.sh
+  - spark.sh master [ start | stop | restart | enable | disable ]
+  - spark.sh worker [ start | stop | restart | enable | disable ]
+  - spark.sh historyserver [ start | stop | restart | enable | disable ]
+  - spark.sh thriftserver [ start | stop | restart | enable | disable ]
+  - spark.sh thriftserver logs [ log | out ]
+  - spark.sh sparkr [ start | stop | restart | enable | disable ]
+  - spark.sh sparkr logs [ log | out ]
+  - spark.sh yarnshuffle
 
 
 
