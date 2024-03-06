@@ -22,6 +22,7 @@ from fabric import Connection, SerialGroup
 import shlex
 import subprocess2
 import binascii
+import pickle
 
 
 class UnitFormat:
@@ -646,5 +647,20 @@ def check_process_exists(proc_keyword):
         if proc_keyword.lower() in proc.info['name'].lower():
             return True, proc.pid
     return False, -1
+
+
+def pack_string(s):
+    #return binascii.hexlify(s.encode('utf-8'))
+    return pickle.dumps(s.encode('utf-8'))
+
+
+def unpack_binnary(b):
+    #return binascii.unhexlify(b).decode('utf-8')
+    return pickle.loads(b).decode('utf-8')
+
+
+
+
+
 
 

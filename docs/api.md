@@ -256,7 +256,7 @@
 
 8. GET /services
     - 描述: 获取服务状态
-    - 请求参数: services: 服务名列表, 逗号分割, 如 /services?services=namenode,datanode,resourcemanager,nodemanager
+    - 请求参数: procs: 服务名列表, 逗号分割, 如 /services?procs=namenode,datanode,resourcemanager,nodemanager
     - 返回参数: 
       - services: 服务状态
       ```json
@@ -272,7 +272,7 @@
 
 9. GET /service
     - 描述: 获取服务状态
-    - 请求参数: service: 单个参数服务名关键字如 /service?service=namenode
+    - 请求参数: proc: 单个参数服务名关键字如 /service?proc=namenode
     - 返回参数:
       - services: 服务状态
       ```json
