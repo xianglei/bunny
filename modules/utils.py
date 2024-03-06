@@ -640,3 +640,11 @@ def write_uuid(uid):
         print(e)
 
 
+def check_process_exists(proc_keyword):
+    import psutil
+    for proc in psutil.process_iter(['name']):
+        if proc_keyword.lower() in proc.info['name'].lower():
+            return True, proc.pid
+    return False, -1
+
+

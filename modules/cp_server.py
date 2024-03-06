@@ -8,6 +8,7 @@ import cherrypy
 import cherrypy_cors
 cherrypy_cors.install()
 
+
 class BunnyHttpService(Logger):
     def __init__(self):
         Logger.__init__(self)
@@ -47,6 +48,39 @@ class BunnyHttpService(Logger):
     @cherrypy.expose()
     def cpu(self):
         return json.dumps(get_cpu_info(), indent=4, sort_keys=True)
+
+    @cherrypy.expose()
+    def services(self, services=None):
+        # services = services.split(',')
+        if services is not None:
+            services = services.split(',')
+            procs = []
+            for service in services:
+                self._logger.debug("Checking service: " + service)
+                exists, pid = check_process_exists(service)
+                self._logger.debug("Service: " + service + " exists: " + str(exists) + " pid: " + str(pid))
+                if exists and pid != -1:
+                    self._logger.info("Service: " + service + " is running")
+                    procs.append({"service": service, "status": True, "pid": pid})
+                else:
+                    self._logger.info("Service: " + service + " is not running")
+                    procs.append({"service": service, "status": False, "pid": pid})
+            return json.dumps(procs, indent=4, sort_keys=True)
+        else:
+            return json.dumps([{"service": None}], indent=4, sort_keys=True)
+
+    @cherrypy.expose()
+    def service(self, service=None):
+        if service is not None:
+            exists, pid = check_process_exists(service)
+            if exists and pid is not None:
+                self._logger.info("Service: " + service + " is running")
+                return json.dumps({"service": service, "status": True, "pid": pid}, indent=4, sort_keys=True)
+            else:
+                self._logger.info("Service: " + service + " is not running")
+                return json.dumps({"service": service, "status": False, "pid": -1}, indent=4, sort_keys=True)
+        else:
+            return json.dumps({"service": None}, indent=4, sort_keys=True)
 
 
 class BunnyCherrypyServer(Logger):

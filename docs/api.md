@@ -254,6 +254,35 @@
             }
           ```
 
+8. GET /services
+    - 描述: 获取服务状态
+    - 请求参数: services: 服务名列表, 逗号分割, 如 /services?services=namenode,datanode,resourcemanager,nodemanager
+    - 返回参数: 
+      - services: 服务状态
+      ```json
+      [ 
+        { "pid": 11453, "service": "google", "status": true }, 
+        { "pid": 80142, "service": "netbiosd", "status": true } 
+      ]
+      ```
+      - 如没有给出参数, 返回数组service null
+      ```json
+      [{"service": null}]
+      ```
+
+9. GET /service
+    - 描述: 获取服务状态
+    - 请求参数: service: 单个参数服务名关键字如 /service?service=namenode
+    - 返回参数:
+      - services: 服务状态
+      ```json
+      { "pid": 11453, "service": "google", "status": true }
+      ```
+      - 如没有给出参数, 返回service null
+      ```json
+      {"service": null}
+      ```
+
 # GRPC接口
 1. Exec
     - 描述: 阻塞执行命令并返回结果
