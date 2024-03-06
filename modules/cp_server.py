@@ -86,7 +86,7 @@ class BunnyHttpService(Logger):
     def service(self, proc=None):
         if proc is not None:
             exists, pid = check_process_exists(proc)
-            if exists and pid is not None:
+            if exists and pid != -1:
                 self._logger.info("Service: " + proc + " is running")
                 return json.dumps({"service": proc, "status": True, "pid": pid}, indent=4, sort_keys=True)
             else:
