@@ -1,5 +1,5 @@
 # HTTP接口
-1. GET /status
+1. GET /sys/status
     - 描述: 获取服务状态, system, cpu, memory, network, storage等信息集合,具体内容参看下面的system等接口返回
     - 请求参数: 无
     - 返回参数: 
@@ -13,7 +13,7 @@
             }
             ```
 
-2. GET /installer
+2. GET /sys/installer
     - 描述: 获取安装器
     - 请求参数: 无
     - 返回参数: 
@@ -24,7 +24,7 @@
             ```json
             { "pkg_manager": "yum" }
             ```
-3. GET /system
+3. GET /sys/system
     - 描述: 获取操作系统信息
     - 请求参数: 无
     - 返回参数: 
@@ -61,7 +61,7 @@
             }
             ```
 
-4. GET /network
+4. GET /sys/network
     - 描述: 获取网络信息
     - 请求参数: 无
     - 返回参数: 
@@ -103,7 +103,7 @@
               } 
             }
           ```
-5. GET /storage
+5. GET /sys/storage
     - 描述: 获取存储信息
     - 请求参数: 无
     - 返回参数: 
@@ -170,7 +170,7 @@
             }
           ```
 
-6. GET /memory
+6. GET /sys/memory
     - 描述: 获取内存信息
     - 请求参数: 无
     - 返回参数: 
@@ -204,7 +204,7 @@
             }
           ```
 
-7. GET /cpu
+7. GET /sys/cpu
     - 描述: 获取CPU信息
     - 请求参数: 无
     - 返回参数: 
@@ -254,9 +254,15 @@
             }
           ```
 
-8. GET /services
+8. POST /sys/services
     - 描述: 获取服务状态
-    - 请求参数: procs: 服务名列表, 逗号分割, 如 /services?procs=namenode,datanode,resourcemanager,nodemanager
+    - 请求参数: 
+    ```json
+    {
+      "services": ["google", "netbiosd", "namenode"]
+    }
+    
+    ```
     - 返回参数: 
       - services: 服务状态
       ```json
@@ -270,9 +276,14 @@
       [{"service": null}]
       ```
 
-9. GET /service
+9. POST /sys/service
     - 描述: 获取服务状态
-    - 请求参数: proc: 单个参数服务名关键字如 /service?proc=namenode
+    - 请求参数: service
+    ```json
+      {
+        "service": "namenode"
+      }
+    ```
     - 返回参数:
       - services: 服务状态
       ```json

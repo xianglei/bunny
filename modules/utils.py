@@ -649,14 +649,14 @@ def check_process_exists(proc_keyword):
     return False, -1
 
 
-def pack_string(s):
+def pack_string(s, fobj):
     #return binascii.hexlify(s.encode('utf-8'))
-    return pickle.dumps(s.encode('utf-8'))
+    return pickle.dump(s, fobj)
 
 
-def unpack_binnary(b):
+def unpack_binary(fobj):
     #return binascii.unhexlify(b).decode('utf-8')
-    return pickle.loads(b).decode('utf-8')
+    return pickle.load(fobj)
 
 
 
