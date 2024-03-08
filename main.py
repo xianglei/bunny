@@ -6,7 +6,7 @@ from modules.daemons import *
 
 bd = BunnyDaemon()
 if len(sys.argv) != 2:
-    print("Usage: python3 main.py start|stop|restart|status")
+    print("Usage: python3 bunny.py start|stop|restart|status")
     exit(1)
 else:
     if sys.argv[1] == 'start':
@@ -18,7 +18,7 @@ else:
     elif sys.argv[1] == 'status':
         bd.status()
     else:
-        print("Usage: python3 main.py start|stop|restart|status")
+        print("Usage: python3 bunny.py start|stop|restart|status")
         exit(1)
 
 
