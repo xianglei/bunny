@@ -1,5 +1,5 @@
 # HTTP接口
-1. GET /sys/status
+1. GET /sys
     - 描述: 获取服务状态, system, cpu, memory, network, storage等信息集合,具体内容参看下面的system等接口返回
     - 请求参数: 无
     - 返回参数: 

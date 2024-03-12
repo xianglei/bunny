@@ -585,6 +585,15 @@ def networktools_ip_hostname(nodename):
     return fqdn, ip
 
 
+def self_ip_hostname():
+    """
+    :return: full qualified domain name and ip address
+    """
+    fqdn = socket.getfqdn()
+    ip = socket.gethostbyname(fqdn)
+    return fqdn, ip
+
+
 def file_crc32(filename):
     crc32 = 0
     with open(filename, 'rb') as f:
@@ -659,6 +668,22 @@ def unpack_binary(fobj):
     return pickle.load(fobj)
 
 
+def get_bunny_user():
+    import getpass
+    return getpass.getuser()
+
+
+def get_user_uid_gid(username):
+    import pwd
+    import grp
+    try:
+        user = pwd.getpwnam(username)
+        group = grp.getgrgid(user.pw_gid)
+        group_name = group.gr_name
+        return user.pw_uid, user.pw_gid, group_name
+    except KeyError as e:
+        print(e)
+        return None, None, None
 
 
 

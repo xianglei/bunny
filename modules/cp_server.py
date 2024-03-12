@@ -6,6 +6,7 @@ from modules.status import *
 import json
 import cherrypy
 import cherrypy_cors
+from modules.kadm5 import *
 cherrypy_cors.install()
 
 
@@ -246,6 +247,180 @@ Kerberos Admin Server on Cherrypy
 """
 
 
+@cherrypy.expose()
+class BunnyKadminPrincipal(Logger):
+    conf = {
+        '/':
+            {
+                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            }
+    }
+
+    def __init__(self):
+        Logger.__init__(self)
+
+    @cherrypy.tools.accept(media='application/json')
+    def POST(self):
+        """
+        Add principal
+        {
+        "admin_principal": "admin/admin@EXAMPLE.COM",
+        "admin_password": "admin_password",
+        "admin_keytab": "/etc/security/keytabs/admin.keytab",
+        "realm": "EXAMPLE.COM",
+        "user": "user"
+        }
+        :return:
+        """
+        self._logger.info("Adding principal...")
+        cl = int(cherrypy.request.headers['Content-Length'])
+        body = json.loads(cherrypy.request.body.read(cl))
+        admin_principal = body['admin_principal']
+        admin_password = body['admin_password']
+        admin_keytab = body['admin_keytab']
+        admin_keytab = None if admin_keytab == '' else admin_keytab
+        admin_password = None if admin_password == '' else admin_password
+        realm = body['realm']
+        fqdn = body['fqdn']
+        fqdn = None if fqdn == '' else fqdn
+        user = body['user']
+        krb5 = Kadmin5(admin_principal, admin_password, admin_keytab, realm)
+        self._logger.info("Kadmin initialized")
+        self._logger.info("Adding principal: " + user)
+        if krb5.add_princ(user, fqdn):
+            return json.dumps({"principal": user, "status": "added"}, indent=4, sort_keys=True).encode('utf-8')
+        else:
+            return json.dumps({"principal": user, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+
+    @cherrypy.tools.accept(media='application/json')
+    def DELETE(self):
+        """
+        Delete principal
+        {
+        "admin_principal": "admin_principal",
+        "admin_password": "admin_password",
+        "admin_keytab": "admin_keytab",
+        "realm": "EXAMPLE.COM",
+        "user": "user"
+        }
+        """
+        self._logger.info("Deleting principal...")
+        cl = int(cherrypy.request.headers['Content-Length'])
+        body = json.loads(cherrypy.request.body.read(cl))
+        admin_principal = body['admin_principal']
+        admin_password = body['admin_password']
+        admin_keytab = body['admin_keytab']
+        admin_keytab = None if admin_keytab == '' else admin_keytab
+        admin_password = None if admin_password == '' else admin_password
+        realm = body['realm']
+        fqdn = body['fqdn']
+        fqdn = None if fqdn == '' else fqdn
+        user = body['user']
+        krb5 = Kadmin5(admin_principal, admin_password, admin_keytab, realm)
+        self._logger.info("Kadmin initialized")
+        self._logger.info("Deleting principal: " + user)
+        if krb5.del_princ(user, fqdn):
+            return json.dumps({"principal": user, "status": "deleted"}, indent=4, sort_keys=True).encode('utf-8')
+        else:
+            return json.dumps({"principal": user, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+
+    @cherrypy.tools.accept(media='application/json')
+    def GET(self):
+        self._logger.info("Listing principal...")
+        cl = int(cherrypy.request.headers['Content-Length'])
+        body = json.loads(cherrypy.request.body.read(cl))
+        admin_principal = body['admin_principal']
+        admin_password = body['admin_password']
+        admin_keytab = body['admin_keytab']
+        admin_keytab = None if admin_keytab == '' else admin_keytab
+        admin_password = None if admin_password == '' else admin_password
+        realm = body['realm']
+        keyword = body['keyword']
+        self._logger.info("Kadmin initializing...")
+        krb5 = Kadmin5(admin_principal, admin_password, admin_keytab, realm)
+        if keyword is not None:
+            self._logger.info("Listing principal: " + keyword)
+            return json.dumps(krb5.list_princs(keyword), indent=4, sort_keys=True).encode('utf-8')
+
+
+class BunnyKadminKeytab(Logger):
+    conf = {
+        '/':
+            {
+                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            }
+    }
+
+    def __init__(self):
+        Logger.__init__(self)
+
+    @cherrypy.expose()
+    def POST(self):
+        """
+        Add keytab
+        {
+        "admin_principal": "admin_principal",
+        "admin_password": "admin_password",
+        "admin_keytab": "admin_keytab",
+        "realm": "EXAMPLE.COM",
+        "user": "user",
+        "fqdn": "_HOST",
+        "keytab_path": "/etc/security/keytabs/user.keytab"
+        }
+        """
+        self._logger.info("Adding keytab...")
+        cl = int(cherrypy.request.headers['Content-Length'])
+        body = json.loads(cherrypy.request.body.read(cl))
+        admin_principal = body['admin_principal']
+        admin_password = body['admin_password']
+        admin_keytab = body['admin_keytab']
+        realm = body['realm']
+        user = body['user']
+        keytab_path = body['keytab_path']
+        admin_keytab = None if admin_keytab == '' else admin_keytab
+        admin_password = None if admin_password == '' else admin_password
+        fqdn = body['fqdn']
+        fqdn = None if fqdn == '' else fqdn
+        krb5 = Kadmin5(admin_principal, admin_password, admin_keytab, realm)
+        self._logger.info("Kadmin initialized")
+        self._logger.info("Adding keytab: " + user)
+        if krb5.generate_keytab(user, keytab_path, fqdn):
+            return json.dumps({"keytab": user, "status": "added"}, indent=4, sort_keys=True).encode('utf-8')
+        else:
+            return json.dumps({"keytab": user, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+
+    def DELETE(self):
+        """
+        Delete keytab
+        {
+        "admin_principal": "admin_principal",
+        "admin_password": "admin_password",
+        "admin_keytab": "admin_keytab",
+        "realm": "EXAMPLE.COM",
+        "user": "user",
+        "fqdn": "_HOST",
+        "keytab_path": "/etc/security/keytabs/user.keytab"
+        }
+        """
+        self._logger.info("Deleting keytab...")
+        cl = int(cherrypy.request.headers['Content-Length'])
+        body = json.loads(cherrypy.request.body.read(cl))
+        admin_principal = body['admin_principal']
+        admin_password = body['admin_password']
+        admin_keytab = body['admin_keytab']
+        admin_keytab = None if admin_keytab == '' else admin_keytab
+        admin_password = None if admin_password == '' else admin_password
+        realm = body['realm']
+        keytab_path = body['keytab_path']
+        krb5 = Kadmin5(admin_principal, admin_password, admin_keytab, realm)
+        self._logger.info("Kadmin initialized")
+        self._logger.info("Deleting keytab: " + keytab_path)
+        if krb5.remove_keytab(keytab_path):
+            return json.dumps({"keytab": keytab_path, "status": "deleted"}, indent=4, sort_keys=True).encode('utf-8')
+        else:
+            return json.dumps({"keytab": keytab_path, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+
+
 class BunnyCherrypyServer(Logger):
     def __init__(self):
         Logger.__init__(self)
@@ -264,6 +439,7 @@ class BunnyCherrypyServer(Logger):
                 'tools.encode.on': True,
                 'tools.encode.encoding': 'utf-8',
                 'tools.response_headers.on': True,
+                'request.methods_with_bodies': ('POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'SEARCH',),
                 'tools.response_headers.headers': [
                     ('Content-Type', 'application/json'),
                     ('Access-Control-Allow-Origin', '*'),
@@ -275,7 +451,7 @@ class BunnyCherrypyServer(Logger):
             }
         # cherrypy.tree.mount(BunnyKadminService(), '/kadmin')
         cherrypy.tree.mount(BunnyHttpService(), '/')
-        cherrypy.tree.mount(BunnySysStatus(), '/sys/status', BunnySysStatus.conf)
+        cherrypy.tree.mount(BunnySysStatus(), '/sys', BunnySysStatus.conf)
         cherrypy.tree.mount(BunnySysCpu(), '/sys/cpu', BunnySysCpu.conf)
         cherrypy.tree.mount(BunnySysMemory(), '/sys/memory', BunnySysMemory.conf)
         cherrypy.tree.mount(BunnySysStorage(), '/sys/storage', BunnySysStorage.conf)
@@ -285,7 +461,10 @@ class BunnyCherrypyServer(Logger):
         # POST only
         cherrypy.tree.mount(BunnySysServices(), '/sys/services', BunnySysServices.conf)
         cherrypy.tree.mount(BunnySysPing(), '/sys/ping', BunnySysPing.conf)
+        # POST only
         cherrypy.tree.mount(BunnySysService(), '/sys/service', BunnySysService.conf)
+        # cherrypy.tree.mount(BunnyKadminPrincipal(), '/kadmin/principal', BunnyKadminPrincipal.conf)
+        # cherrypy.tree.mount(BunnyKadminKeytab(), '/kadmin/keytab', BunnyKadminKeytab.conf)
         try:
             self._logger.info("Unregistering previous server...")
             cherrypy.server.unsubscribe()
