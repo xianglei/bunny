@@ -74,11 +74,6 @@ class BunnyDaemon(Logger):
                     grpc_server_thread.daemon = True
                     grpc_server_thread.start()
 
-                    heartbeat_thread = threading.Thread(target=self._run_heartbeat_server)
-                    threads.append(heartbeat_thread)
-                    heartbeat_thread.daemon = True
-                    heartbeat_thread.start()
-
                     thrift_server_thread = threading.Thread(target=self._run_thrift_server)
                     threads.append(thrift_server_thread)
                     thrift_server_thread.daemon = True
@@ -88,6 +83,11 @@ class BunnyDaemon(Logger):
                     threads.append(cherrypy_thread)
                     cherrypy_thread.daemon = True
                     cherrypy_thread.start()
+
+                    heartbeat_thread = threading.Thread(target=self._run_heartbeat_server)
+                    threads.append(heartbeat_thread)
+                    heartbeat_thread.daemon = True
+                    heartbeat_thread.start()
                     for t in threads:
                         t.join()
 
