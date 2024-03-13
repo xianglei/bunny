@@ -287,10 +287,10 @@ class BunnyKadminPrincipal(Logger):
         krb5 = Kadmin5(admin_principal, admin_password, admin_keytab, realm)
         self._logger.info("Kadmin initialized")
         self._logger.info("Adding principal: " + user)
-        if krb5.add_princ(user, fqdn):
-            return json.dumps({"principal": user, "status": "added"}, indent=4, sort_keys=True).encode('utf-8')
+        if krb5.add_princ(user, fqdn) is True:
+            return json.dumps({"principal": user, "status": "success", "message": "principal added"}, indent=4, sort_keys=True).encode('utf-8')
         else:
-            return json.dumps({"principal": user, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+            return json.dumps({"principal": user, "status": "failed", "message": "Check agent log for details"}, indent=4, sort_keys=True).encode('utf-8')
 
     @cherrypy.tools.accept(media='application/json')
     def DELETE(self):
@@ -320,9 +320,9 @@ class BunnyKadminPrincipal(Logger):
         self._logger.info("Kadmin initialized")
         self._logger.info("Deleting principal: " + user)
         if krb5.del_princ(user, fqdn):
-            return json.dumps({"principal": user, "status": "deleted"}, indent=4, sort_keys=True).encode('utf-8')
+            return json.dumps({"principal": user, "status": "success", "message": "principal removed"}, indent=4, sort_keys=True).encode('utf-8')
         else:
-            return json.dumps({"principal": user, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+            return json.dumps({"principal": user, "status": "failed", "message": "Check agent log for details"}, indent=4, sort_keys=True).encode('utf-8')
 
     @cherrypy.tools.accept(media='application/json')
     def GET(self):
@@ -340,7 +340,9 @@ class BunnyKadminPrincipal(Logger):
         krb5 = Kadmin5(admin_principal, admin_password, admin_keytab, realm)
         if keyword is not None:
             self._logger.info("Listing principal: " + keyword)
-            return json.dumps(krb5.list_princs(keyword), indent=4, sort_keys=True).encode('utf-8')
+            return json.dumps({"principals": krb5.list_princs(keyword), "status": "success", "message": "principal list"}, indent=4, sort_keys=True).encode('utf-8')
+        else:
+            return json.dumps({"principals": krb5.list_princs(), "status": "success", "message": "principal list"}, indent=4, sort_keys=True).encode('utf-8')
 
 
 class BunnyKadminKeytab(Logger):
@@ -385,9 +387,9 @@ class BunnyKadminKeytab(Logger):
         self._logger.info("Kadmin initialized")
         self._logger.info("Adding keytab: " + user)
         if krb5.generate_keytab(user, keytab_path, fqdn):
-            return json.dumps({"keytab": user, "status": "added"}, indent=4, sort_keys=True).encode('utf-8')
+            return json.dumps({"principal": user, "status": "success", "message": "keytab created", "keytab_path": keytab_path}, indent=4, sort_keys=True).encode('utf-8')
         else:
-            return json.dumps({"keytab": user, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+            return json.dumps({"principal": user, "status": "failed", "message": "keytab create failed, check agent log for details", "keytab_path": keytab_path}, indent=4, sort_keys=True).encode('utf-8')
 
     def DELETE(self):
         """
