@@ -21,6 +21,9 @@ DEFAULT_CONFIG = {
         "heartbeat_interval": 30,
         "log_level": "INFO",
         "executor_timeout": 300,
+        "log_file": "agent.log",
+        "log_file_max_size": 10485760,
+        "log_file_backup_count": 10,
     },
     "server": {
         "host": "localhost",

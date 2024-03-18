@@ -175,7 +175,9 @@ class Logger():
         format = logging.Formatter('%(asctime)s %(levelname)s %(filename)s: %(funcName)s: [line:%(lineno)d]'
                                    ' - %(message)s')
         logzero.formatter(format)
-        logfile(LOGS_DIR + 'server.log', maxBytes=1073741824, backupCount=64)
+        logfile(LOGS_DIR + SERVER_CONFIG['agent']['log_file'],
+                maxBytes=SERVER_CONFIG['agent']['log_file_max_size'],
+                backupCount=SERVER_CONFIG['agent']['log_file_backup_count'])
         self._logger = logger
 
     def logger(self):
