@@ -70,7 +70,7 @@ function initZookeeper() {
     echo "Zookeeper already initialized"
     exit 1
   else
-    sudo -u zookeeper zookeeper-server-initialize --myid=$1 --force --verbose
+    sudo -u zookeeper zookeeper-server-initialize --myid=$1 --force
     exit 0
   fi
 }
