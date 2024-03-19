@@ -432,7 +432,7 @@ class BunnyCherrypyServer(Logger):
         global_conf = {
                 'cors.expose.on': True,
                 'cors.allow.origin': '*',
-                'cors.allow.methods': 'GET, POST, PUT, DELETE',
+                'cors.allow.methods': 'GET, POST, PUT, DELETE, PATCH, SEARCH',
                 #'environment': 'production',
                 'log.screen': False,
                 'log.access_file': LOGS_DIR + 'cp_access.log',
