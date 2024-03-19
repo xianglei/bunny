@@ -261,7 +261,7 @@ class BunnyGrpcServer(Logger):
 
     def serve(self):
         try:
-            server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+            server = grpc.server(futures.ThreadPoolExecutor(max_workers=20), maximum_concurrent_rpcs=10)
             api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
             api_pb2_grpc.add_HeartbeatServiceServicer_to_server(HeartbeatService(), server)
             #api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)

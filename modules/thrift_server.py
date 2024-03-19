@@ -100,7 +100,7 @@ class BunnyThriftServer(Logger):
         #processor.registerProcessor('RegistrationService', register_processor)
 
         server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory)
-        server.setNumThreads(4)
+        server.setNumThreads(8)
         self._logger.info('Starting bunny thrift server on port ' + str(SERVER_CONFIG['agent']['agent_thrift_port']))
         server.serve()
 
