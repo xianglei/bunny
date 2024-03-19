@@ -67,7 +67,6 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting Heartbeat server...")
 
                     threads = []
-                    # gRPC not used for now, but DON'T REMOVE IT
 
                     grpc_server_thread = threading.Thread(target=self._run_grpc_server)
                     threads.append(grpc_server_thread)

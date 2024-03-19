@@ -103,7 +103,7 @@ function disableZookeeper() {
   sudo systemctl disable zookeeper-server
 }
 
-if [ -z $1 ]; then
+#if [ -z $1 ]; then
   if [ $1 = "init" ]; then
     NUM=$2
     initZookeeper ${NUM}
@@ -121,6 +121,6 @@ if [ -z $1 ]; then
     echo "Invalid command"
     exit 1
   fi
-else
-  echo "zookeeper.sh [init|start|stop|restart|enable|disable] [1|2|3]"
-fi
+#else
+#  echo "zookeeper.sh [init|start|stop|restart|enable|disable] [1|2|3]"
+#fi
