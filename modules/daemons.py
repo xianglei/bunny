@@ -83,10 +83,10 @@ class BunnyDaemon(Logger):
                     cherrypy_thread.daemon = True
                     cherrypy_thread.start()
 
-                    heartbeat_thread = threading.Thread(target=self._run_heartbeat_server)
-                    threads.append(heartbeat_thread)
-                    heartbeat_thread.daemon = True
-                    heartbeat_thread.start()
+                    #heartbeat_thread = threading.Thread(target=self._run_heartbeat_server)
+                    #threads.append(heartbeat_thread)
+                    #heartbeat_thread.daemon = True
+                    #heartbeat_thread.start()
                     for t in threads:
                         t.join()
 
