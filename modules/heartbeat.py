@@ -16,9 +16,9 @@ class Heartbeat(Logger):
             try:
                 channel = grpc.insecure_channel(SERVER_CONFIG['server']['host'] + ':' +
                                                 str(SERVER_CONFIG['server']['server_rpc_port']))
+                self._logger.info("Heartbeat connecting to server {}".format(SERVER_CONFIG['server']['host']))
                 stub = api_pb2_grpc.HeartbeatServiceStub(channel)
                 local_millis = math.floor(datetime.datetime.now().timestamp() * 1000)
-
                 response = stub.Heartbeat(api_pb2.HeartbeatRequest(machine_uniq_id="1",
                                                                    timestamp_millis=local_millis,
                                                                    ping="ping"))
@@ -37,6 +37,7 @@ class Heartbeat(Logger):
                 else:
                     self._logger.fatal("Heartbeat failed, server did not respond with a pong")
                 channel.close()
+                self._logger.info("Heartbeat channel closed and sleeping for {} seconds".format(SERVER_CONFIG['agent']['heartbeat_interval']))
             except Exception as e:
                 self._logger.error("Heartbeat failed: {}".format(e))
             time.sleep(int(SERVER_CONFIG['agent']['heartbeat_interval']))
