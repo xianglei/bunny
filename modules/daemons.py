@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # coding: utf-8
-import os
 
 import daemon
 import signal
 import multiprocessing
-import threading
 
 from daemon import pidfile
 from modules.grpc_server import *
@@ -13,7 +11,6 @@ from modules.thrift_server import *
 from modules.cp_server import *
 #
 from modules.heartbeat import *
-from concurrent.futures import ThreadPoolExecutor
 
 
 def exception_callback(e):
@@ -78,7 +75,7 @@ class BunnyDaemon(Logger):
                     """
 
                     workers = []
-                    for i in range(5):
+                    for i in range(10):
                         workers.append(multiprocessing.Process(target=self._run_grpc_server))
                     # workers.append(multiprocessing.Process(target=self._run_thrift_server))
                     workers.append(multiprocessing.Process(target=self._run_cp_server))
@@ -94,11 +91,6 @@ class BunnyDaemon(Logger):
                     grpc_server_thread.daemon = True
                     grpc_server_thread.start()
 
-                    thrift_server_thread = threading.Thread(target=self._run_thrift_server)
-                    threads.append(thrift_server_thread)
-                    thrift_server_thread.daemon = True
-                    thrift_server_thread.start()
-
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)
                     threads.append(cherrypy_thread)
                     cherrypy_thread.daemon = True
@@ -112,15 +104,6 @@ class BunnyDaemon(Logger):
                         t.join()
                     """
                     """try to use futures to run the servers in parallel"""
-                    '''
-                    grpc_thread = threading.Thread(target=self._run_grpc_server)
-                    cherrypy_thread = threading.Thread(target=self._run_cp_server)
-                    threads = [grpc_thread, cherrypy_thread]
-                    for t in threads:
-                        t.daemon = True
-                        t.start()
-                    t.join()
-                    '''
             except Exception as e:
                 self._logger.fatal(e)
                 self.stop()

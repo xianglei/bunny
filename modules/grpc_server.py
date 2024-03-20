@@ -8,6 +8,7 @@ from modules.utils import *
 from modules.status import *
 import math
 import pwd
+import grp
 
 
 class HeartbeatService(api_pb2_grpc.HeartbeatServiceServicer, Logger):
@@ -43,11 +44,6 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
         try:
             se = ShellExecutor()
             ret = se._executor(cmd, request.timeout)
-            response = api_pb2.ExecResponse()
-            response.exec_id = exec_id
-            response.stdout = ret['stdout']
-            response.stderr = ret['stderr']
-            response.exit_code = ret['retcode']
 
             curdt = curdatetime(formatter='%Y%m%d%H%M%S')
             output = '------STDOUT------\n'
@@ -62,13 +58,14 @@ class ExecService(api_pb2_grpc.ExecServiceServicer, Logger):
                 f.close()
             #print(response.exit_code)
             #print(exec_id, cmd, timeout)
-            self._logger.debug("stdout: " + response.stdout.decode())
-            self._logger.debug("stderr: " + response.stderr.decode())
-            self._logger.debug("exit code: " + str(response.exit_code))
-            return response
+            self._logger.debug("stdout: " + ret['stdout'].decode())
+            self._logger.debug("stderr: " + ret['stderr'].decode())
+            self._logger.debug("exit code: " + str(ret['retcode']))
+            return api_pb2.ExecResponse(exec_id=exec_id, stdout=ret['stdout'], stderr=ret['stderr'], exit_code=ret['retcode'])
         except Exception as e:
             self._logger.fatal("exec_cmd: {}".format(cmd))
             self._logger.fatal(str(e))
+            return api_pb2.ExecResponse(exec_id=exec_id, stdout=b'', stderr=b'Unknown Exception', exit_code=1)
 
     def StreamExec(self, request, context):
         exec_id = request.exec_id
@@ -193,61 +190,64 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
 
     def Send(self, request, context):
         self._logger.debug("send: File send service incoming")
-        file_id = request.id
-        file_name = request.filename
-        dest_path = request.path
-        checksum = request.checksum
-        content = request.content
         # oct() will return a string type, so use eval() to convert it to int
         access_modes = eval(oct(int(request.access_modes, base=8)))
-        owner = request.owner
-        user = pwd.getpwnam(owner)
-        uid = user.pw_uid
-        gid = user.pw_gid
-        # format is unused now
-        format = request.format
+        try:
+            uid = pwd.getpwnam(request.owner).pw_uid
+        except KeyError as e:
+            self._logger.fatal(e)
+            self._return_code = self.CODE[4]
+            return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown user ' + request.owner)
+        try:
+            gid = grp.getgrnam(request.group).gr_gid
+        except KeyError as e:
+            gid = pwd.getpwnam(request.owner).pw_gid
+            # self._logger.fatal(e)
+            # self._return_code = self.CODE[4]
+            # return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown group ' + request.group)
 
-        # self._logger.info("send: {}".format(request))
-
-        if dest_path[-1] == '/':
-            full_filename = dest_path + file_name
+        if request.dest_path[-1] == '/':
+            full_filename = request.dest_path + request.file_name
         else:
-            full_filename = dest_path + '/' + file_name
+            full_filename = request.dest_path + '/' + request.file_name
 
         self._logger.debug("send: file_id: {}, file_name: {}, dest_path: {}, checksum: {}, access_modes: {}, owner: {}, format: {}".format(
-            file_id, full_filename, dest_path, checksum, access_modes, owner, format))
-        if not os.path.exists(dest_path):
+            request.id, full_filename, request.dest_path, request.checksum, access_modes, request.owner, request.format))
+        if not os.path.exists(request.dest_path):
             self._return_code = self.CODE[1]
             self._logger.warn("send: {}".format(self._return_code))
             try:
-                os.mkdir(dest_path, 0o755)
-                self._logger.debug("send: create directory: {}".format(dest_path))
+                os.mkdir(request.dest_path, 0o755)
+                self._logger.debug("send: create directory: {}".format(request.dest_path))
             except OSError as e:
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
+                return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Write not allowed')
         else:
             try:
                 self._logger.debug("send: write file: {}".format(full_filename))
                 with open(full_filename, 'wb') as f:
-                    f.write(content)
+                    f.write(request.content)
                 f.close()
                 self._logger.debug("send: change file mode: {}".format(access_modes))
                 os.chmod(full_filename, access_modes)
-                self._logger.debug("send: change file owner: {}, {}".format(uid, gid))
+                self._logger.debug("send: change file owner to: {}, {}".format(request.owner, request.group))
                 os.chown(full_filename, uid, gid)
                 checksum_local = file_hash_md5(full_filename)
                 self._logger.debug("send: local file md5 checksum: {}".format(checksum_local))
-                self._logger.debug("send: remote file md5 checksum: {}".format(checksum))
-                if checksum_local != checksum:
+                self._logger.debug("send: remote file md5 checksum: {}".format(request.checksum))
+                if checksum_local != request.checksum:
                     self._return_code = self.CODE[2]
                     self._logger.error('File checksum not equally')
+                    return api_pb2.FileResponse(id=request.file_id, status=self._return_code, message='File checksum error')
                 else:
                     self._return_code = self.CODE[0]
                     self._logger.info('File checksum equally, file receive succeed')
+                    return api_pb2.FileResponse(id=request.file_id, status=self._return_code, message='File received successfully')
             except OSError as e:
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
-        return api_pb2.FileResponse(id=file_id, status=self._return_code, message=self._return_code)
+                return api_pb2.FileResponse(id=request.file_id, status=self._return_code, message='Unknown exception')
 
     """
     def StreamSend(self, request_iterator, context):
