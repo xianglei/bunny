@@ -206,19 +206,19 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
             # self._return_code = self.CODE[4]
             # return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown group ' + request.group)
 
-        if request.dest_path[-1] == '/':
-            full_filename = request.dest_path + request.file_name
+        if request.path[-1] == '/':
+            full_filename = request.path + request.file_name
         else:
-            full_filename = request.dest_path + '/' + request.file_name
+            full_filename = request.path + '/' + request.file_name
 
         self._logger.debug("send: file_id: {}, file_name: {}, dest_path: {}, checksum: {}, access_modes: {}, owner: {}, format: {}".format(
-            request.id, full_filename, request.dest_path, request.checksum, access_modes, request.owner, request.format))
-        if not os.path.exists(request.dest_path):
+            request.id, full_filename, request.path, request.checksum, access_modes, request.owner, request.format))
+        if not os.path.exists(request.path):
             self._return_code = self.CODE[1]
             self._logger.warn("send: {}".format(self._return_code))
             try:
-                os.mkdir(request.dest_path, 0o755)
-                self._logger.debug("send: create directory: {}".format(request.dest_path))
+                os.mkdir(request.path, 0o755)
+                self._logger.debug("send: create directory: {}".format(request.path))
             except OSError as e:
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
