@@ -3,8 +3,8 @@
 import os
 
 import daemon
-import threading
 import signal
+import multiprocessing
 
 from daemon import pidfile
 from modules.grpc_server import *
@@ -64,7 +64,7 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting Bunny...")
                     self._logger.info("Starting Cherrypy server...")
                     self._logger.info("Starting gRPC server...")
-                    self._logger.info("Starting thrift server...")
+                    # self._logger.info("Starting thrift server...")
                     self._logger.info("Starting Heartbeat server...")
 
                     """
@@ -75,12 +75,13 @@ class BunnyDaemon(Logger):
                         executor.submit(self._run_cp_server)
                         #executor.submit(self._run_heartbeat_server)
                     """
-                    import multiprocessing
+
                     workers = []
                     for i in range(5):
                         workers.append(multiprocessing.Process(target=self._run_grpc_server))
-                    workers.append(multiprocessing.Process(target=self._run_thrift_server))
+                    # workers.append(multiprocessing.Process(target=self._run_thrift_server))
                     workers.append(multiprocessing.Process(target=self._run_cp_server))
+                    # workers.append(multiprocessing.Process(target=self._run_heartbeat_server))
                     for worker in workers:
                         worker.start()
                         worker.join()
