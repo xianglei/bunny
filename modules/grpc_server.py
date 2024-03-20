@@ -7,6 +7,7 @@ from concurrent import futures
 from modules.utils import *
 from modules.status import *
 import math
+import pwd
 
 
 class HeartbeatService(api_pb2_grpc.HeartbeatServiceServicer, Logger):
@@ -165,7 +166,7 @@ class RegistrationService(api_pb2_grpc.RegistrationServiceServicer, Logger):
                 self._logger.fatal(e)
 """
 
-'''
+
 class FileService(api_pb2_grpc.FileServiceServicer, Logger):
     def __init__(self):
         Logger.__init__(self)
@@ -199,7 +200,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
         # oct() will return a string type, so use eval() to convert it to int
         access_modes = eval(oct(int(request.access_modes, base=8)))
         owner = request.owner
-        user = getpwnam(owner)
+        user = pwd.getpwnam(owner)
         uid = user.pw_uid
         gid = user.pw_gid
         # format is unused now
@@ -219,12 +220,12 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                 os.mkdir(dest_path, 0o755)
             except OSError as e:
                 self._logger.fatal(e)
-                self._return_code = self.CODE[4]
+                self._return_code = self.CODE[3]
         else:
             try:
                 with open(full_filename, 'wb') as f:
                     f.write(content)
-                    f.close()
+                f.close()
                 os.chmod(full_filename, access_modes)
                 os.chown(full_filename, uid, gid)
                 checksum_local = file_hash_md5(full_filename)
@@ -239,8 +240,9 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
             except OSError as e:
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
-        return api_pb2.FileResponse(status=self._return_code, message=self._return_code)
+        return api_pb2.FileResponse(id=request.id, status=self._return_code, message=self._return_code)
 
+    """
     def StreamSend(self, request_iterator, context):
         self._logger.info("stream_send: {}".format(request_iterator))
 
@@ -252,7 +254,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
             elif request.chunk:
                 yield api_pb2.FileResponse(id=request.header.id, status=api_pb2.FileResponse.OK, message='File received successfully')
         return
-'''
+    """
 
 
 class BunnyGrpcServer(Logger):
@@ -264,6 +266,7 @@ class BunnyGrpcServer(Logger):
             server = grpc.server(futures.ThreadPoolExecutor(max_workers=20), maximum_concurrent_rpcs=10)
             api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
             api_pb2_grpc.add_HeartbeatServiceServicer_to_server(HeartbeatService(), server)
+            api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
             #api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)
             #api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
             server.add_insecure_port('[::]:' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
