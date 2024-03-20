@@ -75,13 +75,17 @@ class BunnyDaemon(Logger):
                     """
 
                     workers = []
-                    for i in range(10):
-                        workers.append(multiprocessing.Process(target=self._run_grpc_server))
+                    cp = multiprocessing.Process(target=self._run_cp_server)
+                    workers.append(cp)
+                    cp.start()
+                    for i in range(5):
+                        rpc = multiprocessing.Process(target=self._run_grpc_server)
+                        workers.append(rpc)
+                        rpc.start()
                     # workers.append(multiprocessing.Process(target=self._run_thrift_server))
-                    workers.append(multiprocessing.Process(target=self._run_cp_server))
+                    # workers.append(multiprocessing.Process(target=self._run_cp_server))
                     # workers.append(multiprocessing.Process(target=self._run_heartbeat_server))
                     for worker in workers:
-                        worker.start()
                         worker.join()
 
                     """try to use futures to run the servers in parallel"""
