@@ -192,6 +192,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
         self._return_code = None
 
     def Send(self, request, context):
+        self._logger.debug("send: File send service incoming")
         file_id = request.id
         file_name = request.filename
         dest_path = request.path
@@ -206,31 +207,37 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
         # format is unused now
         format = request.format
 
-        self._logger.info("send: {}".format(request))
+        # self._logger.info("send: {}".format(request))
 
         if dest_path[-1] == '/':
             full_filename = dest_path + file_name
         else:
             full_filename = dest_path + '/' + file_name
 
+        self._logger.debug("send: file_id: {}, file_name: {}, dest_path: {}, checksum: {}, access_modes: {}, owner: {}, format: {}".format(
+            file_id, full_filename, dest_path, checksum, access_modes, owner, format))
         if not os.path.exists(dest_path):
             self._return_code = self.CODE[1]
             self._logger.warn("send: {}".format(self._return_code))
             try:
                 os.mkdir(dest_path, 0o755)
+                self._logger.debug("send: create directory: {}".format(dest_path))
             except OSError as e:
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
         else:
             try:
+                self._logger.debug("send: write file: {}".format(full_filename))
                 with open(full_filename, 'wb') as f:
                     f.write(content)
                 f.close()
+                self._logger.debug("send: change file mode: {}".format(access_modes))
                 os.chmod(full_filename, access_modes)
+                self._logger.debug("send: change file owner: {}, {}".format(uid, gid))
                 os.chown(full_filename, uid, gid)
                 checksum_local = file_hash_md5(full_filename)
-                self._logger.warn(checksum_local)
-                self._logger.warn(checksum)
+                self._logger.debug("send: local file md5 checksum: {}".format(checksum_local))
+                self._logger.debug("send: remote file md5 checksum: {}".format(checksum))
                 if checksum_local != checksum:
                     self._return_code = self.CODE[2]
                     self._logger.error('File checksum not equally')
@@ -270,13 +277,16 @@ class BunnyGrpcServer(Logger):
             ]
             server = grpc.server(futures.ThreadPoolExecutor(max_workers=10), maximum_concurrent_rpcs=10, options=options)
             api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
+            self._logger.debug('Starting grpc Exec Service')
             #api_pb2_grpc.add_HeartbeatServiceServicer_to_server(HeartbeatService(), server)
             api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
+            self._logger.debug('Starting grpc FileTransfer Service')
             #api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)
             #api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
             server.add_insecure_port('[::]:' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
             self._logger.info('Starting bunny grpc server on port ' + str(SERVER_CONFIG['agent']['agent_rpc_port']))
             server.start()
+            self._logger.debug('bunny grpc server started')
             server.wait_for_termination()
         except Exception as e:
             self._logger.fatal(e)
