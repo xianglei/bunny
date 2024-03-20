@@ -12,6 +12,7 @@ from modules.thrift_server import *
 from modules.cp_server import *
 #
 from modules.heartbeat import *
+from concurrent.futures import ThreadPoolExecutor
 
 
 def exception_callback(e):
@@ -66,8 +67,26 @@ class BunnyDaemon(Logger):
                     self._logger.info("Starting thrift server...")
                     self._logger.info("Starting Heartbeat server...")
 
+                    """
                     threads = []
+                    with ThreadPoolExecutor(max_workers=4) as executor:
+                        executor.submit(self._run_grpc_server).
+                        executor.submit(self._run_thrift_server)
+                        executor.submit(self._run_cp_server)
+                        #executor.submit(self._run_heartbeat_server)
+                    """
+                    import multiprocessing
+                    workers = []
+                    for i in range(5):
+                        workers.append(multiprocessing.Process(target=self._run_grpc_server))
+                    workers.append(multiprocessing.Process(target=self._run_thrift_server))
+                    workers.append(multiprocessing.Process(target=self._run_cp_server))
+                    for worker in workers:
+                        worker.start()
+                        worker.join()
 
+                    """try to use futures to run the servers in parallel"""
+                    """
                     grpc_server_thread = threading.Thread(target=self._run_grpc_server)
                     threads.append(grpc_server_thread)
                     grpc_server_thread.daemon = True
@@ -89,7 +108,8 @@ class BunnyDaemon(Logger):
                     #heartbeat_thread.start()
                     for t in threads:
                         t.join()
-
+                    """
+                    """try to use futures to run the servers in parallel"""
                     '''
                     grpc_thread = threading.Thread(target=self._run_grpc_server)
                     cherrypy_thread = threading.Thread(target=self._run_cp_server)

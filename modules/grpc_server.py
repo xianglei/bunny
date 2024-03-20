@@ -215,7 +215,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
 
         if not os.path.exists(dest_path):
             self._return_code = self.CODE[1]
-            self._logger.fatal("send: {}".format(self._return_code))
+            self._logger.warn("send: {}".format(self._return_code))
             try:
                 os.mkdir(dest_path, 0o755)
             except OSError as e:
@@ -233,14 +233,14 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                 self._logger.warn(checksum)
                 if checksum_local != checksum:
                     self._return_code = self.CODE[2]
-                    self._logger.fatal('File checksum not equally')
+                    self._logger.error('File checksum not equally')
                 else:
                     self._return_code = self.CODE[0]
                     self._logger.info('File checksum equally, file receive succeed')
             except OSError as e:
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
-        return api_pb2.FileResponse(id=request.id, status=self._return_code, message=self._return_code)
+        return api_pb2.FileResponse(id=file_id, status=self._return_code, message=self._return_code)
 
     """
     def StreamSend(self, request_iterator, context):
@@ -263,9 +263,14 @@ class BunnyGrpcServer(Logger):
 
     def serve(self):
         try:
-            server = grpc.server(futures.ThreadPoolExecutor(max_workers=20), maximum_concurrent_rpcs=10)
+            MAX_MESSAGE_LENGTH = 1024 * 1024 * 1024
+            options = [
+                ('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
+                ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH)
+            ]
+            server = grpc.server(futures.ThreadPoolExecutor(max_workers=10), maximum_concurrent_rpcs=10, options=options)
             api_pb2_grpc.add_ExecServiceServicer_to_server(ExecService(), server)
-            api_pb2_grpc.add_HeartbeatServiceServicer_to_server(HeartbeatService(), server)
+            #api_pb2_grpc.add_HeartbeatServiceServicer_to_server(HeartbeatService(), server)
             api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
             #api_pb2_grpc.add_RegistrationServiceServicer_to_server(RegistrationService(), server)
             #api_pb2_grpc.add_FileServiceServicer_to_server(FileService(), server)
