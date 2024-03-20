@@ -207,9 +207,9 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
             # return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown group ' + request.group)
 
         if request.path[-1] == '/':
-            full_filename = request.path + request.file_name
+            full_filename = request.path + request.filename
         else:
-            full_filename = request.path + '/' + request.file_name
+            full_filename = request.path + '/' + request.filename
 
         self._logger.debug("send: file_id: {}, file_name: {}, dest_path: {}, checksum: {}, access_modes: {}, owner: {}, format: {}".format(
             request.id, full_filename, request.path, request.checksum, access_modes, request.owner, request.format))
