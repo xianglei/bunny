@@ -239,15 +239,15 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                 if checksum_local != request.checksum:
                     self._return_code = self.CODE[2]
                     self._logger.error('File checksum not equally')
-                    return api_pb2.FileResponse(id=request.file_id, status=self._return_code, message='File checksum error')
+                    return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File checksum error')
                 else:
                     self._return_code = self.CODE[0]
                     self._logger.info('File checksum equally, file receive succeed')
-                    return api_pb2.FileResponse(id=request.file_id, status=self._return_code, message='File received successfully')
+                    return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File received successfully')
             except OSError as e:
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
-                return api_pb2.FileResponse(id=request.file_id, status=self._return_code, message='Unknown exception')
+                return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown exception')
 
     """
     def StreamSend(self, request_iterator, context):
