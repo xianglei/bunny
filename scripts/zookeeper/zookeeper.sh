@@ -63,10 +63,10 @@ function tailZookeeper() {
 function initZookeeper() {
   echo "Initializing Zookeeper"
   # Create the data directory
-  # zookeeper.sh init [1|2|3]
-  sudo mkdir -p /var/lib/zookeeper/data
-  sudo chown -R zookeeper:zookeeper /var/lib/zookeeper/data
-  if [ -f /var/lib/zookeeper/myid ]; then
+  # zookeeper.sh init [1|2|3] [dataDir]
+  sudo mkdir -p $2/data
+  sudo chown -R zookeeper:zookeeper $2/data
+  if [ -f $2/myid ]; then
     echo "Zookeeper already initialized"
     exit 1
   else
@@ -106,7 +106,8 @@ function disableZookeeper() {
 #if [ -z $1 ]; then
   if [ $1 = "init" ]; then
     NUM=$2
-    initZookeeper ${NUM}
+    dataDir=$3
+    initZookeeper ${NUM} ${dataDir}
   elif [ $1 = "start" ]; then
     startZookeeper
   elif [ $1 == "stop" ]; then
@@ -122,5 +123,5 @@ function disableZookeeper() {
     exit 1
   fi
 #else
-#  echo "zookeeper.sh [init|start|stop|restart|enable|disable] [1|2|3]"
+#  echo "zookeeper.sh [init|start|stop|restart|enable|disable] [1|2|3] [dataDir(init only)]"
 #fi
