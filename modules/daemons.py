@@ -28,7 +28,7 @@ class BunnyDaemon(Logger):
 
     def _run_grpc_server(self):
         try:
-            # self.__set_user()
+            self.__set_user()
             self.grpc_server.serve()
         except Exception as e:
             self._logger.error(e)
