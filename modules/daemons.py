@@ -4,7 +4,6 @@
 import daemon
 import signal
 import multiprocessing
-import sudo
 
 from daemon import pidfile
 from modules.grpc_server import *
@@ -33,12 +32,6 @@ class BunnyDaemon(Logger):
         except Exception as e:
             self._logger.error(e)
 
-    #def _run_thrift_server(self):
-    #    try:
-    #        self.thrift_server.serve()
-    #    except Exception as e:
-    #        self._logger.error(e)
-
     def _run_cp_server(self):
         try:
             self.__set_user()
@@ -60,7 +53,13 @@ class BunnyDaemon(Logger):
         except Exception as e:
             self._logger.error(e)
 
+    def signal_handler(self, signum, frame):
+        print('Signal handler called with signal', signum)
+        self.stop()
+        exit(0)
+
     def start(self):
+        signal.signal(signal.SIGTERM, self.signal_handler)
         if not self._check_proc_alive():
             self._logger.info("Mounting tmpfs")
             sudo.run_as_sudo('root', 'mount -t tmpfs tmpfs -o size=300M ' + TMP_DIR)
@@ -154,7 +153,7 @@ class BunnyDaemon(Logger):
                 self._logger.info("Kill Bunny Agent Server...")
                 os.killpg(os.getpgid(pid), signal.SIGKILL)
             sudo.run_as_sudo('root', 'umount ' + TMP_DIR)
-            sudo.run_as_sudo('root', 'rm -rf ' + TMP_DIR)
+            # sudo.run_as_sudo('root', 'rm -rf ' + TMP_DIR)
         except Exception as e:
             self._logger.fatal(e)
             exit(1)
