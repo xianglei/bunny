@@ -67,65 +67,65 @@ function hiveOperation() {
   if [ $1 = "metastore" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service metastore > /var/log/hive/hive-metastore.log 2>&1 &
-      systemctl start hive-metastore
+      sudo systemctl start hive-metastore
     elif [ $2 = "stop" ]; then
       #sudo -u hive pkill -f org.apache.hadoop.hive.metastore.HiveMetaStore
-      systemctl stop hive-metastore
+      sudo systemctl stop hive-metastore
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveMetaStore
-      systemctl status hive-metastore
+      sudo systemctl status hive-metastore
     else
       hiveUsage
     fi
   elif [ $1 = "server" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hiveserver > /var/log/hive/hive-server.log 2>&1 &
-      systemctl start hive-server
+      sudo systemctl start hive-server
     elif [ $2 = "stop" ]; then
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
-      systemctl stop hive-server
+      sudo systemctl stop hive-server
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveServer2
-      systemctl status hive-server
+      sudo systemctl status hive-server
     else
       hiveUsage
     fi
   elif [ $1 = "server2" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hiveserver2 > /var/log/hive/hive-server2.log 2>&1 &
-      systemctl start hive-server2
+      sudo systemctl start hive-server2
     elif [ $2 = "stop" ]; then
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
-      systemctl stop hive-server2
+      sudo systemctl stop hive-server2
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveServer2
-      systemctl status hive-server2
+      sudo systemctl status hive-server2
     else
       hiveUsage
     fi
   elif [ $1 = "webhcat" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service webhcat > /var/log/hive/hive-webhcat.log 2>&1 &
-      systemctl start hive-webhcat
+      sudo systemctl start hive-webhcat
     elif [ $2 = "stop" ]; then
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
-      systemctl stop hive-webhcat
+      sudo systemctl stop hive-webhcat
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveServer2
-      systemctl status hive-webhcat
+      sudo systemctl status hive-webhcat
     else
       hiveUsage
     fi
   elif [ $1 = "hwi" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hwi > /var/log/hive/hive-hwi.log 2>&1 &
-      systemctl start hive-hwi
+      sudo systemctl start hive-hwi
     elif [ $2 = "stop" ]; then
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
-      systemctl stop hive-hwi
+      sudo systemctl stop hive-hwi
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveServer2
-      systemctl status hive-hwi
+      sudo systemctl status hive-hwi
     else
       hiveUsage
     fi

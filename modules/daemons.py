@@ -27,6 +27,7 @@ class BunnyDaemon(Logger):
 
     def _run_grpc_server(self):
         try:
+            self.__set_user()
             self.grpc_server.serve()
         except Exception as e:
             self._logger.error(e)
@@ -39,7 +40,15 @@ class BunnyDaemon(Logger):
 
     def _run_cp_server(self):
         try:
+            self.__set_user()
             self.cp_server.start()
+        except Exception as e:
+            self._logger.error(e)
+
+    def __set_user(self):
+        try:
+            os.setuid(pwd.getpwnam('bryea-agent').pw_uid)
+            os.setgid(grp.getgrnam('bryea-agent').gr_gid)
         except Exception as e:
             self._logger.error(e)
 

@@ -84,10 +84,10 @@ function hbaseOperation()
       sudo systemctl start hbase-master
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-master service'
-      systemctl enable hbase-master
+      sudo systemctl enable hbase-master
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-master service'
-      systemctl disable hbase-master
+      sudo systemctl disable hbase-master
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-$1-$HOSTNAME.log
@@ -111,10 +111,10 @@ function hbaseOperation()
       sudo systemctl start hbase-regionserver
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-regionserver service'
-      systemctl enable hbase-regionserver
+      sudo systemctl enable hbase-regionserver
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-regionserver service'
-      systemctl disable hbase-regionserver
+      sudo systemctl disable hbase-regionserver
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-$1-$HOSTNAME.log

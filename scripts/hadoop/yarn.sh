@@ -82,15 +82,15 @@ function yarnOperation() {
       for DIR in $DIRS
       do
         echo "Creating $DIR"
-        mkdir -p $DIR
-        chown -R yarn:yarn $DIR
+        sudo mkdir -p $DIR
+        sudo chown -R yarn:yarn $DIR
       done
     elif [ $2 = 'enable' ]; then
       echo 'enable hadoop-yarn-nodemanager service'
-      systemctl enable hadoop-yarn-nodemanager
+      sudo systemctl enable hadoop-yarn-nodemanager
     elif [ $2 = 'disable' ]; then
       echo 'disable hadoop-yarn-nodemanager service'
-      systemctl disable hadoop-yarn-nodemanager
+      sudo systemctl disable hadoop-yarn-nodemanager
     elif [ $2 = "start" ]; then
       echo "Starting NodeManager"
       sudo systemctl start hadoop-yarn-nodemanager
@@ -125,10 +125,10 @@ function yarnOperation() {
       sudo systemctl restart hadoop-yarn-resourcemanager
     elif [ $2 = 'enable' ]; then
       echo 'enable hadoop-yarn-resourcemanager service'
-      systemctl enable hadoop-yarn-resourcemanager
+      sudo systemctl enable hadoop-yarn-resourcemanager
     elif [ $2 = 'disable' ]; then
       echo 'disable hadoop-yarn-resourcemanager service'
-      systemctl disable hadoop-yarn-resourcemanager
+      sudo systemctl disable hadoop-yarn-resourcemanager
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing ResourceManager log"
@@ -138,9 +138,11 @@ function yarnOperation() {
         sudo -u yarn tail -n 200 /var/log/hadoop-yarn/yarn-yarn-resourcemanager-$HOSTNAME.out
       else
         echo "Invalid command"
+        exit 1
       fi
     else
       echo "Invalid command"
+      exit 1
     fi
   elif [ $1 = "jobhistory" ]; then
     if [ $2 = "start" ]; then
@@ -151,22 +153,25 @@ function yarnOperation() {
       sudo systemctl restart hadoop-mapreduce-historyserver
     elif [ $2 = 'enable' ]; then
       echo 'enable hadoop-mapreduce-historyserver service'
-      systemctl enable hadoop-mapreduce-historyserver
+      sudo systemctl enable hadoop-mapreduce-historyserver
     elif [ $2 = 'disable' ]; then
       echo 'disable hadoop-mapreduce-historyserver service'
-      systemctl disable hadoop-mapreduce-historyserver
+      sudo systemctl disable hadoop-mapreduce-historyserver
     elif [ $2 = "logs" ]; then
       if [ $3 = "out" ]; then
         echo "Tailing JobHistory out"
         sudo -u mapred tail -n 200 /var/log/hadoop-mapreduce/mapred-mapred-historyserver-$HOSTNAME.out
       else
         echo "Invalid command"
+        exit 1
       fi
     else
       echo "Invalid command"
+      exit 1
     fi
   else
     echo "Invalid command"
+    exit 1
   fi
 }
 
