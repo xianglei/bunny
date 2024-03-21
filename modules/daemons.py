@@ -23,20 +23,20 @@ class BunnyDaemon(Logger):
         Logger.__init__(self)
         self.grpc_server = BunnyGrpcServer()
         self.cp_server = BunnyCherrypyServer()
-        self.thrift_server = BunnyThriftServer()
+        # self.thrift_server = BunnyThriftServer()
 
     def _run_grpc_server(self):
         try:
-            self.__set_user()
+            # self.__set_user()
             self.grpc_server.serve()
         except Exception as e:
             self._logger.error(e)
 
-    def _run_thrift_server(self):
-        try:
-            self.thrift_server.serve()
-        except Exception as e:
-            self._logger.error(e)
+    #def _run_thrift_server(self):
+    #    try:
+    #        self.thrift_server.serve()
+    #    except Exception as e:
+    #        self._logger.error(e)
 
     def _run_cp_server(self):
         try:
@@ -70,7 +70,7 @@ class BunnyDaemon(Logger):
                                           ):
                     self._logger.info("Starting Bunny...")
                     self._logger.info("Starting Cherrypy server...")
-                    self._logger.info("Starting gRPC server...")
+                    self._logger.info("Starting RPC server...")
                     # self._logger.info("Starting thrift server...")
                     # self._logger.info("Starting Heartbeat server...")
 

@@ -47,5 +47,7 @@ cython==3.0.8
 pyopenssl==24.0.0
 cherrypy-cors==1.7.0
 python-kadmv==0.1.7
+sudo==1.0.0
+
 
 
