@@ -53,13 +53,7 @@ class BunnyDaemon(Logger):
         except Exception as e:
             self._logger.error(e)
 
-    def signal_handler(self, signum, frame):
-        print('Signal handler called with signal', signum)
-        self.stop()
-        exit(0)
-
     def start(self):
-        signal.signal(signal.SIGTERM, self.signal_handler)
         if not self._check_proc_alive():
             self._logger.info("Mounting tmpfs")
             sudo.run_as_sudo('root', 'mount -t tmpfs tmpfs -o size=300M ' + TMP_DIR)
