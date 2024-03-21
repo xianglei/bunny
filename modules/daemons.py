@@ -62,8 +62,9 @@ class BunnyDaemon(Logger):
 
     def start(self):
         if not self._check_proc_alive():
-            sudo.run_as_sudo('root', 'mount -t tmpfs tmpfs -o size=300M' + TMP_DIR)
-            sudo.run_as_sudo('root', 'chown -R bryea-agent:bryea-agent' + TMP_DIR)
+            self._logger.info("Mounting tmpfs")
+            sudo.run_as_sudo('root', 'mount -t tmpfs tmpfs -o size=300M ' + TMP_DIR)
+            # sudo.run_as_sudo('root', 'chown -R bryea-agent:bryea-agent ' + TMP_DIR)
             try:
                 with daemon.DaemonContext(working_directory=BASE_DIR,
                                           umask=0o002,
