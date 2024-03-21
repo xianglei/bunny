@@ -40,7 +40,7 @@ class BunnyDaemon(Logger):
 
     def _run_cp_server(self):
         try:
-            # self.__set_user()
+            self.__set_user()
             self.cp_server.start()
         except Exception as e:
             self._logger.error(e)
