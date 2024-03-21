@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
+import sudo
 
 from modules.grpc_module import api_pb2_grpc, api_pb2
 import grpc
@@ -205,6 +206,101 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
             # self._logger.fatal(e)
             # self._return_code = self.CODE[4]
             # return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown group ' + request.group)
+        if request.path[-1] == '/':
+            full_filename = request.path + request.filename
+        else:
+            full_filename = request.path + '/' + request.filename
+        self._logger.debug("send: file_id: {}, file_name: {}, dest_path: {}, checksum: {}, access_modes: {}, owner: {}, format: {}".format(
+            request.id, full_filename, request.path, request.checksum, access_modes, request.owner, request.format))
+
+        tmp_filename = TMP_DIR + request.filename
+
+        if not os.path.exists(request.path):
+            self._return_code = self.CODE[1]
+            self._logger.warn("send: {}".format(self._return_code))
+            try:
+                if sudo.run_as_sudo('root', 'mkdir -p ' + request.path).returncode != 0:
+                    self._return_code = self.CODE[3]
+                    self._logger.error('Write not allowed')
+                    return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Write not allowed')
+                self._logger.debug("send: create directory: {}".format(request.path))
+                self._logger.debug("send: write tmp file: {}".format(tmp_filename))
+                with open(tmp_filename, 'wb') as f:
+                    f.write(request.content)
+                f.close()
+                checksum_local = file_hash_md5(tmp_filename)
+                self._logger.debug("send: local file md5 checksum: {}".format(checksum_local))
+                self._logger.debug("send: remote file md5 checksum: {}".format(request.checksum))
+                if checksum_local != request.checksum:
+                    self._return_code = self.CODE[2]
+                    self._logger.error('File checksum not equally')
+                    return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File checksum error')
+
+                self._logger.debug("send: change file mode: {}".format(access_modes))
+                sudo.run_as_sudo('root', 'chmod ' + str(access_modes) + ' ' + tmp_filename)
+
+                self._logger.debug("send: change file owner to: {}, {}".format(request.owner, request.group))
+                sudo.run_as_sudo('root', 'chown ' + request.owner + ':' + request.group + ' ' + tmp_filename)
+
+                self._return_code = self.CODE[0]
+                self._logger.info('File checksum equally, file receive succeed')
+                sudo.run_as_sudo('root', 'rm -f ' + full_filename)
+                sudo.run_as_sudo('root', 'mv ' + tmp_filename + ' ' + full_filename)
+
+                return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File received successfully')
+            except Exception as e:
+                self._logger.fatal(e)
+                self._return_code = self.CODE[3]
+                return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Write not allowed')
+        else:
+            try:
+                self._logger.debug("send: write tmp file: {}".format(tmp_filename))
+                with open(tmp_filename, 'wb') as f:
+                    f.write(request.content)
+                f.close()
+                checksum_local = file_hash_md5(tmp_filename)
+                self._logger.debug("send: local file md5 checksum: {}".format(checksum_local))
+                self._logger.debug("send: remote file md5 checksum: {}".format(request.checksum))
+                if checksum_local != request.checksum:
+                    self._return_code = self.CODE[2]
+                    self._logger.error('File checksum not equally')
+                    return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File checksum error')
+
+                self._logger.debug("send: change file mode: {}".format(access_modes))
+                sudo.run_as_sudo('root', 'chmod ' + str(access_modes) + ' ' + tmp_filename)
+
+                self._logger.debug("send: change file owner to: {}, {}".format(request.owner, request.group))
+                sudo.run_as_sudo('root', 'chown ' + request.owner + ':' + request.group + ' ' + tmp_filename)
+
+                self._return_code = self.CODE[0]
+                self._logger.info('File checksum equally, file receive succeed')
+                sudo.run_as_sudo('root', 'rm -f ' + full_filename)
+                sudo.run_as_sudo('root', 'mv ' + tmp_filename + ' ' + full_filename)
+
+                return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File received successfully')
+            except Exception as e:
+                self._logger.fatal(e)
+                self._return_code = self.CODE[3]
+                return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown exception')
+
+    """
+    def Send(self, request, context):
+        self._logger.debug("send: File send service incoming")
+        # oct() will return a string type, so use eval() to convert it to int
+        access_modes = eval(oct(int(request.access_modes, base=8)))
+        try:
+            uid = pwd.getpwnam(request.owner).pw_uid
+        except KeyError as e:
+            self._logger.fatal(e)
+            self._return_code = self.CODE[4]
+            return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown user ' + request.owner)
+        try:
+            gid = grp.getgrnam(request.group).gr_gid
+        except KeyError as e:
+            gid = pwd.getpwnam(request.owner).pw_gid
+            # self._logger.fatal(e)
+            # self._return_code = self.CODE[4]
+            # return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown group ' + request.group)
 
         if request.path[-1] == '/':
             full_filename = request.path + request.filename
@@ -248,6 +344,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                 self._logger.fatal(e)
                 self._return_code = self.CODE[3]
                 return api_pb2.FileResponse(id=request.id, status=self._return_code, message='Unknown exception')
+    """
 
     """
     def StreamSend(self, request_iterator, context):

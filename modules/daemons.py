@@ -4,6 +4,7 @@
 import daemon
 import signal
 import multiprocessing
+import sudo
 
 from daemon import pidfile
 from modules.grpc_server import *
@@ -61,6 +62,8 @@ class BunnyDaemon(Logger):
 
     def start(self):
         if not self._check_proc_alive():
+            sudo.run_as_sudo('root', 'mount -t tmpfs tmpfs -o size=300M' + TMP_DIR)
+            sudo.run_as_sudo('root', 'chown -R bryea-agent:bryea-agent' + TMP_DIR)
             try:
                 with daemon.DaemonContext(working_directory=BASE_DIR,
                                           umask=0o002,
@@ -149,6 +152,8 @@ class BunnyDaemon(Logger):
                 self._logger.info("pid file removed...")
                 self._logger.info("Kill Bunny Agent Server...")
                 os.killpg(os.getpgid(pid), signal.SIGKILL)
+            sudo.run_as_sudo('root', 'umount ' + TMP_DIR)
+            sudo.run_as_sudo('root', 'rm -rf ' + TMP_DIR)
         except Exception as e:
             self._logger.fatal(e)
             exit(1)
