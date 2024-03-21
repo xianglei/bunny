@@ -179,6 +179,7 @@ class Logger():
                 maxBytes=SERVER_CONFIG['agent']['log_file_max_size'],
                 backupCount=SERVER_CONFIG['agent']['log_file_backup_count'])
         self._logger = logger
+        os.system('sudo chown -R bryea-agent:bryea-agent ' + LOGS_DIR + SERVER_CONFIG['agent']['log_file'])
 
     def logger(self):
         return self._logger
