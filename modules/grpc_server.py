@@ -272,11 +272,11 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                     self._logger.error('File checksum not equally')
                     return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File checksum error')
 
-                self._logger.debug("send: change file mode: {}".format(access_modes))
-                sudo.run_as_sudo('root', 'chmod ' + str(access_modes) + ' ' + tmp_filename)
+                self._logger.debug("send: change file mode: {}".format(request.access_modes))
+                sudo.run_as_sudo('root', 'chmod ' + str(request.access_modes) + ' ' + tmp_filename)
 
                 self._logger.debug("send: change file owner to: {}, {}".format(request.owner, request.group))
-                sudo.run_as_sudo('root', 'chown ' + request.owner + ':' + request.group + ' ' + tmp_filename)
+                sudo.run_as_sudo('root', 'chown ' + final_user + ':' + final_group + ' ' + tmp_filename)
 
                 self._return_code = self.CODE[0]
                 self._logger.info('File checksum equally, file receive succeed')
