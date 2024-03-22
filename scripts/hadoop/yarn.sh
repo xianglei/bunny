@@ -80,7 +80,7 @@ function yarnOperation() {
   TMP=$3
   DIRS=${TMP//,/ }
   if [ $1 = "nodemanager" ]; then
-    if [ $2 = "mkdirs" ]; then
+    if [ $2 = "mkdir" ]; then
       echo "Initializing NodeManager"
       for DIR in $DIRS
       do
@@ -112,6 +112,7 @@ function yarnOperation() {
         sudo -u yarn tail -n 200 /var/log/hadoop-yarn/yarn-yarn-nodemanager-$HOSTNAME.out
       else
         echo "Invalid command"
+        exit 1
       fi
     elif [ $2 = "mklogdir" ]; then
       echo "Initializing NodeManager log directory"
@@ -123,6 +124,7 @@ function yarnOperation() {
       done
     else
       echo "Invalid command"
+      exit 1
     fi
   elif [ $1 = "resourcemanager" ]; then
     if [ $2 = "start" ]; then
