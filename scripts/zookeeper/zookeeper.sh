@@ -64,8 +64,8 @@ function initZookeeper() {
   echo "Initializing Zookeeper"
   # Create the data directory
   # zookeeper.sh init [1|2|3] [dataDir]
-  sudo mkdir -p $2/data
-  sudo chown -R zookeeper:zookeeper $2/data
+  sudo mkdir -p $2
+  sudo chown -R zookeeper:zookeeper $2
   if [ -f $2/myid ]; then
     echo "Zookeeper already initialized"
     exit 1
