@@ -68,12 +68,15 @@ function yarnUsage() {
 # yarn.sh nodemanager logs log | out
 # yarn.sh jobhistory start | stop | restart
 # yarn.sh jobhistory logs out
+# yarn.sh nodemanager mkdir $dirs(comma seperated)
+# yarn.sh nodemanager mklogdir $dirs(comma seperated)
 
 function yarnOperation() {
   echo "Initializing YARN"
       # Create the yarn directory
       # yarn.sh nodemanager mkdir $dirs(comma seperated)
-      # yarn.sh jobhistory mkdir $dirs(comma seperated)
+      # yarn.sh jobhistory mkdir $dir
+      # yarn.sh nodemanager mklogdir $dirs(comma seperated)
   TMP=$3
   DIRS=${TMP//,/ }
   if [ $1 = "nodemanager" ]; then
@@ -83,7 +86,7 @@ function yarnOperation() {
       do
         echo "Creating $DIR"
         sudo mkdir -p $DIR
-        sudo chown -R yarn:yarn $DIR
+        sudo chown -R yarn:hadoop $DIR
       done
     elif [ $2 = 'enable' ]; then
       echo 'enable hadoop-yarn-nodemanager service'
@@ -110,6 +113,14 @@ function yarnOperation() {
       else
         echo "Invalid command"
       fi
+    elif [ $2 = "mklogdir" ]; then
+      echo "Initializing NodeManager log directory"
+      for DIR in $DIRS
+      do
+        echo "Creating $DIR"
+        sudo mkdir -p $DIR
+        sudo chown -R yarn:hadoop $DIR
+      done
     else
       echo "Invalid command"
     fi
@@ -157,6 +168,10 @@ function yarnOperation() {
     elif [ $2 = 'disable' ]; then
       echo 'disable hadoop-mapreduce-historyserver service'
       sudo systemctl disable hadoop-mapreduce-historyserver
+    elif [ $2 = 'mkdir' ]; then
+      echo "Initializing JobHistory"
+      sudo -u hdfs hdfs dfs -mkdir -p $3
+      sudo -u hdfs hdfs dfs -chmod -R 1777 $3
     elif [ $2 = "logs" ]; then
       if [ $3 = "out" ]; then
         echo "Tailing JobHistory out"

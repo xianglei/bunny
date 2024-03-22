@@ -182,6 +182,7 @@ function hdfsOperation()
       sudo -u hdfs hdfs dfs -chown -R mapred:hadoop /user/mapred
       sudo -u hdfs hdfs dfs -mkdir -p /user/yarn
       sudo -u hdfs hdfs dfs -chown -R yarn:hadoop /user/yarn
+      sudo -u hdfs hdfs dfs -chmod 777 /user
     else
       echo "Invalid command"
     fi
