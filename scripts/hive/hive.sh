@@ -77,19 +77,6 @@ function hiveOperation() {
     else
       hiveUsage
     fi
-  elif [ $1 = "server" ]; then
-    if [ $2 = "start" ]; then
-      #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hiveserver > /var/log/hive/hive-server.log 2>&1 &
-      sudo systemctl start hive-server
-    elif [ $2 = "stop" ]; then
-      #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
-      sudo systemctl stop hive-server
-    elif [ $2 = "status" ]; then
-      #sudo -u hive jps | grep HiveServer2
-      sudo systemctl status hive-server
-    else
-      hiveUsage
-    fi
   elif [ $1 = "server2" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hiveserver2 > /var/log/hive/hive-server2.log 2>&1 &
@@ -103,29 +90,16 @@ function hiveOperation() {
     else
       hiveUsage
     fi
-  elif [ $1 = "webhcat" ]; then
+  elif [ $1 = "webhcat-server" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service webhcat > /var/log/hive/hive-webhcat.log 2>&1 &
-      sudo systemctl start hive-webhcat
+      sudo systemctl start hive-webhcat-server
     elif [ $2 = "stop" ]; then
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
-      sudo systemctl stop hive-webhcat
+      sudo systemctl stop hive-webhcat-server
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveServer2
-      sudo systemctl status hive-webhcat
-    else
-      hiveUsage
-    fi
-  elif [ $1 = "hwi" ]; then
-    if [ $2 = "start" ]; then
-      #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hwi > /var/log/hive/hive-hwi.log 2>&1 &
-      sudo systemctl start hive-hwi
-    elif [ $2 = "stop" ]; then
-      #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
-      sudo systemctl stop hive-hwi
-    elif [ $2 = "status" ]; then
-      #sudo -u hive jps | grep HiveServer2
-      sudo systemctl status hive-hwi
+      sudo systemctl status hive-webhcat-server
     else
       hiveUsage
     fi
