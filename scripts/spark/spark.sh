@@ -56,6 +56,10 @@ if [ -z "${JAVA_HOME}" ]; then
 fi
 
 function sparkOperation() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   if [ $1 = "historyserver" ];then
     if [ $2 = "start" ]; then
       echo "Starting Spark History Server"

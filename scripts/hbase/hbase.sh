@@ -79,6 +79,10 @@ ROLES=("master" "regionserver" "thrift" "thrift2" "rest")
 # hbase.sh rest [start|stop|restart|logs] [log|out]
 function hbaseOperation()
 {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   if [ $1 = 'master' ]; then
     if [ $2 = 'initHBaseHDFSDir' ]; then
       echo "Make /hbase on hdfs"

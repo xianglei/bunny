@@ -72,6 +72,10 @@ function yarnUsage() {
 # yarn.sh nodemanager mklogdir $dirs(comma seperated)
 
 function yarnOperation() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   echo "Initializing YARN"
       # Create the yarn directory
       # yarn.sh nodemanager mkdir $dirs(comma seperated)

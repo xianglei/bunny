@@ -64,6 +64,10 @@ function hiveUsage() {
 }
 
 function hiveOperation() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   if [ $1 = "metastore" ]; then
     if [ $2 = "start" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service metastore > /var/log/hive/hive-metastore.log 2>&1 &

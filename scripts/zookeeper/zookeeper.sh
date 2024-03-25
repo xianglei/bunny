@@ -61,6 +61,10 @@ function tailZookeeper() {
 }
 
 function initZookeeper() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   echo "Initializing Zookeeper"
   # Create the data directory
   # zookeeper.sh init [1|2|3] [dataDir]
@@ -76,18 +80,30 @@ function initZookeeper() {
 }
 
 function startZookeeper() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   echo "Starting Zookeeper"
   # Start Zookeeper
   sudo systemctl start zookeeper-server
 }
 
 function stopZookeeper() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   echo "Stopping Zookeeper"
   # Stop Zookeeper
   sudo systemctl stop zookeeper-server
 }
 
 function restartZookeeper() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   echo "Restarting Zookeeper"
   # Restart Zookeeper
   sudo systemctl restart zookeeper-server

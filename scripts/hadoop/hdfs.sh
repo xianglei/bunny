@@ -102,6 +102,10 @@ function hdfsUsage() {
 
 function hdfsOperation()
 {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
   if [ $1 = "namenode" ]; then
     # mkdir namenode metadata dirs
     if [ $2 = "mkdir" ]; then
