@@ -71,6 +71,12 @@ ACTION=("start" "stop" "restart" "logs" "initHBaseHDFSDir")
 ROLES=("master" "regionserver" "thrift" "thrift2" "rest")
 # valid $2 in [master, regionserver, thrift, thrift2]
 # valid $3 is an hdfs path
+# hbase.sh master initHBaseHDFSDir /hbase
+# hbase.sh master [start|stop|restart|logs] [log|out]
+# hbase.sh regionserver [start|stop|restart|logs] [log|out]
+# hbase.sh thrift [start|stop|restart|logs] [log|out]
+# hbase.sh thrift2 [start|stop|restart|logs] [log|out]
+# hbase.sh rest [start|stop|restart|logs] [log|out]
 function hbaseOperation()
 {
   if [ $1 = 'master' ]; then
@@ -79,6 +85,7 @@ function hbaseOperation()
       sudo -u hdfs hdfs dfs -mkdir $3
       echo "Chown /hbase on hdfs to hbase:hbase"
       sudo -u hdfs hdfs dfs -chown hbase:hbase $3
+      echo $?
     elif [ $2 = 'start' ]; then
       echo 'start hbase master'
       sudo systemctl start hbase-master

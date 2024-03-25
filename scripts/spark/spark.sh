@@ -84,11 +84,13 @@ function sparkOperation() {
       echo "Invalid operation"
     fi
   elif [ $1 = "yarnshuffle" ]; then
+    # 添加spark-yarn-shuffle.jar到hadoop-yarn lib目录
+    # 需要重启yarn
     if [ -f /usr/lib/hadoop-yarn/lib/spark-yarn-shuffle.jar ]; then
       echo "Spark Yarn Shuffle jar already exists"
     else
       echo "Copying Spark Yarn Shuffle jar"
-      sudo cp /usr/lib/spark/yarn/lib/spark-yarn-shuffle.jar /usr/lib/hadoop-yarn/lib/
+      sudo ln -sf /usr/lib/spark/yarn/lib/spark-yarn-shuffle.jar /usr/lib/hadoop-yarn/lib/
     fi
   elif [ $1 = "master" ];then
     if [ $2 = "start" ]; then
