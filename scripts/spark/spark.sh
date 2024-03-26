@@ -108,7 +108,7 @@ function sparkOperation() {
     sudo -u hdfs hdfs dfs -mkdir /user/spark/history
     sudo -u hdfs hdfs dfs -mkdir /user/spark/archive
     sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/history
-    cd /usr/lib/spark/jars; zip -r spark-libs.zip *.jars
+    cd /usr/lib/spark/jars; sudo zip -rq spark-libs.zip *
     sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive
     sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/archive
     sudo -u hdfs hdfs dfs -chown -R spark:spark /user/spark
