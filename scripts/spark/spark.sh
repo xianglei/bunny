@@ -55,12 +55,51 @@ if [ -z "${JAVA_HOME}" ]; then
   done
 fi
 
+# spark.sh initHistoryDir
+# spark.sh historyserver start
+# spark.sh historyserver stop
+# spark.sh historyserver restart
+# spark.sh historyserver enable
+# spark.sh historyserver disable
+# spark.sh historyserver status
+# spark.sh historyserver logs log
+# spark.sh historyserver logs out
+# spark.sh yarnshuffle
+# spark.sh master start
+# spark.sh master stop
+# spark.sh master restart
+# spark.sh master enable
+# spark.sh master disable
+# spark.sh master status
+# spark.sh master logs log
+# spark.sh master logs out
+# spark.sh worker start
+# spark.sh worker stop
+# spark.sh worker restart
+# spark.sh worker enable
+# spark.sh worker disable
+# spark.sh worker status
+# spark.sh worker logs log
+# spark.sh worker logs out
+# spark.sh thriftserver start
+# spark.sh thriftserver stop
+# spark.sh thriftserver restart
+# spark.sh thriftserver enable
+# spark.sh thriftserver disable
+# spark.sh thriftserver status
+# spark.sh thriftserver logs log
+# spark.sh thriftserver logs out
+
+
 function sparkOperation() {
   if [ -z "${JAVA_HOME}" ]; then
     echo "JAVA_HOME is not set, script will not work"
     exit 1
   fi
-  if [ $1 = "historyserver" ];then
+  if [ $1 = "initHistoryDir" ]; then
+    sudo -u hdfs hadoop fs -mkdir /user/spark/history
+    sudo -u hdfs hadoop fs -chown -R spark:spark /user/spark
+  elif [ $1 = "historyserver" ];then
     if [ $2 = "start" ]; then
       echo "Starting Spark History Server"
       sudo systemctl start spark-history-server
