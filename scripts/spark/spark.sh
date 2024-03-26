@@ -96,9 +96,22 @@ function sparkOperation() {
     echo "JAVA_HOME is not set, script will not work"
     exit 1
   fi
-  if [ $1 = "initHistoryDir" ]; then
-    sudo -u hdfs hadoop fs -mkdir /user/spark/history
-    sudo -u hdfs hadoop fs -chown -R spark:spark /user/spark
+  if [ $1 = 'pyspark' ]; then
+    if grep -qwxF 'export PYSPARK_PYTHON=python3' /usr/bin/pyspark; then
+      echo "PYSPARK_PYTHON is already set to python3"
+    else
+      sudo sed -i 's/export PYSPARK_PYTHON=python/export PYSPARK_PYTHON=python3/g' /usr/bin/pyspark
+    fi
+    sudo pip3 install py4j
+    cd /usr/lib/spark/python; sudo /usr/bin/python3 setup.py install
+  elif [ $1 = "initHistoryDir" ]; then
+    sudo -u hdfs hdfs dfs -mkdir /user/spark/history
+    sudo -u hdfs hdfs dfs -mkdir /user/spark/archive
+    sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/history
+    cd /usr/lib/spark/jars; zip -r spark-libs.zip *.jars
+    sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive
+    sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/archive
+    sudo -u hdfs hdfs dfs -chown -R spark:spark /user/spark
   elif [ $1 = "historyserver" ];then
     if [ $2 = "start" ]; then
       echo "Starting Spark History Server"
