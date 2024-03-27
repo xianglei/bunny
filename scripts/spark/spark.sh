@@ -126,6 +126,8 @@ function sparkOperation() {
       sudo systemctl enable spark-history-server
     elif [ $2 = "disable" ]; then
       sudo systemctl disable spark-history-server
+    elif [ $2 = 'status' ]; then
+      sudo systemctl status spark-history-server
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u spark tail -n 200 /var/log/spark/spark-history-server.log
