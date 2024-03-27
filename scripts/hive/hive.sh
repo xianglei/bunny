@@ -58,6 +58,14 @@ fi
 HOSTNAME=$(hostname -f)
 ROLE=$1
 
+# hive.sh initSchema mysql
+# hive.sh metastore start
+# hive.sh metastore stop
+# hive.sh metastore status
+# hive.sh server2 start
+# hive.sh server2 stop
+# hive.sh server2 status
+
 function hiveUsage() {
   echo "Usage: hive {metastore|server|server2|webhcat|hwi|initSchema} {start|stop|status|mysql}"
   exit 1
@@ -108,8 +116,17 @@ function hiveOperation() {
       hiveUsage
     fi
   elif [ $1 = "initSchema" ]; then
+    sudo -u hdfs hdfs dfs -mkdir -p /user/hive/warehouse
+    sudo -u hdfs hdfs dfs -chown -R hive:hive /user/hive
+    sudo -u hdfs hdfs dfs -chmod -R 0777 /user/hive/warehouse
     if [ $2 = "mysql" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service schematool -initSchema -dbType derby
+      if [ -f /usr/share/java/mysql-connector-j.jar ]; then
+        sudo ln -sf /usr/share/java/mysql-connector-j.jar /usr/lib/hive/lib/mysql-connector-java.jar
+      else
+        echo "mysql-connector-j.jar not found, install mysql-connector-java package first"
+        exit 1
+      fi
       sudo -u hive /usr/lib/hive/bin/schematool -initSchema -dbType mysql
     else
       hiveUsage

@@ -106,11 +106,11 @@ function sparkOperation() {
     sudo -u hdfs hdfs dfs -mkdir -p /user/spark/history
     sudo -u hdfs hdfs dfs -mkdir -p /user/spark/archive
     sudo -u hdfs hdfs dfs -mkdir -p /user/spark/events
-    sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/history
+    sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/history
     cd /usr/lib/spark/jars; sudo zip -rq spark-libs.zip *
     sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive
-    sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/archive
-    sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/events
+    sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/archive
+    sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/events
     sudo -u hdfs hdfs dfs -chown -R spark:spark /user/spark
   elif [ $1 = "historyserver" ];then
     if [ $2 = "start" ]; then
