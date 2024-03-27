@@ -61,7 +61,6 @@ fi
 # spark.sh historyserver restart
 # spark.sh historyserver enable
 # spark.sh historyserver disable
-# spark.sh historyserver status
 # spark.sh historyserver logs log
 # spark.sh historyserver logs out
 # spark.sh yarnshuffle
@@ -70,7 +69,6 @@ fi
 # spark.sh master restart
 # spark.sh master enable
 # spark.sh master disable
-# spark.sh master status
 # spark.sh master logs log
 # spark.sh master logs out
 # spark.sh worker start
@@ -78,7 +76,6 @@ fi
 # spark.sh worker restart
 # spark.sh worker enable
 # spark.sh worker disable
-# spark.sh worker status
 # spark.sh worker logs log
 # spark.sh worker logs out
 # spark.sh thriftserver start
@@ -86,7 +83,6 @@ fi
 # spark.sh thriftserver restart
 # spark.sh thriftserver enable
 # spark.sh thriftserver disable
-# spark.sh thriftserver status
 # spark.sh thriftserver logs log
 # spark.sh thriftserver logs out
 
@@ -97,6 +93,7 @@ function sparkOperation() {
     exit 1
   fi
   if [ $1 = 'pyspark' ]; then
+    # set PYSPARK_PYTHON to python3
     if grep -qwxF 'export PYSPARK_PYTHON=python3' /usr/bin/pyspark; then
       echo "PYSPARK_PYTHON is already set to python3"
     else
@@ -105,8 +102,9 @@ function sparkOperation() {
     sudo pip3 install py4j
     cd /usr/lib/spark/python; sudo /usr/bin/python3 setup.py install
   elif [ $1 = "initHistoryDir" ]; then
-    sudo -u hdfs hdfs dfs -mkdir /user/spark/history
-    sudo -u hdfs hdfs dfs -mkdir /user/spark/archive
+    # 初始化spark historyserver目录并为spark.yarn.archive配置项上传spark-libs.zip
+    sudo -u hdfs hdfs dfs -mkdir -p /user/spark/history
+    sudo -u hdfs hdfs dfs -mkdir -p /user/spark/archive
     sudo -u hdfs hdfs dfs -chmod -R 1777 /user/spark/history
     cd /usr/lib/spark/jars; sudo zip -rq spark-libs.zip *
     sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive
