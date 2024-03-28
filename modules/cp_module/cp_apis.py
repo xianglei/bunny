@@ -426,6 +426,7 @@ class BunnyKadminKeytab(Logger):
             return json.dumps({"keytab": keytab_path, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
 
 
+"""
 class LogsTailerWebSocketHandler(WebSocket):
     def received_message(self, message):
         self.send(message.data, message.is_binary)
@@ -455,7 +456,7 @@ class BunnyLogTailerHandler(WebSocket, Logger):
     def closed(self, code, reason=None):
         self._logger.info("WebSocket closed")
         cherrypy.engine.publish('websocket-broadcast', message="WebSocket closed")
-
+"""
 
 
 

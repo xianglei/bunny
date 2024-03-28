@@ -6,7 +6,7 @@ import cherrypy
 from modules.cp_module.cp_apis import *
 
 
-def CORS():
+def cors():
     cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
 
 
@@ -17,6 +17,7 @@ class BunnyCherrypyServer(Logger):
     def start(self):
         # cherrypy.tree.mount(BunnyHttpService(), '/sys')
         global_conf = {
+                'tools.cors.on': True,
                 'cors.expose.on': True,
                 'tools.websocket.on': True,
                 'cors.allow.origin': '*',
@@ -55,7 +56,7 @@ class BunnyCherrypyServer(Logger):
         cherrypy.tree.mount(BunnySysService(), '/sys/service', BunnySysService.conf)
         # cherrypy.tree.mount(BunnyKadminPrincipal(), '/kadmin/principal', BunnyKadminPrincipal.conf)
         # cherrypy.tree.mount(BunnyKadminKeytab(), '/kadmin/keytab', BunnyKadminKeytab.conf)
-        cherrypy.tree.mount(BunnyLogTailerHandler(), '/logs', BunnyLogTailerHandler.conf)
+        # cherrypy.tree.mount(BunnyLogTailerHandler(), '/logs', BunnyLogTailerHandler.conf)
         try:
             self._logger.info("Unregistering previous server...")
             cherrypy.server.unsubscribe()
