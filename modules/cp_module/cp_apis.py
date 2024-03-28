@@ -6,7 +6,10 @@ from modules.status import *
 import json
 import cherrypy_cors
 from modules.kadm5 import *
+from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
+from ws4py.websocket import WebSocket
 cherrypy_cors.install()
+
 
 @cherrypy.expose()
 class BunnySysStatus(Logger):
@@ -343,6 +346,7 @@ class BunnyKadminPrincipal(Logger):
             return json.dumps({"principals": krb5.list_princs(), "status": "success", "message": "principal list"}, indent=4, sort_keys=True).encode('utf-8')
 
 
+@cherrypy.expose()
 class BunnyKadminKeytab(Logger):
     conf = {
         '/':
@@ -354,7 +358,7 @@ class BunnyKadminKeytab(Logger):
     def __init__(self):
         Logger.__init__(self)
 
-    @cherrypy.expose()
+    @cherrypy.tools.accept(media='application/json')
     def POST(self):
         """
         Add keytab
@@ -389,6 +393,7 @@ class BunnyKadminKeytab(Logger):
         else:
             return json.dumps({"principal": user, "status": "failed", "message": "keytab create failed, check agent log for details", "keytab_path": keytab_path}, indent=4, sort_keys=True).encode('utf-8')
 
+    @cherrypy.tools.accept(media='application/json')
     def DELETE(self):
         """
         Delete keytab
@@ -419,6 +424,38 @@ class BunnyKadminKeytab(Logger):
             return json.dumps({"keytab": keytab_path, "status": "deleted"}, indent=4, sort_keys=True).encode('utf-8')
         else:
             return json.dumps({"keytab": keytab_path, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
+
+
+class LogsTailerWebSocketHandler(WebSocket):
+    def received_message(self, message):
+        self.send(message.data, message.is_binary)
+
+
+@cherrypy.expose()
+class BunnyLogTailerHandler(WebSocket, Logger):
+    conf = {
+        '/':
+            {
+                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            },
+        '/logs':
+            {
+                'tools.websocket.on': True,
+                'tools.cors.on': True,
+            }
+    }
+
+    def __init__(self):
+        Logger.__init__(self)
+
+    @cherrypy.tools.websocket(handler_cls=LogsTailerWebSocketHandler)
+    def logs(self):
+        pass
+
+    def closed(self, code, reason=None):
+        self._logger.info("WebSocket closed")
+        cherrypy.engine.publish('websocket-broadcast', message="WebSocket closed")
+
 
 
 

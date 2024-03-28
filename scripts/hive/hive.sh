@@ -67,7 +67,7 @@ ROLE=$1
 # hive.sh server2 status
 
 function hiveUsage() {
-  echo "Usage: hive {metastore|server|server2|webhcat|hwi|initSchema} {start|stop|status|mysql}"
+  echo "Usage: hive.sh {metastore|server|server2|webhcat|hwi|initSchema} {start|stop|status|mysql}"
   exit 1
 }
 
@@ -86,6 +86,8 @@ function hiveOperation() {
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveMetaStore
       sudo systemctl status hive-metastore
+    elif [ $2 = 'restart' ]; then
+      sudo systemctl restart hive-metastore
     else
       hiveUsage
     fi
@@ -99,6 +101,8 @@ function hiveOperation() {
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveServer2
       sudo systemctl status hive-server2
+    elif [ $2 = 'restart' ]; then
+      sudo systemctl restart hive-server2
     else
       hiveUsage
     fi
@@ -112,6 +116,8 @@ function hiveOperation() {
     elif [ $2 = "status" ]; then
       #sudo -u hive jps | grep HiveServer2
       sudo systemctl status hive-webhcat-server
+    elif [ $2 = 'restart' ]; then
+      sudo systemctl restart hive-webhcat-server
     else
       hiveUsage
     fi
@@ -137,3 +143,8 @@ function hiveOperation() {
   fi
 }
 
+if [ -z "$ROLE" ]; then
+  hiveUsage
+else
+  hiveOperation $1 $2
+fi

@@ -4,10 +4,11 @@
 import daemon
 import signal
 import multiprocessing
+import sys
 
 from daemon import pidfile
 from modules.grpc_server import *
-from modules.thrift_server import *
+#from modules.thrift_server import *
 from modules.cp_server import *
 #
 from modules.heartbeat import *

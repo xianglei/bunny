@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from modules.utils import *
+#from modules.utils import *
+import os
+import time
 import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
-class LogFileHandler(FileSystemEventHandler, Logger):
+class LogFileHandler(FileSystemEventHandler):
     def __init__(self, log_file):
         FileSystemEventHandler.__init__(self)
-        Logger.__init__(self)
+        #Logger.__init__(self)
         self.log_file = log_file
         self.file = open(log_file, 'r')
         self.file.seek(0, 2)  # 将文件指针移到文件末尾
@@ -40,3 +42,7 @@ class LogTailThread(threading.Thread):
     def stop(self):
         self.observer.stop()
         self.join()
+
+
+l = LogTailThread('a.log')
+l.run()

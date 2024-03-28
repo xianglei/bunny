@@ -51,6 +51,7 @@ sudo==1.0.0
 kubernetes==29.0.0
 docker==7.0.0
 podman==5.0.0
+ws4py==0.5.1
 
 
 
