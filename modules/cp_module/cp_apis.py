@@ -6,8 +6,6 @@ from modules.status import *
 import json
 import cherrypy_cors
 from modules.kadm5 import *
-from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
-from ws4py.websocket import WebSocket
 cherrypy_cors.install()
 
 
@@ -426,37 +424,11 @@ class BunnyKadminKeytab(Logger):
             return json.dumps({"keytab": keytab_path, "status": "failed"}, indent=4, sort_keys=True).encode('utf-8')
 
 
-"""
-class LogsTailerWebSocketHandler(WebSocket):
-    def received_message(self, message):
-        self.send(message.data, message.is_binary)
 
 
-@cherrypy.expose()
-class BunnyLogTailerHandler(WebSocket, Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-            },
-        '/logs':
-            {
-                'tools.websocket.on': True,
-                'tools.cors.on': True,
-            }
-    }
 
-    def __init__(self):
-        Logger.__init__(self)
 
-    @cherrypy.tools.websocket(handler_cls=LogsTailerWebSocketHandler)
-    def logs(self):
-        pass
 
-    def closed(self, code, reason=None):
-        self._logger.info("WebSocket closed")
-        cherrypy.engine.publish('websocket-broadcast', message="WebSocket closed")
-"""
 
 
 
