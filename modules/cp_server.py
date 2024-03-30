@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from modules.utils import *
-import cherrypy
 from modules.cp_module.cp_apis import *
-
-
-def cors():
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+from modules.cp_module.cp_websocket import *
+from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
 
 class BunnyCherrypyServer(Logger):
@@ -17,9 +13,7 @@ class BunnyCherrypyServer(Logger):
     def start(self):
         # cherrypy.tree.mount(BunnyHttpService(), '/sys')
         global_conf = {
-                'tools.cors.on': True,
                 'cors.expose.on': True,
-                'tools.websocket.on': True,
                 'cors.allow.origin': '*',
                 'cors.allow.methods': 'GET, POST, PUT, DELETE, PATCH, SEARCH',
                 #'environment': 'production',
@@ -41,7 +35,7 @@ class BunnyCherrypyServer(Logger):
                 'cherrypy.max_request_body_size': 300 * 1024 * 1024,
             }
         # cherrypy.tree.mount(BunnyKadminService(), '/kadmin')
-        cherrypy.tree.mount(BunnyHttpService(), '/')
+        cherrypy.tree.mount(BunnyWebsocket(), '/', BunnyWebsocket.conf)
         cherrypy.tree.mount(BunnySysStatus(), '/sys', BunnySysStatus.conf)
         cherrypy.tree.mount(BunnySysCpu(), '/sys/cpu', BunnySysCpu.conf)
         cherrypy.tree.mount(BunnySysMemory(), '/sys/memory', BunnySysMemory.conf)
@@ -56,7 +50,6 @@ class BunnyCherrypyServer(Logger):
         cherrypy.tree.mount(BunnySysService(), '/sys/service', BunnySysService.conf)
         # cherrypy.tree.mount(BunnyKadminPrincipal(), '/kadmin/principal', BunnyKadminPrincipal.conf)
         # cherrypy.tree.mount(BunnyKadminKeytab(), '/kadmin/keytab', BunnyKadminKeytab.conf)
-        # cherrypy.tree.mount(BunnyLogTailerHandler(), '/logs', BunnyLogTailerHandler.conf)
         try:
             self._logger.info("Unregistering previous server...")
             cherrypy.server.unsubscribe()
@@ -71,6 +64,8 @@ class BunnyCherrypyServer(Logger):
             #    HTTP_SERVER.ssl_certificate = BASE_DIR + 'ssl/cert.pem'
             #    HTTP_SERVER.ssl_private_key = BASE_DIR + 'ssl/privkey.pem'
             HTTP_SERVER.subscribe()
+            WebSocketPlugin(cherrypy.engine).subscribe()
+            cherrypy.tools.websocket = WebSocketTool()
             self._logger.info("Registering http server...")
             cherrypy.engine.start()
             self._logger.info("Blocking http threads...")

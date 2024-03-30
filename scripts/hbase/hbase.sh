@@ -113,6 +113,8 @@ function hbaseOperation()
     elif [ $2 = 'restart' ]; then
       echo 'restart hbase master'
       sudo systemctl restart hbase-master
+    elif [ $2 = 'status' ]; then
+      sudo systemctl status hbase-master
     else
       echo "Invalid command"
     fi
@@ -140,6 +142,8 @@ function hbaseOperation()
     elif [ $2 = 'restart' ]; then
       echo 'restart hbase regionserver'
       sudo systemctl restart hbase-regionserver
+    elif [ $2 = 'status' ]; then
+          sudo systemctl status hbase-regionserver
     else
       echo "Invalid command"
     fi
@@ -167,6 +171,8 @@ function hbaseOperation()
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-thrift service'
       sudo systemctl disable hbase-thrift
+    elif [ $2 = 'status' ]; then
+          sudo systemctl status hbase-thrift
     else
       echo "Invalid command"
     fi
@@ -194,6 +200,8 @@ function hbaseOperation()
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-thrift2 service'
       sudo systemctl disable hbase-thrift2
+    elif [ $2 = 'status' ]; then
+      sudo systemctl status hbase-thrift2
     else
       echo "Invalid command"
     fi
@@ -221,6 +229,8 @@ function hbaseOperation()
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-rest service'
       sudo systemctl disable hbase-rest
+    elif [ $2 = 'status' ]; then
+      sudo systemctl status hbase-rest
     else
       echo "Invalid command"
     fi
