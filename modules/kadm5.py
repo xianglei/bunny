@@ -10,6 +10,7 @@ class Kadmin5(Logger):
     """
     keytab should be full path and name of the keytab file
     ex: keytab = "/etc/security/keytabs/hdfs.headless.keytab"
+    admin_keytab = "/etc/security/keytabs/admin.keytab"
     """
     def __init__(self, admin_pricipal, admin_password=None, admin_keytab=None, realm="EXAMPLE.COM"):
         Logger.__init__(self)
@@ -47,13 +48,25 @@ class Kadmin5(Logger):
         return False
     """
 
-    def add_princ(self, user, fqdn=None):
+    def add_princ(self, user, fqdn=None, force=False):
         if fqdn is None:
             fqdn, ip = self_ip_hostname()
         princ = user + '/' + fqdn + "@" + self._realm
         if self._kadmin.principal_exists(princ):
             self._logger.info("principal already exists")
-            return False
+            if force is False:
+                self._logger.warning("force add is not set")
+                return False
+            else:
+                try:
+                    self._logger.warning("force add is set")
+                    self.del_princ(user, fqdn)
+                    self._kadmin.ank(princ, None)
+                    self._logger.info("principal created")
+                    return True
+                except kadmin.KAdminError as e:
+                    self._logger.error("create principal failed: {}".format(e))
+                    return False
         else:
             try:
                 self._kadmin.ank(princ, None)
