@@ -54,17 +54,30 @@ if [ -z "${JAVA_HOME}" ]; then
   done
 fi
 
-function dolphinUsage() {
-    echo "Usage: $0 {start|stop|status|restart|operation}"
+function kylinUsage() {
+    echo "Usage: $0 {start|stop|status|restart|initHdfsDir}"
     exit 1
 }
 
-function dolphinOperation() {
-    if [ $1 = 'initDatabase' ];then
-        echo "initDatabase"
-        sudo ln -sf /usr/share/java/mysql-connector-j.jar /usr/lib/dolphinscheduler/lib/
-        sudo /usr/lib/dolphinscheduler/script/create-dolphinscheduler.sh
-    else
-        dolphinUsage
-    fi
+function kylinOperation() {
+  if [ -z "${JAVA_HOME}" ]; then
+    echo "JAVA_HOME is not set, script will not work"
+    exit 1
+  fi
+  if [ $1 = 'initHdfsDir' ]; then
+    echo "initHdfsDir"
+    sudo -u hdfs hadoop fs -mkdir -p /user/kylin/cube
+    sudo -u hdfs hadoop fs -chown -R kylin:kylin /user/kylin
+  elif [ $1 = 'start' ]; then
+    sudo systemctl start kylin
+  elif [ $1 = 'stop' ]; then
+    sudo systemctl stop kylin
+  elif [ $1 = 'status' ]; then
+    sudo systemctl status kylin
+  elif [ $1 = 'restart' ]; then
+    sudo systemctl restart kylin
+  else
+    kylinUsage
+  fi
 }
+
