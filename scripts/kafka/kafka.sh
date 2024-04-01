@@ -85,6 +85,9 @@ function kafkaOperation() {
     elif [ $2 = "status" ]; then
         echo "Status of Kafka"
         sudo systemctl status kafka-server
+    elif [ $2 = 'restart' ]; then
+        echo "Restarting Kafka"
+        sudo systemctl restart kafka-server
     else
         kafkaUsage
     fi
@@ -95,7 +98,6 @@ function kafkaOperation() {
 
 if [ -z $1 ]; then
   kafkaUsage
-  exit 1
 else
   kafkaOperation $1 $2
 fi
