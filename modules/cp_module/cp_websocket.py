@@ -4,6 +4,7 @@ import cherrypy
 from urllib.parse import urlparse, parse_qs
 from modules.utils import *
 import select
+import sys
 
 cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
 
@@ -20,10 +21,14 @@ class TailWebSocketHandler(WebSocket, Logger):
 
     def read_log(self, stop=False):
         try:
+            cmd = ['tail', '-F', self.filepath]
             with subprocess.Popen(['tail', '-F', self.filepath],
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE) as p:
-                select.epoll().register(p.stdout)
+                self._logger.debug('Tail process started with pid={} and cmd={} and args={}'.format(p.pid, ' '.join(cmd), p.args))
+                if is_linux():
+                    self._logger.info("Is linux, Using epoll")
+                    select.epoll().register(p.stdout)
                 while True:
                     line = p.stdout.readline()
                     if stop:
@@ -42,23 +47,30 @@ class TailWebSocketHandler(WebSocket, Logger):
                 parse_result = urlparse(url)
                 self._logger.info('parse_result={}'.format(parse_result))
             except Exception:
+                self._logger.error('Fail to parse URL')
+                self.read_log(stop=True)
+                self.send('<font color="red"><strong>Fail to parse URL</strong></font>')
                 raise ValueError('Fail to parse URL')
             self.filepath = os.path.abspath(parse_qs(parse_result.path)['logfile'][0])
-            self._logger.info('file_path={}'.format(self.filepath))
+            self._logger.info('websocket log file_path={}'.format(self.filepath))
             allowed = False
             for suffix in allowed_suffixes:
                 if self.filepath.endswith(suffix):
                     allowed = True
                     break
-            self._logger.info('allowed={}'.format(allowed))
+            self._logger.debug('allowed={}'.format(allowed))
             if not allowed:
+                self._logger.error('File access not allowed')
                 self.send('<font color="red"><strong>Not allowed</strong></font>')
             if not os.path.isfile(self.filepath):
+                self._logger.error('File not found')
                 self.send('<font color="red"><strong>File not found</strong></font>')
+            self._logger.info('Start reading log file')
             self.read_log(stop=False)
         except ValueError as e:
             try:
                 self.send('<font color="red"><strong>{}</strong></font>'.format(e))
+                self._logger.error('Closed, remote={}, url={}, error={}'.format(self.peer_address, url, e))
                 self.close()
             except Exception:
                 pass
@@ -69,7 +81,7 @@ class TailWebSocketHandler(WebSocket, Logger):
             self._logger.error('Closed, remote={}, url={}'.format(self.peer_address, url))
 
     def received_message(self, message):
-        self.send(message)
+        self.send(message.data, message.is_binary)
 
     def closed(self, code, reason=None):
         self.close()

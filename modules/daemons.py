@@ -57,7 +57,12 @@ class BunnyDaemon(Logger):
     def start(self):
         if not self._check_proc_alive():
             self._logger.info("Mounting tmpfs")
-            sudo.run_as_sudo('root', 'mount -t tmpfs tmpfs -o size=300M ' + TMP_DIR)
+            sudo_user = 'root'
+            if is_linux():
+                cmd = 'mount -t tmpfs tmpfs -o size=300M ' + TMP_DIR
+                sudo.run_as_sudo(sudo_user, cmd)
+                self._logger.debug("user: {}, cmd: {}".format(sudo_user, cmd))
+                self._logger.info("tmpfs mounted")
             # sudo.run_as_sudo('root', 'chown -R bryea-agent:bryea-agent ' + TMP_DIR)
             try:
                 with daemon.DaemonContext(working_directory=BASE_DIR,
@@ -136,18 +141,22 @@ class BunnyDaemon(Logger):
             cherrypy.engine.stop()
             cherrypy.engine.exit()
             self._logger.info("CherryPy server stopped...")
-            self._logger.info("Stopping thrift server...")
             self._logger.info("Stopping gRpc server...")
-            self._logger.info("Stopping Heartbeat server...")
+            #self._logger.info("Stopping Heartbeat server...")
             with open(pid, 'r') as f:
                 pid = int(f.read())
                 self._logger.debug("pid: " + str(pid))
                 self._logger.debug("Getting pid from pid file...")
                 os.remove(BASE_DIR + 'run/bunny.pid')
                 self._logger.info("pid file removed...")
-                self._logger.info("Kill Bunny Agent Server...")
+                self._logger.info("Kill the Bunny...")
                 os.killpg(os.getpgid(pid), signal.SIGKILL)
-            sudo.run_as_sudo('root', 'umount ' + TMP_DIR)
+            sudo_user = 'root'
+            if is_linux():
+                cmd = 'umount ' + TMP_DIR
+                sudo.run_as_sudo(sudo_user, cmd)
+                self._logger.debug("user: {}, cmd: {}".format(sudo_user, cmd))
+                self._logger.info("tmpfs unmounted")
             # sudo.run_as_sudo('root', 'rm -rf ' + TMP_DIR)
         except Exception as e:
             self._logger.fatal(e)
@@ -162,7 +171,6 @@ class BunnyDaemon(Logger):
         if os.path.exists(BASE_DIR + 'run/bunny.pid'):
             with open(BASE_DIR + 'run/bunny.pid', 'r') as f:
                 pid = f.read()
-
             return 'Bunny is running on pid ' + pid
         else:
             return 'Bunny is not running.'

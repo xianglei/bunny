@@ -17,7 +17,7 @@ DEFAULT_CONFIG = {
         "agent_rpc_port": 7182,
         # "agent_thrift_port": 7183,
         "agent_http_port": 7181,
-        "agent_http_thread_pool": 30,
+        "agent_http_thread_pool": 20,
         "version": "0.0.1",
         "heartbeat_interval": 30,
         "log_level": "INFO",

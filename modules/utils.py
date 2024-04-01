@@ -689,6 +689,12 @@ def get_user_uid_gid(username):
         return None, None, None
 
 
+def is_linux():
+    import sys
+    if sys.platform.lower() == 'linux':
+        return True
+    else:
+        return False
 
 
 

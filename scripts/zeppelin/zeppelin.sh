@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 JAVA8_HOME_CANDIDATES=(
     '/usr/java/jdk1.8'
     '/usr/java/jre1.8'
@@ -55,49 +54,29 @@ if [ -z "${JAVA_HOME}" ]; then
   done
 fi
 
-function kafkaUsage() {
-    echo "Usage: kafka.sh {mkdir|server} dirs(comma seperated) {start|stop|status}"
+function zeppelinUsage() {
+    echo "Usage: $0 {start|stop|status|restart|operation}"
     exit 1
 }
 
-function kafkaOperation() {
+function zeppelinOperation() {
   if [ -z "${JAVA_HOME}" ]; then
     echo "JAVA_HOME is not set, script will not work"
     exit 1
   fi
-  if [ $1 = "mkdir" ];then
-    TMP=$2
-    DIRS=${TMP//,/ }
-    echo "Creating Kafka data directory"
-    for DIR in $DIRS
-    do
-      sudo echo "Creating directory $DIR"
-      sudo mkdir -p $DIR
-      sudo chown -R kafka:kafka $DIR
-    done
-  elif [ $1 = "server" ];then
-    if [ $2 = "start" ]; then
-        echo "Starting Kafka"
-        sudo systemctl start kafka-server
-    elif [ $2 = "stop" ]; then
-        echo "Stopping Kafka"
-        sudo systemctl stop kafka-server
-    elif [ $2 = "status" ]; then
-        echo "Status of Kafka"
-        sudo systemctl status kafka-server
-    elif [ $2 = 'restart' ]; then
-        echo "Restarting Kafka"
-        sudo systemctl restart kafka-server
-    else
-        kafkaUsage
-    fi
+  if [ $1 = 'start' ]; then
+    echo "Starting Zeppelin"
+    systemctl start zeppelin
+  elif [ $1 = 'stop' ]; then
+    echo "Stopping Zeppelin"
+    systemctl stop zeppelin
+  elif [ $1 = 'status' ]; then
+    echo "Checking Zeppelin status"
+    systemctl status zeppelin
+  elif [ $1 = 'restart' ]; then
+    echo "Restarting Zeppelin"
+    systemctl restart zeppelin
   else
-    kafkaUsage
+    zeppelinUsage
   fi
 }
-
-if [ -z $1 ]; then
-  kafkaUsage
-else
-  kafkaOperation $1 $2
-fi
