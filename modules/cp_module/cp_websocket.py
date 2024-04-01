@@ -3,6 +3,7 @@ import threading
 import cherrypy
 from urllib.parse import urlparse, parse_qs
 from modules.utils import *
+import select
 
 cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
 
@@ -18,14 +19,20 @@ class TailWebSocketHandler(WebSocket, Logger):
         self.t = None
 
     def read_log(self, stop=False):
-        with subprocess.Popen(['tail', '-F', self.filepath], stdout=subprocess.PIPE, stderr=subprocess.PIPE) as p:
-            while True:
-                line = p.stdout.readline()
-                if stop:
-                    self._logger.info("read_log stopped")
-                    break
-                else:
-                    self.send(line)
+        try:
+            with subprocess.Popen(['tail', '-F', self.filepath],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE) as p:
+                select.epoll().register(p.stdout)
+                while True:
+                    line = p.stdout.readline()
+                    if stop:
+                        self._logger.info("read_log stopped")
+                        break
+                    else:
+                        self.send(line)
+        except Exception as e:
+            self._logger.error(e)
 
     def opened(self):
         url = cherrypy.request.query_string
