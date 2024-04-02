@@ -128,7 +128,7 @@ function hdfsOperation()
       else
         sudo -u hdfs hdfs namenode -format
         sudo touch /var/lib/hadoop-hdfs/formatted
-        exit $? # exit with the same status as the format command
+        exit 127 # exit with the same status as the format command
       fi
     # Tail namenode logs
     elif [ $2 = "logs" ]; then
