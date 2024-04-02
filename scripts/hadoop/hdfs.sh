@@ -180,10 +180,13 @@ function hdfsOperation()
       echo "Init /user"
       sudo -u hdfs hdfs dfs -mkdir -p /user/history
       sudo -u hdfs hdfs dfs -chmod -R 1777 /user/history
+      echo "Init /user/hdfs"
       sudo -u hdfs hdfs dfs -mkdir -p /user/hdfs
       sudo -u hdfs hdfs dfs -chown -R hdfs:hadoop /user/hdfs
+      echo "Init /user/mapred"
       sudo -u hdfs hdfs dfs -mkdir -p /user/mapred
       sudo -u hdfs hdfs dfs -chown -R mapred:hadoop /user/mapred
+      echo "Init /user/yarn"
       sudo -u hdfs hdfs dfs -mkdir -p /user/yarn
       sudo -u hdfs hdfs dfs -chown -R yarn:hadoop /user/yarn
       sudo -u hdfs hdfs dfs -chmod 777 /user

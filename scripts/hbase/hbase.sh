@@ -71,7 +71,7 @@ ACTION=("start" "stop" "restart" "logs" "initHBaseHDFSDir")
 ROLES=("master" "regionserver" "thrift" "thrift2" "rest")
 # valid $2 in [master, regionserver, thrift, thrift2]
 # valid $3 is an hdfs path
-# hbase.sh master initHBaseHDFSDir /hbase
+# hbase.sh initHBaseHDFSDir
 # hbase.sh master [start|stop|restart|logs] [log|out]
 # hbase.sh regionserver [start|stop|restart|logs] [log|out]
 # hbase.sh thrift [start|stop|restart|logs] [log|out]
@@ -83,14 +83,14 @@ function hbaseOperation()
     echo "JAVA_HOME is not set, script will not work"
     exit 1
   fi
-  if [ $1 = 'master' ]; then
-    if [ $2 = 'initHBaseHDFSDir' ]; then
-      echo "Make /hbase on hdfs"
-      sudo -u hdfs hdfs dfs -mkdir $3
-      echo "Chown /hbase on hdfs to hbase:hbase"
-      sudo -u hdfs hdfs dfs -chown hbase:hbase $3
-      echo $?
-    elif [ $2 = 'start' ]; then
+  if [ $1 = 'initHBaseHDFSDir' ]; then
+        echo "Make /hbase on hdfs"
+        sudo -u hdfs hdfs dfs -mkdir -p /user/hbase/
+        echo "Chown /hbase on hdfs to hbase:hbase"
+        sudo -u hdfs hdfs dfs -chown hbase:hbase /user/hbase/
+        echo $?
+  elif [ $1 = 'master' ]; then
+    if [ $2 = 'start' ]; then
       echo 'start hbase master'
       sudo systemctl start hbase-master
     elif [ $2 = 'enable' ]; then

@@ -78,61 +78,76 @@ function hiveOperation() {
   fi
   if [ $1 = "metastore" ]; then
     if [ $2 = "start" ]; then
+      echo "Starting Hive Metastore"
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service metastore > /var/log/hive/hive-metastore.log 2>&1 &
       sudo systemctl start hive-metastore
     elif [ $2 = "stop" ]; then
+      echo "Stopping Hive Metastore"
       #sudo -u hive pkill -f org.apache.hadoop.hive.metastore.HiveMetaStore
       sudo systemctl stop hive-metastore
     elif [ $2 = "status" ]; then
+      echo "Checking Hive Metastore status"
       #sudo -u hive jps | grep HiveMetaStore
       sudo systemctl status hive-metastore
     elif [ $2 = 'restart' ]; then
+      echo "Restarting Hive Metastore"
       sudo systemctl restart hive-metastore
     else
       hiveUsage
     fi
   elif [ $1 = "server2" ]; then
     if [ $2 = "start" ]; then
+      echo "Starting Hive Server2"
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hiveserver2 > /var/log/hive/hive-server2.log 2>&1 &
       sudo systemctl start hive-server2
     elif [ $2 = "stop" ]; then
+      echo "Stopping Hive Server2"
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
       sudo systemctl stop hive-server2
     elif [ $2 = "status" ]; then
+      echo "Checking Hive Server2 status"
       #sudo -u hive jps | grep HiveServer2
       sudo systemctl status hive-server2
     elif [ $2 = 'restart' ]; then
+      echo "Restarting Hive Server2"
       sudo systemctl restart hive-server2
     else
       hiveUsage
     fi
   elif [ $1 = "webhcat-server" ]; then
     if [ $2 = "start" ]; then
+      echo "Starting Hive WebHCat"
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service webhcat > /var/log/hive/hive-webhcat.log 2>&1 &
       sudo systemctl start hive-webhcat-server
     elif [ $2 = "stop" ]; then
+      echo  "Stopping Hive WebHCat"
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
       sudo systemctl stop hive-webhcat-server
     elif [ $2 = "status" ]; then
+      echo "Checking Hive WebHCat status"
       #sudo -u hive jps | grep HiveServer2
       sudo systemctl status hive-webhcat-server
     elif [ $2 = 'restart' ]; then
+      echo "Restarting Hive WebHCat"
       sudo systemctl restart hive-webhcat-server
     else
       hiveUsage
     fi
   elif [ $1 = "initSchema" ]; then
+    echo "Setting Hive HDFS dirs"
     sudo -u hdfs hdfs dfs -mkdir -p /user/hive/warehouse
     sudo -u hdfs hdfs dfs -chown -R hive:hive /user/hive
     sudo -u hdfs hdfs dfs -chmod -R 0777 /user/hive/warehouse
     if [ $2 = "mysql" ]; then
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service schematool -initSchema -dbType derby
+      echo "Settingß Hive MySQL jdbc driver"
       if [ -f /usr/share/java/mysql-connector-j.jar ]; then
         sudo ln -sf /usr/share/java/mysql-connector-j.jar /usr/lib/hive/lib/mysql-connector-java.jar
       else
         echo "mysql-connector-j.jar not found, install mysql-connector-java package first"
         exit 1
       fi
+      echo "Creating Hive MySQL schema"
       sudo -u hive /usr/lib/hive/bin/schematool -initSchema -dbType mysql
     else
       hiveUsage

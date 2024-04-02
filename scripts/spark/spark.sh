@@ -86,6 +86,11 @@ fi
 # spark.sh thriftserver logs log
 # spark.sh thriftserver logs out
 
+function sparkUsage() {
+  echo "Usage: $0 [initHistoryDir|historyserver|yarnshuffle|master|worker|thriftserver|pyspark] [start|stop|restart|enable|disable|status]"
+}
+
+
 
 function sparkOperation() {
   if [ -z "${JAVA_HOME}" ]; then
@@ -103,12 +108,19 @@ function sparkOperation() {
     cd /usr/lib/spark/python; sudo /usr/bin/python3 setup.py install
   elif [ $1 = "initHistoryDir" ]; then
     # 初始化spark historyserver目录并为spark.yarn.archive配置项上传spark-libs.zip
+    echo "Initializing Spark History Server"
+    echo "Creating spark historyserver directories"
     sudo -u hdfs hdfs dfs -mkdir -p /user/spark/history
+    echo "Creating spark archive directories"
     sudo -u hdfs hdfs dfs -mkdir -p /user/spark/archive
+    echo "Creating spark events directories"
     sudo -u hdfs hdfs dfs -mkdir -p /user/spark/events
     sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/history
+    echo "Creating spark-libs.zip"
     cd /usr/lib/spark/jars; sudo zip -rq spark-libs.zip *
-    sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive
+    echo "Uploading spark-libs.zip to hdfs"
+    sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive; sudo rm -rf /usr/lib/spark/jars/spark-libs.zip
+    echo "Setting spark dirs permissions"
     sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/archive
     sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/events
     sudo -u hdfs hdfs dfs -chown -R spark:spark /user/spark
@@ -136,8 +148,6 @@ function sparkOperation() {
       else
         echo "Invalid command"
       fi
-    elif [ $2 = "status" ]; then
-      sudo -u spark /usr/lib/spark/sbin/spark-daemon.sh status org.apache.spark.deploy.history.HistoryServer 1
     else
       echo "Invalid operation"
     fi
