@@ -280,7 +280,9 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
 
                 self._return_code = self.CODE[0]
                 self._logger.info('File checksum equally, file receive succeed')
+                self._logger.debug("send: remove dest file: {}".format(full_filename))
                 sudo.run_as_sudo('root', 'rm -f ' + full_filename)
+                self._logger.debug("send: move tmp file from {} to dest path: {}".format(tmp_filename, full_filename))
                 sudo.run_as_sudo('root', 'mv ' + tmp_filename + ' ' + full_filename)
 
                 return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File received successfully')
