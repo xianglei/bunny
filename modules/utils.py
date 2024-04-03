@@ -252,8 +252,8 @@ class ShellExecutor(Logger):
                     os.mkdir(LOGS_EXEC_DIR, mode=0o777)
                 except OSError as e:
                     self._logger.error(e)
-            self._logger.info('Shell command execution result: retcode %s, stdout %s, stderr %s' %
-                              (retcode, stdout, stderr,))
+            self._logger.info('Shell command execution result: retcode {}, stdout {}, stderr {}'
+                              .format(retcode, stdout, stderr,))
             return {'retcode': retcode, 'stdout': stdout, 'stderr': stderr, 'cmd': cmd}
         except IOError as e:
             self._logger.error(e)
