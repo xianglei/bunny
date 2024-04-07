@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from modules.cp_module.cp_apis import *
+from modules.cp_module.cp_sysmonitor import *
+from modules.cp_module.cp_kadmin import *
 from modules.cp_module.cp_websocket import *
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
