@@ -49,8 +49,8 @@ class BunnyCherrypyServer(Logger):
         cherrypy.tree.mount(BunnySysPing(), '/sys/ping', BunnySysPing.conf)
         # POST only
         cherrypy.tree.mount(BunnySysService(), '/sys/service', BunnySysService.conf)
-        # cherrypy.tree.mount(BunnyKadminPrincipal(), '/kadmin/principal', BunnyKadminPrincipal.conf)
-        # cherrypy.tree.mount(BunnyKadminKeytab(), '/kadmin/keytab', BunnyKadminKeytab.conf)
+        cherrypy.tree.mount(BunnyKadminPrincipal(), '/kadmin/principal', BunnyKadminPrincipal.conf)
+        cherrypy.tree.mount(BunnyKadminKeytab(), '/kadmin/keytab', BunnyKadminKeytab.conf)
         try:
             self._logger.info("Unregistering previous server...")
             cherrypy.server.unsubscribe()
