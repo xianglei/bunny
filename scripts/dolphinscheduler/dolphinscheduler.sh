@@ -9,6 +9,12 @@ JAVA8_HOME_CANDIDATES=(
     '/usr/lib/jdk8-latest'
     '/usr/lib/jvm/java-1.8.0'
     '/usr/lib/jvm/java-1.8.0-oracle'
+    '/usr/lib/jvm/java-1.8.0-oracle'
+    '/usr/lib/jvm/jdk-1.8-oracle-aarch64'
+    '/usr/lib/jvm/jdk-1.8-oracle-x64'
+    '/usr/lib/jvm/jdk-1.8-oracle-x86'
+    '/usr/lib/jvm/jdk-1.8-oracle'
+    '/usr/java/latest'
 )
 
 OPENJAVA8_HOME_CANDIDATES=(
