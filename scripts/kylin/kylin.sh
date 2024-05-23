@@ -60,7 +60,7 @@ if [ -z "${JAVA_HOME}" ]; then
 fi
 
 function kylinUsage() {
-    echo "Usage: $0 {start|stop|status|restart|initHdfsDir}"
+    echo "Usage: $0 {start|stop|status|restart|init}"
     exit 1
 }
 
@@ -69,10 +69,25 @@ function kylinOperation() {
     echo "JAVA_HOME is not set, script will not work"
     exit 1
   fi
-  if [ $1 = 'initHdfsDir' ]; then
-    echo "initHdfsDir"
+  if [ $1 = 'init' ]; then
+    echo "init kylin"
     sudo -u hdfs hadoop fs -mkdir -p /user/kylin/cube
+    sudo -u hdfs hadoop fs -mkdir -p /user/kylin/spark-history
     sudo -u hdfs hadoop fs -chown -R kylin:kylin /user/kylin
+    CONNECTOR_JAR_STATUS=$(rpm -qa | grep mysql-connector-j > /dev/null; echo $?)
+    if [ $CONNECTOR_JAR_STATUS -ne 0 ]; then
+      sudo yum -y install mysql-connector-j mysql --verbose
+    fi
+    echo "Link mysql jdbc driver to /usr/lib/kylin/lib/mysql-connector-java.jar"
+    if [ -L /usr/lib/kylin/lib/mysql-connector-java.jar ]; then
+      sudo rm -f /usr/lib/kylin/lib/mysql-connector-java.jar
+    fi
+    sudo ln -sf /usr/share/java/mysql-connector-j.jar /usr/lib/kylin/lib/mysql-connector-java.jar
+    echo "Link spark jdbc driver to /usr/lib/kylin/"
+    if [ -L /usr/lib/kylin/spark ]; then
+      sudo rm -f /usr/lib/kylin/spark
+    fi
+    sudo ln -sf /usr/lib/spark /usr/lib/kylin
   elif [ $1 = 'start' ]; then
     sudo systemctl start kylin
   elif [ $1 = 'stop' ]; then

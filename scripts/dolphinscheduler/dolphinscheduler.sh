@@ -66,7 +66,7 @@ function dolphinUsage() {
 }
 
 function dolphinOperation() {
-  CONNECTOR_JAR_STATUS=$(rpm -qa | grep mysql-connector-j; echo $?)
+  CONNECTOR_JAR_STATUS=$(rpm -qa | grep mysql-connector-j > /dev/null; echo $?)
   if [ $1 = 'master' ];then
     if [ $2 = 'initDatabase' ]; then
       MYSQL_USER=$3
