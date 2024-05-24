@@ -10,6 +10,7 @@ from modules.status import *
 import math
 import pwd
 import grp
+import shortuuid
 
 
 class HeartbeatService(api_pb2_grpc.HeartbeatServiceServicer, Logger):
@@ -193,6 +194,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
         self._logger.debug("send: File send service incoming")
         # oct() will return a string type, so use eval() to convert it to int
         access_modes = int(request.access_modes, base=8)
+        suffix = shortuuid.ShortUUID().random(length=16)
         try:
             uid = pwd.getpwnam(request.owner).pw_uid
         except KeyError as e:
@@ -219,7 +221,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
         self._logger.debug("send: file_id: {}, file_name: {}, dest_path: {}, checksum: {}, access_modes: {}, owner: {}, format: {}".format(
             request.id, full_filename, request.path, request.checksum, access_modes, request.owner, request.format))
 
-        tmp_filename = TMP_DIR + request.filename
+        tmp_filename = TMP_DIR + request.filename + '.' + suffix
 
         if not os.path.exists(request.path):
             self._return_code = self.CODE[1]
