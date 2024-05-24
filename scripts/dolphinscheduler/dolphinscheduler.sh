@@ -72,6 +72,7 @@ function dolphinOperation() {
       MYSQL_USER=$3
       MYSQL_PASSWORD=$4
       MYSQL_HOST=$5
+      MYSQL_PORT=$6
       MYSQL_DB=dolphinscheduler
       echo "init database"
       echo "Install mysql client and jdbc driver"
@@ -83,17 +84,19 @@ function dolphinOperation() {
         sudo rm -f /usr/lib/dolphinscheduler/master-server/libs/mysql-connector-java.jar
       fi
       sudo ln -sf /usr/share/java/mysql-connector-j.jar /usr/lib/dolphinscheduler/master-server/libs/mysql-connector-java.jar
-      sudo chown -R dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler
-      echo "Create database"
-      sudo mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB"
+      sudo chown dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler/master-server/libs/mysql-connector-java.jar
+      #echo "Create database"
+      #sudo mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB"
       #echo "Create user and grant privileges"
       #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE USER IF NOT EXISTS 'dolphinscheduler'@'%' IDENTIFIED BY 'dolphinscheduler';"
       #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO 'dolphinscheduler'@'%';"
       #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "FLUSH PRIVILEGES;"
       echo "Import database"
-      sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DB < /usr/lib/dolphinscheduler/tools/sql/sql/dolphinscheduler_mysql.sql
+      sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -P$MYSQL_PORT -v $MYSQL_DB < /usr/lib/dolphinscheduler/tools/sql/sql/dolphinscheduler_mysql.sql
     elif [ $2 = 'start' ]; then
-      sudo mkdir -p /dolphinscheduler
+      if [ ! -d /dolphinscheduler ]; then
+        mkdir -p /dolphinscheduler
+      fi
       OWNER=$(stat -c %U:%G /dolphinscheduler)
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
@@ -114,7 +117,9 @@ function dolphinOperation() {
     fi
   elif [ $1 = 'worker' ]; then
     if [ $2 = 'start' ]; then
-      sudo mkdir -p /dolphinscheduler
+      if [ ! -d /dolphinscheduler ]; then
+        mkdir -p /dolphinscheduler
+      fi
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -128,6 +133,7 @@ function dolphinOperation() {
         sudo rm -f /usr/lib/dolphinscheduler/worker-server/libs/mysql-connector-java.jar
       fi
       sudo ln -sf /usr/share/java/mysql-connector-java.jar /usr/lib/dolphinscheduler/worker-server/libs/mysql-connector-java.jar
+      sudo chown dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler/worker-server/libs/mysql-connector-java.jar
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-worker
       echo $?
@@ -142,7 +148,9 @@ function dolphinOperation() {
     fi
   elif [ $1 = 'api' ]; then
     if [ $2 = 'start' ]; then
-      sudo mkdir -p /dolphinscheduler
+      if [ ! -d /dolphinscheduler ]; then
+        mkdir -p /dolphinscheduler
+      fi
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -156,6 +164,7 @@ function dolphinOperation() {
         sudo rm -f /usr/lib/dolphinscheduler/api-server/libs/mysql-connector-java.jar
       fi
       sudo ln -sf /usr/share/java/mysql-connector-java.jar /usr/lib/dolphinscheduler/api-server/libs/mysql-connector-java.jar
+      sudo chown dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler/api-server/libs/mysql-connector-java.jar
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-api
       echo $?
@@ -170,7 +179,9 @@ function dolphinOperation() {
     fi
   elif [ $1 = 'alert' ]; then
     if [ $2 = 'start' ]; then
-      mkdir -p /dolphinscheduler
+      if [ ! -d /dolphinscheduler ]; then
+        mkdir -p /dolphinscheduler
+      fi
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -184,6 +195,7 @@ function dolphinOperation() {
         sudo rm -f /usr/lib/dolphinscheduler/alert-server/libs/mysql-connector-java.jar
       fi
       sudo ln -sf /usr/share/java/mysql-connector-java.jar /usr/lib/dolphinscheduler/alert-server/libs/mysql-connector-java.jar
+      sudo chown dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler/alert-server/libs/mysql-connector-java.jar
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-alert
       echo $?
@@ -198,7 +210,9 @@ function dolphinOperation() {
     fi
   elif [ $1 = 'standalone' ]; then
     if [ $2 = 'start' ]; then
-      sudo mkdir -p /dolphinscheduler
+      if [ ! -d /dolphinscheduler ]; then
+        mkdir -p /dolphinscheduler
+      fi
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -233,5 +247,5 @@ if [ -z $1 ]; then
   dolphinUsage
   exit 1
 else
-  dolphinOperation $1 $2 $3 $4 $5
+  dolphinOperation $1 $2 $3 $4 $5 $6
 fi

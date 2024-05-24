@@ -175,27 +175,44 @@ function hdfsOperation()
       # Make HDFS directories
       tmp=/tmp
       echo "Init dir /tmp"
-      sudo -u hdfs hdfs dfs -mkdir -p $tmp
-      sudo -u hdfs hdfs dfs -mkdir -p /tmp/hadoop-yarn/staging/history/done_intermediate
-      sudo -u hdfs hdfs dfs -chown -R hdfs:hadoop $tmp
-      sudo -u hdfs hdfs dfs -chown -R mapred:mapred /tmp/hadoop-yarn/staging
-      sudo -u hdfs hdfs dfs -chmod -R 1777 $tmp
+      if sudo -u hdfs hdfs dfs -test -d /tmp; then
+        echo "Directory /tmp already exists"
+      else
+        echo "Creating HDFS directory /tmp"
+        sudo -u hdfs hdfs dfs -mkdir -p $tmp
+        sudo -u hdfs hdfs dfs -mkdir -p /tmp/hadoop-yarn/staging/history/done_intermediate
+        sudo -u hdfs hdfs dfs -chown -R hdfs:hadoop $tmp
+        sudo -u hdfs hdfs dfs -chown -R mapred:mapred /tmp/hadoop-yarn/staging
+        sudo -u hdfs hdfs dfs -chmod -R 1777 $tmp
+        echo "HDFS Directory /tmp created"
+      fi
       echo "Init /var"
-      sudo -u hdfs hdfs dfs -mkdir -p /var/log/hadoop-yarn
-      sudo -u hdfs hdfs dfs -chown yarn:mapred /var/log/hadoop-yarn
-      echo "Init /user"
-      sudo -u hdfs hdfs dfs -mkdir -p /user/history
-      sudo -u hdfs hdfs dfs -chmod -R 1777 /user/history
-      echo "Init /user/hdfs"
-      sudo -u hdfs hdfs dfs -mkdir -p /user/hdfs
-      sudo -u hdfs hdfs dfs -chown -R hdfs:hadoop /user/hdfs
-      echo "Init /user/mapred"
-      sudo -u hdfs hdfs dfs -mkdir -p /user/mapred
-      sudo -u hdfs hdfs dfs -chown -R mapred:hadoop /user/mapred
-      echo "Init /user/yarn"
-      sudo -u hdfs hdfs dfs -mkdir -p /user/yarn
-      sudo -u hdfs hdfs dfs -chown -R yarn:hadoop /user/yarn
-      sudo -u hdfs hdfs dfs -chmod 777 /user
+      if sudo -u hdfs hdfs dfs -test -d /var; then
+        echo "HDFS Directory /var already exists"
+      else
+        echo "Creating HDFS directory /var"
+        sudo -u hdfs hdfs dfs -mkdir -p /var/log/hadoop-yarn
+        sudo -u hdfs hdfs dfs -chown yarn:mapred /var/log/hadoop-yarn
+        echo "HDFS Directory /var created"
+      fi
+      if sudo -u hdfs hdfs dfs -test -d /user; then
+        echo "HDFS Directory /user already exists"
+      else
+        echo "Init /user"
+        sudo -u hdfs hdfs dfs -mkdir -p /user/history
+        sudo -u hdfs hdfs dfs -chmod -R 1777 /user/history
+        echo "Init /user/hdfs"
+        sudo -u hdfs hdfs dfs -mkdir -p /user/hdfs
+        sudo -u hdfs hdfs dfs -chown -R hdfs:hadoop /user/hdfs
+        echo "Init /user/mapred"
+        sudo -u hdfs hdfs dfs -mkdir -p /user/mapred
+        sudo -u hdfs hdfs dfs -chown -R mapred:hadoop /user/mapred
+        echo "Init /user/yarn"
+        sudo -u hdfs hdfs dfs -mkdir -p /user/yarn
+        sudo -u hdfs hdfs dfs -chown -R yarn:hadoop /user/yarn
+        sudo -u hdfs hdfs dfs -chmod 777 /user
+        echo "HDFS Directory /user created"
+      fi
     else
       echo "Invalid command"
     fi

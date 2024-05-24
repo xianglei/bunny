@@ -105,13 +105,14 @@ function sparkOperation() {
   fi
   if [ $1 = 'pyspark' ]; then
     # set PYSPARK_PYTHON to python3
+    PYTHON3=$(which python3)
     if grep -qwxF 'export PYSPARK_PYTHON=python3' /usr/bin/pyspark; then
       echo "PYSPARK_PYTHON is already set to python3"
     else
       sudo sed -i 's/export PYSPARK_PYTHON=python/export PYSPARK_PYTHON=python3/g' /usr/bin/pyspark
     fi
     sudo pip3 install py4j
-    cd /usr/lib/spark/python; sudo /usr/bin/python3 setup.py install
+    cd /usr/lib/spark/python; sudo $PYTHON3 setup.py install
   elif [ $1 = "initHistoryDir" ]; then
     # 初始化spark historyserver目录并为spark.yarn.archive配置项上传spark-libs.zip
     echo "Initializing Spark History Server"
@@ -122,10 +123,14 @@ function sparkOperation() {
     echo "Creating spark events directories"
     sudo -u hdfs hdfs dfs -mkdir -p /user/spark/events
     sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/history
-    echo "Creating spark-libs.zip"
-    cd /usr/lib/spark/jars; sudo zip -rq spark-libs.zip *
-    echo "Uploading spark-libs.zip to hdfs"
-    sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive; sudo rm -rf /usr/lib/spark/jars/spark-libs.zip
+    if sudo -u hdfs hdfs dfs -test -f /user/spark/archive/spark-libs.zip; then
+      echo "spark-libs.zip already exists"
+    else
+      echo "Creating spark-libs.zip"
+      cd /usr/lib/spark/jars; sudo zip -rq spark-libs.zip *
+      echo "Uploading spark-libs.zip to hdfs"
+      sudo -u hdfs hdfs dfs -put /usr/lib/spark/jars/spark-libs.zip /user/spark/archive; sudo rm -rf /usr/lib/spark/jars/spark-libs.zip
+    fi
     echo "Setting spark dirs permissions"
     sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/archive
     sudo -u hdfs hdfs dfs -chmod -R 0777 /user/spark/events
