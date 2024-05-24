@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 JAVA8_HOME_CANDIDATES=(
     '/usr/java/jdk1.8'
@@ -105,3 +105,9 @@ function kylinOperation() {
   fi
 }
 
+if [ -z $1 ]; then
+  kylinUsage
+  exit 1
+else
+  kylinOperation $1
+fi

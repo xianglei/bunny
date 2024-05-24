@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 JAVA8_HOME_CANDIDATES=(
     '/usr/java/jdk1.8'
@@ -83,12 +83,14 @@ function dolphinOperation() {
         sudo rm -f /usr/lib/dolphinscheduler/master-server/libs/mysql-connector-java.jar
       fi
       sudo ln -sf /usr/share/java/mysql-connector-j.jar /usr/lib/dolphinscheduler/master-server/libs/mysql-connector-java.jar
+      sudo chown -R dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler
       echo "Create database"
       sudo mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB"
-      echo "Create user and grant privileges"
-      sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE USER IF NOT EXISTS 'dolphinscheduler'@'%' IDENTIFIED BY 'dolphinscheduler';"
-      sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO 'dolphinscheduler'@'%';"
-      sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "FLUSH PRIVILEGES;"
+      #echo "Create user and grant privileges"
+      #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE USER IF NOT EXISTS 'dolphinscheduler'@'%' IDENTIFIED BY 'dolphinscheduler';"
+      #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO 'dolphinscheduler'@'%';"
+      #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "FLUSH PRIVILEGES;"
+      echo "Import database"
       sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DB < /usr/lib/dolphinscheduler/tools/sql/sql/dolphinscheduler_mysql.sql
     elif [ $2 = 'start' ]; then
       sudo mkdir -p /dolphinscheduler
@@ -226,3 +228,10 @@ function dolphinOperation() {
     dolphinUsage
   fi
 }
+
+if [ -z $1 ]; then
+  dolphinUsage
+  exit 1
+else
+  dolphinOperation $1 $2 $3 $4 $5
+fi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 JAVA8_HOME_CANDIDATES=(
