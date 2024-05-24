@@ -112,6 +112,12 @@ function dolphinOperation() {
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-master
       exit $?
+    elif [ $2 = 'enable' ]; then
+      sudo systemctl enable dolphinscheduler-master
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      sudo systemctl disable dolphinscheduler-master
+      exit $?
     else
       dolphinUsage
     fi
@@ -120,6 +126,7 @@ function dolphinOperation() {
       if [ ! -d /dolphinscheduler ]; then
         mkdir -p /dolphinscheduler
       fi
+      OWNER=$(stat -c %U:%G /dolphinscheduler)
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -143,6 +150,12 @@ function dolphinOperation() {
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-worker
       exit $?
+    elif [ $2 = 'enable' ]; then
+      sudo systemctl enable dolphinscheduler-worker
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      sudo systemctl disable dolphinscheduler-worker
+      exit $?
     else
       dolphinUsage
     fi
@@ -151,6 +164,7 @@ function dolphinOperation() {
       if [ ! -d /dolphinscheduler ]; then
         mkdir -p /dolphinscheduler
       fi
+      OWNER=$(stat -c %U:%G /dolphinscheduler)
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -174,6 +188,12 @@ function dolphinOperation() {
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-api
       exit $?
+    elif [ $2 = 'enable' ]; then
+      sudo systemctl enable dolphinscheduler-api
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      sudo systemctl disable dolphinscheduler-api
+      exit $?
     else
       dolphinUsage
     fi
@@ -182,6 +202,7 @@ function dolphinOperation() {
       if [ ! -d /dolphinscheduler ]; then
         mkdir -p /dolphinscheduler
       fi
+      OWNER=$(stat -c %U:%G /dolphinscheduler)
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -205,6 +226,12 @@ function dolphinOperation() {
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-alert
       exit $?
+    elif [ $2 = 'enable' ]; then
+      sudo systemctl enable dolphinscheduler-alert
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      sudo systemctl disable dolphinscheduler-alert
+      exit $?
     else
       dolphinUsage
     fi
@@ -213,6 +240,7 @@ function dolphinOperation() {
       if [ ! -d /dolphinscheduler ]; then
         mkdir -p /dolphinscheduler
       fi
+      OWNER=$(stat -c %U:%G /dolphinscheduler)
       if [ $OWNER != "dolphinscheduler:dolphinscheduler" ]; then
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
@@ -234,6 +262,12 @@ function dolphinOperation() {
       exit $?
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-standalone
+      exit $?
+    elif [ $2 = 'enable' ]; then
+      sudo systemctl enable dolphinscheduler-standalone
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      sudo systemctl disable dolphinscheduler-standalone
       exit $?
     else
       dolphinUsage

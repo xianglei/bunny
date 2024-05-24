@@ -102,6 +102,14 @@ function hiveOperation() {
       echo "Restarting Hive Metastore"
       sudo systemctl restart hive-metastore
       exit $?
+    elif [ $2 = 'enable' ]; then
+      echo 'enable hive-metastore service'
+      sudo systemctl enable hive-metastore
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      echo 'disable hive-metastore service'
+      sudo systemctl disable hive-metastore
+      exit $?
     else
       hiveUsage
     fi
@@ -125,6 +133,14 @@ function hiveOperation() {
       echo "Restarting Hive Server2"
       sudo systemctl restart hive-server2
       exit $?
+    elif [ $2 = 'enable' ]; then
+      echo 'enable hive-server2 service'
+      sudo systemctl enable hive-server2
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      echo 'disable hive-server2 service'
+      sudo systemctl disable hive-server2
+      exit $?
     else
       hiveUsage
     fi
@@ -147,6 +163,14 @@ function hiveOperation() {
     elif [ $2 = 'restart' ]; then
       echo "Restarting Hive WebHCat"
       sudo systemctl restart hive-webhcat-server
+      exit $?
+    elif [ $2 = 'enable' ]; then
+      echo 'enable hive-webhcat-server service'
+      sudo systemctl enable hive-webhcat-server
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      echo 'disable hive-webhcat-server service'
+      sudo systemctl disable hive-webhcat-server
       exit $?
     else
       hiveUsage

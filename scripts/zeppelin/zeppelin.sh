@@ -86,6 +86,14 @@ function zeppelinOperation() {
     echo "Restarting Zeppelin"
     sudo systemctl restart zeppelin
     exit $?
+  elif [ $1 = 'enable' ]; then
+    echo "Enabling Zeppelin"
+    sudo systemctl enable zeppelin
+    exit $?
+  elif [ $1 = 'disable' ]; then
+    echo "Disabling Zeppelin"
+    sudo systemctl disable zeppelin
+    exit $?
   else
     zeppelinUsage
   fi

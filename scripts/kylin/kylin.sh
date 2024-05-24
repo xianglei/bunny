@@ -65,6 +65,7 @@ function kylinUsage() {
 }
 
 function kylinOperation() {
+  CONNECTOR_JAR_STATUS=$(rpm -qa | grep mysql-connector-j > /dev/null; echo $?)
   if [ -z "${JAVA_HOME}" ]; then
     echo "JAVA_HOME is not set, script will not work"
     exit 1
@@ -74,7 +75,6 @@ function kylinOperation() {
     sudo -u hdfs hadoop fs -mkdir -p /user/kylin/cube
     sudo -u hdfs hadoop fs -mkdir -p /user/kylin/spark-history
     sudo -u hdfs hadoop fs -chown -R kylin:kylin /user/kylin
-    CONNECTOR_JAR_STATUS=$(rpm -qa | grep mysql-connector-j > /dev/null; echo $?)
     if [ $CONNECTOR_JAR_STATUS -ne 0 ]; then
       sudo yum -y install mysql-connector-j mysql --verbose
     fi
@@ -99,6 +99,12 @@ function kylinOperation() {
     exit $?
   elif [ $1 = 'restart' ]; then
     sudo systemctl restart kylin
+    exit $?
+  elif [ $1 = 'enable' ]; then
+    sudo systemctl enable kylin
+    exit $?
+  elif [ $1 = 'disable' ]; then
+    sudo systemctl disable kylin
     exit $?
   else
     kylinUsage

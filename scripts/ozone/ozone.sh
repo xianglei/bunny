@@ -71,6 +71,99 @@ function ozoneOperation() {
     echo "JAVA_HOME is not set, script will not work"
     exit 1
   fi
+  if [ $1 = 'scm' ]; then
+    if [ $2 = 'init' ]; then
+      if [ -f /usr/lib/ozone/scm.init-ed ]; then
+        echo "Ozone SCM is already init-ed, if want to re-init, remove the om meta dir and /usr/lib/ozone/scm.init-ed file manually and re-run the script"
+        exit 1
+      else
+        sudo -u ozone /usr/lib/ozone/bin/ozone scm --init
+        sudo touch /usr/lib/ozone/scm.init-ed
+        sudo chown ozone:ozone /usr/lib/ozone/scm.init-ed
+      fi
+    elif [ $2 = 'mkdir' ]; then
+      # ozone.metadata.dirs
+      TMP=$3
+      DIRS=${TMP//,/ }
+      echo "Creating $DIR"
+      for dir in $DIRS; do
+        sudo mkdir -p $dir
+        sudo chown ozone:ozone $dir
+      done
+    elif [ $2 = 'start' ]; then
+      echo "Starting Ozone SCM"
+      sudo systemctl start ozone-scm
+      exit $?
+    elif [ $2 = 'stop' ]; then
+      echo "Stopping Ozone SCM"
+      sudo systemctl stop ozone-scm
+      exit $?
+    elif [ $2 = 'status' ]; then
+      echo "Checking Ozone SCM status"
+      sudo systemctl status ozone-scm
+      exit $?
+    elif [ $2 = 'restart' ]; then
+      echo "Restarting Ozone SCM"
+      sudo systemctl restart ozone-scm
+      exit $?
+    elif [ $2 = 'enable' ]; then
+      echo 'enable ozone-scm service'
+      sudo systemctl enable ozone-scm
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      echo 'disable ozone-scm service'
+      sudo systemctl disable ozone-scm
+      exit $?
+    else
+      ozoneUsage
+    fi
+  elif [ $1 = 'om' ]; then
+    if [ $2 = 'init' ]; then
+      if [ -f /usr/lib/ozone/om.init-ed ]; then
+        echo "Ozone OM is already init-ed, if want to re-init, remove the om meta dir and /usr/lib/ozone/om.init-ed file manually and re-run the script"
+        exit 1
+      else
+        sudo -u ozone /usr/lib/ozone/bin/ozone om --init
+        sudo touch /usr/lib/ozone/om.init-ed
+        sudo chown ozone:ozone /usr/lib/ozone/om.init-ed
+      fi
+    elif [ $2 = 'mkdir' ]; then
+      # ozone.om.db.dirs
+      TMP=$3
+      DIRS=${TMP//,/ }
+      echo "Creating $DIR"
+      for dir in $DIRS; do
+        sudo mkdir -p $dir
+        sudo chown ozone:ozone $dir
+      done
+    elif [ $2 = 'start' ]; then
+      echo "Starting Ozone OM"
+      sudo systemctl start ozone-om
+      exit $?
+    elif [ $2 = 'stop' ]; then
+      echo "Stopping Ozone OM"
+      sudo systemctl stop ozone-om
+      exit $?
+    elif [ $2 = 'status' ]; then
+      echo "Checking Ozone OM status"
+      sudo systemctl status ozone-om
+      exit $?
+    elif [ $2 = 'restart' ]; then
+      echo "Restarting Ozone OM"
+      sudo systemctl restart ozone-om
+      exit $?
+    elif [ $2 = 'enable' ]; then
+      echo 'enable ozone-om service'
+      sudo systemctl enable ozone-om
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      echo 'disable ozone-om service'
+      sudo systemctl disable ozone-om
+      exit $?
+    else
+      ozoneUsage
+    fi
+  fi
 }
 
 
