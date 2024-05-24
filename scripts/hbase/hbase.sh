@@ -99,6 +99,7 @@ function hbaseOperation()
     if [ $2 = 'start' ]; then
       echo 'start hbase master'
       sudo systemctl start hbase-master
+      echo $?
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-master service'
       sudo systemctl enable hbase-master
@@ -116,11 +117,14 @@ function hbaseOperation()
     elif [ $2 = 'stop' ]; then
       echo 'stop hbase master'
       sudo systemctl stop hbase-master
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo 'restart hbase master'
       sudo systemctl restart hbase-master
+      echo $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status hbase-master
+      echo $?
     else
       echo "Invalid command"
     fi
@@ -128,12 +132,15 @@ function hbaseOperation()
     if [ $2 = 'start' ]; then
       echo 'start hbase regionserver'
       sudo systemctl start hbase-regionserver
+      echo $?
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-regionserver service'
       sudo systemctl enable hbase-regionserver
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-regionserver service'
       sudo systemctl disable hbase-regionserver
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-$1-$HOSTNAME.log
@@ -145,11 +152,14 @@ function hbaseOperation()
     elif [ $2 = 'stop' ]; then
       echo 'stop hbase regionserver'
       sudo systemctl stop hbase-regionserver
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo 'restart hbase regionserver'
       sudo systemctl restart hbase-regionserver
+      echo $?
     elif [ $2 = 'status' ]; then
-          sudo systemctl status hbase-regionserver
+      sudo systemctl status hbase-regionserver
+      echo $?
     else
       echo "Invalid command"
     fi
@@ -157,12 +167,15 @@ function hbaseOperation()
     if [ $2 = 'start' ]; then
       echo 'start hbase thrift'
       sudo systemctl start hbase-thrift
+      echo $?
     elif [ $2 = 'stop' ]; then
       echo 'stop hbase thrift'
       sudo systemctl stop hbase-thrift
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo 'restart hbase thrift'
       sudo systemctl restart hbase-thrift
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-thrift-$HOSTNAME.log
@@ -174,11 +187,14 @@ function hbaseOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-thrift service'
       sudo systemctl enable hbase-thrift
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-thrift service'
       sudo systemctl disable hbase-thrift
+      echo $?
     elif [ $2 = 'status' ]; then
-          sudo systemctl status hbase-thrift
+      sudo systemctl status hbase-thrift
+      echo $?
     else
       echo "Invalid command"
     fi
@@ -186,12 +202,15 @@ function hbaseOperation()
     if [ $2 = 'start' ]; then
       echo 'start hbase thrift2'
       sudo systemctl start hbase-thrift2
+      echo $?
     elif [ $2 = 'stop' ]; then
       echo 'stop hbase thrift2'
       sudo systemctl stop hbase-thrift2
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo 'restart hbase thrift'
       sudo systemctl restart hbase-thrift2
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-thrift2-$HOSTNAME.log
@@ -203,11 +222,14 @@ function hbaseOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-thrift2 service'
       sudo systemctl enable hbase-thrift2
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-thrift2 service'
       sudo systemctl disable hbase-thrift2
+      echo $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status hbase-thrift2
+      echo $?
     else
       echo "Invalid command"
     fi
@@ -215,12 +237,15 @@ function hbaseOperation()
     if [ $2 = 'start' ]; then
       echo 'start hbase rest'
       sudo systemctl start hbase-rest
+      echo $?
     elif [ $2 = 'stop' ]; then
       echo 'stop hbase rest'
       sudo systemctl stop hbase-rest
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo 'restart hbase rest'
       sudo systemctl restart hbase-rest
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u hbase tail -n 200 /var/log/hbase/hbase-hbase-rest-$HOSTNAME.log
@@ -232,11 +257,14 @@ function hbaseOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable hbase-rest service'
       sudo systemctl enable hbase-rest
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable hbase-rest service'
       sudo systemctl disable hbase-rest
+      echo $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status hbase-rest
+      echo $?
     else
       echo "Invalid command"
     fi

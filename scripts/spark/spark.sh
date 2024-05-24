@@ -134,18 +134,24 @@ function sparkOperation() {
     if [ $2 = "start" ]; then
       echo "Starting Spark History Server"
       sudo systemctl start spark-history-server
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Spark History Server"
       sudo systemctl stop spark-history-server
+      echo $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Spark History Server"
       sudo systemctl restart spark-history-server
+      echo $?
     elif [ $2 = "enable" ]; then
       sudo systemctl enable spark-history-server
+      echo $?
     elif [ $2 = "disable" ]; then
       sudo systemctl disable spark-history-server
+      echo $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status spark-history-server
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u spark tail -n 200 /var/log/spark/spark-history-server.log
@@ -170,18 +176,24 @@ function sparkOperation() {
     if [ $2 = "start" ]; then
       echo "Starting Spark master"
       sudo systemctl start spark-master
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Spark master"
       sudo systemctl stop spark-master
+      echo $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Spark master"
       sudo systemctl restart spark-master
+      echo $?
     elif [ $2 = "enable" ]; then
       sudo systemctl enable spark-master
+      echo $?
     elif [ $2 = "disable" ]; then
       sudo systemctl disable spark-master
+      echo $?
     elif [ $2 = "status" ]; then
       sudo systemctl status spark-master
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u spark tail -n 200 /var/log/spark/spark-master.log
@@ -197,18 +209,24 @@ function sparkOperation() {
     if [ $2 = "start" ]; then
       echo "Starting Spark worker"
       sudo systemctl start spark-worker
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Spark worker"
       sudo systemctl stop spark-worker
+      echo $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Spark worker"
       sudo systemctl restart spark-worker
+      echo $?
     elif [ $2 = "enable" ]; then
       sudo systemctl enable spark-worker
+      echo $?
     elif [ $2 = "disable" ]; then
       sudo systemctl disable spark-worker
+      echo $?
     elif [ $2 = "status" ]; then
       sudo systemctl status spark-worker
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u spark tail -n 200 /var/log/spark/spark-worker.log
@@ -224,18 +242,24 @@ function sparkOperation() {
     if [ $2 = "start" ]; then
       echo "Starting Spark thriftserver"
       sudo systemctl start spark-thriftserver
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Spark thriftserver"
       sudo systemctl stop spark-thriftserver
+      echo $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Spark thriftserver"
       sudo systemctl restart spark-thriftserver
+      echo $?
     elif [ $2 = "enable" ]; then
       sudo systemctl enable spark-thriftserver
+      echo $?
     elif [ $2 = "disable" ]; then
       sudo systemctl disable spark-thriftserver
+      echo $?
     elif [ $2 = "status" ]; then
       sudo systemctl status spark-thriftserver
+      echo $?
     elif [ $2 = 'logs' ]; then
       if [ $3 = 'log' ]; then
         sudo -u spark tail -n 200 /var/log/spark/spark-thriftserver.log

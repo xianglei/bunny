@@ -87,17 +87,21 @@ function hiveOperation() {
       echo "Starting Hive Metastore"
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service metastore > /var/log/hive/hive-metastore.log 2>&1 &
       sudo systemctl start hive-metastore
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Hive Metastore"
       #sudo -u hive pkill -f org.apache.hadoop.hive.metastore.HiveMetaStore
       sudo systemctl stop hive-metastore
+      echo $?
     elif [ $2 = "status" ]; then
       echo "Checking Hive Metastore status"
       #sudo -u hive jps | grep HiveMetaStore
       sudo systemctl status hive-metastore
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo "Restarting Hive Metastore"
       sudo systemctl restart hive-metastore
+      echo $?
     else
       hiveUsage
     fi
@@ -106,17 +110,21 @@ function hiveOperation() {
       echo "Starting Hive Server2"
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service hiveserver2 > /var/log/hive/hive-server2.log 2>&1 &
       sudo systemctl start hive-server2
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Hive Server2"
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
       sudo systemctl stop hive-server2
+      echo $?
     elif [ $2 = "status" ]; then
       echo "Checking Hive Server2 status"
       #sudo -u hive jps | grep HiveServer2
       sudo systemctl status hive-server2
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo "Restarting Hive Server2"
       sudo systemctl restart hive-server2
+      echo $?
     else
       hiveUsage
     fi
@@ -125,17 +133,21 @@ function hiveOperation() {
       echo "Starting Hive WebHCat"
       #sudo -u hive HADOOP_HOME=${HADOOP_HOME} JAVA_HOME=${JAVA_HOME} ${HIVE_HOME}/bin/hive --service webhcat > /var/log/hive/hive-webhcat.log 2>&1 &
       sudo systemctl start hive-webhcat-server
+      echo $?
     elif [ $2 = "stop" ]; then
       echo  "Stopping Hive WebHCat"
       #sudo -u hive pkill -f org.apache.hive.service.server.HiveServer2
       sudo systemctl stop hive-webhcat-server
+      echo $?
     elif [ $2 = "status" ]; then
       echo "Checking Hive WebHCat status"
       #sudo -u hive jps | grep HiveServer2
       sudo systemctl status hive-webhcat-server
+      echo $?
     elif [ $2 = 'restart' ]; then
       echo "Restarting Hive WebHCat"
       sudo systemctl restart hive-webhcat-server
+      echo $?
     else
       hiveUsage
     fi

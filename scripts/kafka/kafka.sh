@@ -89,15 +89,27 @@ function kafkaOperation() {
     if [ $2 = "start" ]; then
         echo "Starting Kafka"
         sudo systemctl start kafka-server
+        echo $?
     elif [ $2 = "stop" ]; then
         echo "Stopping Kafka"
         sudo systemctl stop kafka-server
+        echo $?
     elif [ $2 = "status" ]; then
         echo "Status of Kafka"
         sudo systemctl status kafka-server
+        echo $?
     elif [ $2 = 'restart' ]; then
         echo "Restarting Kafka"
         sudo systemctl restart kafka-server
+        echo $?
+    elif [ $2 = 'enable' ]; then
+        echo 'enable kafka-server service'
+        sudo systemctl enable kafka-server
+        echo $?
+    elif [ $2 = 'disable' ]; then
+        echo 'disable kafka-server service'
+        sudo systemctl disable kafka-server
+        echo $?
     else
         kafkaUsage
     fi

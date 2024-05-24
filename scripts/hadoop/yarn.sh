@@ -101,18 +101,23 @@ function yarnOperation() {
     elif [ $2 = 'enable' ]; then
       echo 'enable hadoop-yarn-nodemanager service'
       sudo systemctl enable hadoop-yarn-nodemanager
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable hadoop-yarn-nodemanager service'
       sudo systemctl disable hadoop-yarn-nodemanager
+      echo $?
     elif [ $2 = "start" ]; then
       echo "Starting NodeManager"
       sudo systemctl start hadoop-yarn-nodemanager
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping NodeManager"
       sudo systemctl stop hadoop-yarn-nodemanager
+      echo $?
     elif [ $2 = "restart" ]; then
       echo "Restarting NodeManager"
       sudo systemctl restart hadoop-yarn-nodemanager
+      echo $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing NodeManager log"
@@ -140,18 +145,23 @@ function yarnOperation() {
     if [ $2 = "start" ]; then
       echo "Starting ResourceManager"
       sudo systemctl start hadoop-yarn-resourcemanager
+      echo $?
     elif [ $2 = "stop" ]; then
       echo "Stopping ResourceManager"
       sudo systemctl stop hadoop-yarn-resourcemanager
+      echo $?
     elif [ $2 = "restart" ]; then
       echo "Restarting ResourceManager"
       sudo systemctl restart hadoop-yarn-resourcemanager
+      echo $?
     elif [ $2 = 'enable' ]; then
       echo 'enable hadoop-yarn-resourcemanager service'
       sudo systemctl enable hadoop-yarn-resourcemanager
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable hadoop-yarn-resourcemanager service'
       sudo systemctl disable hadoop-yarn-resourcemanager
+      echo $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing ResourceManager log"
@@ -170,16 +180,21 @@ function yarnOperation() {
   elif [ $1 = "jobhistory" ]; then
     if [ $2 = "start" ]; then
       sudo systemctl start hadoop-mapreduce-historyserver
+      echo $?
     elif [ $2 = "stop" ]; then
       sudo systemctl stop hadoop-mapreduce-historyserver
+      echo $?
     elif [ $2 = "restart" ]; then
       sudo systemctl restart hadoop-mapreduce-historyserver
+      echo $?
     elif [ $2 = 'enable' ]; then
       echo 'enable hadoop-mapreduce-historyserver service'
       sudo systemctl enable hadoop-mapreduce-historyserver
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable hadoop-mapreduce-historyserver service'
       sudo systemctl disable hadoop-mapreduce-historyserver
+      echo $?
     elif [ $2 = 'mkdir' ]; then
       echo "Initializing JobHistory"
       sudo -u hdfs hdfs dfs -mkdir -p $3

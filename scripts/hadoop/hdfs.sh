@@ -212,9 +212,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-datanode
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-datanode
+      echo $?
     elif [ $2 = "start" ]; then
       # hdfs.sh datanode start
       echo "Starting Datanode"
@@ -258,9 +260,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-journalnode
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-journalnode
+      echo $?
     elif [ $2 = "start" ]; then
       # hdfs.sh journalnode start
       echo "Starting Journalnode"
@@ -314,9 +318,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-zkfc
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-zkfc
+      echo $?
     else
       echo "Invalid command"
     fi
@@ -373,9 +379,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-secondarynamenode
+      echo $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-secondarynamenode
+      echo $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing Secondary Namenode logs"
