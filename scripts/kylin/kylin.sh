@@ -90,16 +90,16 @@ function kylinOperation() {
     sudo ln -sf /usr/lib/spark /usr/lib/kylin
   elif [ $1 = 'start' ]; then
     sudo systemctl start kylin
-    echo $?
+    exit $?
   elif [ $1 = 'stop' ]; then
     sudo systemctl stop kylin
-    echo $?
+    exit $?
   elif [ $1 = 'status' ]; then
     sudo systemctl status kylin
-    echo $?
+    exit $?
   elif [ $1 = 'restart' ]; then
     sudo systemctl restart kylin
-    echo $?
+    exit $?
   else
     kylinUsage
   fi

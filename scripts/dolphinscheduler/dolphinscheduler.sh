@@ -92,7 +92,7 @@ function dolphinOperation() {
       #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON $MYSQL_DB.* TO 'dolphinscheduler'@'%';"
       #sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -e "FLUSH PRIVILEGES;"
       echo "Import database"
-      sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -P$MYSQL_PORT -v $MYSQL_DB < /usr/lib/dolphinscheduler/tools/sql/sql/dolphinscheduler_mysql.sql
+      sudo mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -P$MYSQL_PORT $MYSQL_DB -v < /usr/lib/dolphinscheduler/tools/sql/sql/dolphinscheduler_mysql.sql
     elif [ $2 = 'start' ]; then
       if [ ! -d /dolphinscheduler ]; then
         mkdir -p /dolphinscheduler
@@ -102,16 +102,16 @@ function dolphinOperation() {
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
       sudo systemctl start dolphinscheduler-master
-      echo $?
+      exit $?
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-master
-      echo $?
+      exit $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status dolphinscheduler-master
-      echo $?
+      exit $?
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-master
-      echo $?
+      exit $?
     else
       dolphinUsage
     fi
@@ -124,7 +124,7 @@ function dolphinOperation() {
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
       sudo systemctl start dolphinscheduler-worker
-      echo $?
+      exit $?
     elif [ $2 = "jdbc" ]; then
       if [ $CONNECTOR_JAR_STATUS -ne 0 ]; then
         sudo yum -y install mysql-connector-j mysql --verbose
@@ -136,13 +136,13 @@ function dolphinOperation() {
       sudo chown dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler/worker-server/libs/mysql-connector-java.jar
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-worker
-      echo $?
+      exit $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status dolphinscheduler-worker
-      echo $?
+      exit $?
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-worker
-      echo $?
+      exit $?
     else
       dolphinUsage
     fi
@@ -155,7 +155,7 @@ function dolphinOperation() {
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
       sudo systemctl start dolphinscheduler-api
-      echo $?
+      exit $?
     elif [ $2 = "jdbc" ]; then
       if [ $CONNECTOR_JAR_STATUS -ne 0 ]; then
         sudo yum -y install mysql-connector-j mysql --verbose
@@ -167,13 +167,13 @@ function dolphinOperation() {
       sudo chown dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler/api-server/libs/mysql-connector-java.jar
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-api
-      echo $?
+      exit $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status dolphinscheduler-api
-      echo $?
+      exit $?
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-api
-      echo $?
+      exit $?
     else
       dolphinUsage
     fi
@@ -186,7 +186,7 @@ function dolphinOperation() {
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
       sudo systemctl start dolphinscheduler-alert
-      echo $?
+      exit $?
     elif [ $2 = "jdbc" ]; then
       if [ $CONNECTOR_JAR_STATUS -ne 0 ]; then
         sudo yum -y install mysql-connector-j mysql --verbose
@@ -198,13 +198,13 @@ function dolphinOperation() {
       sudo chown dolphinscheduler:dolphinscheduler /usr/lib/dolphinscheduler/alert-server/libs/mysql-connector-java.jar
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-alert
-      echo $?
+      exit $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status dolphinscheduler-alert
-      echo $?
+      exit $?
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-alert
-      echo $?
+      exit $?
     else
       dolphinUsage
     fi
@@ -217,7 +217,7 @@ function dolphinOperation() {
         chown -R dolphinscheduler:dolphinscheduler /dolphinscheduler
       fi
       sudo systemctl start dolphinscheduler-standalone
-      echo $?
+      exit $?
     elif [ $2 = "jdbc" ]; then
       if [ $CONNECTOR_JAR_STATUS -ne 0 ]; then
         sudo yum -y install mysql-connector-j mysql --verbose
@@ -228,13 +228,13 @@ function dolphinOperation() {
       sudo ln -sf /usr/share/java/mysql-connector-java.jar /usr/lib/dolphinscheduler/standalone-server/libs/mysql-connector-java.jar
     elif [ $2 = 'stop' ]; then
       sudo systemctl stop dolphinscheduler-standalone
-      echo $?
+      exit $?
     elif [ $2 = 'status' ]; then
       sudo systemctl status dolphinscheduler-standalone
-      echo $?
+      exit $?
     elif [ $2 = 'restart' ]; then
       sudo systemctl restart dolphinscheduler-standalone
-      echo $?
+      exit $?
     else
       dolphinUsage
     fi

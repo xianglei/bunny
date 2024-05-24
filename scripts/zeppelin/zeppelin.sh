@@ -73,19 +73,19 @@ function zeppelinOperation() {
   if [ $1 = 'start' ]; then
     echo "Starting Zeppelin"
     sudo systemctl start zeppelin
-    echo $?
+    exit $?
   elif [ $1 = 'stop' ]; then
     echo "Stopping Zeppelin"
     sudo systemctl stop zeppelin
-    echo $?
+    exit $?
   elif [ $1 = 'status' ]; then
     echo "Checking Zeppelin status"
     sudo systemctl status zeppelin
-    echo $?
+    exit $?
   elif [ $1 = 'restart' ]; then
     echo "Restarting Zeppelin"
     sudo systemctl restart zeppelin
-    echo $?
+    exit $?
   else
     zeppelinUsage
   fi

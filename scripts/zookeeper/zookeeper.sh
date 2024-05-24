@@ -93,7 +93,7 @@ function startZookeeper() {
   echo "Starting Zookeeper"
   # Start Zookeeper
   sudo systemctl start zookeeper-server
-  echo $?
+  exit $?
 }
 
 function stopZookeeper() {
@@ -104,7 +104,7 @@ function stopZookeeper() {
   echo "Stopping Zookeeper"
   # Stop Zookeeper
   sudo systemctl stop zookeeper-server
-  echo $?
+  exit $?
 }
 
 function restartZookeeper() {
@@ -115,19 +115,19 @@ function restartZookeeper() {
   echo "Restarting Zookeeper"
   # Restart Zookeeper
   sudo systemctl restart zookeeper-server
-  echo $?
+  exit $?
 }
 
 function enableZookeeper() {
   echo 'enable zookeeper'
   sudo systemctl enable zookeeper-server
-  echo $?
+  exit $?
 }
 
 function disableZookeeper() {
   echo 'enable zookeeper'
   sudo systemctl disable zookeeper-server
-  echo $?
+  exit $?
 }
 
 #if [ -z $1 ]; then

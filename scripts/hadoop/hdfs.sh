@@ -150,9 +150,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-namenode
+      exit $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-namenode
+      exit $?
     # Start namenode
     elif [ $2 = "start" ]; then
       echo "Starting Namenode"
@@ -229,11 +231,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-datanode
-      echo $?
+      exit $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-datanode
-      echo $?
+      exit $?
     elif [ $2 = "start" ]; then
       # hdfs.sh datanode start
       echo "Starting Datanode"
@@ -277,11 +279,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-journalnode
-      echo $?
+      exit $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-journalnode
-      echo $?
+      exit $?
     elif [ $2 = "start" ]; then
       # hdfs.sh journalnode start
       echo "Starting Journalnode"
@@ -335,11 +337,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-zkfc
-      echo $?
+      exit $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-zkfc
-      echo $?
+      exit $?
     else
       echo "Invalid command"
     fi
@@ -396,11 +398,11 @@ function hdfsOperation()
     elif [ $2 = 'enable' ]; then
       echo 'enable service'
       sudo systemctl enable hadoop-hdfs-secondarynamenode
-      echo $?
+      exit $?
     elif [ $2 = 'disable' ]; then
       echo 'disable service'
       sudo systemctl disable hadoop-hdfs-secondarynamenode
-      echo $?
+      exit $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Tailing Secondary Namenode logs"
