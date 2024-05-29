@@ -74,7 +74,7 @@ function ozoneOperation() {
   if [ $1 = 'scm' ]; then
     if [ $2 = 'init' ]; then
       if [ -f /usr/lib/ozone/scm.init-ed ]; then
-        echo "Ozone SCM is already init-ed, if want to re-init, remove the om meta dir and /usr/lib/ozone/scm.init-ed file manually and re-run the script"
+        echo "Ozone SCM is already init-ed, if want to re-init, remove the scm meta dir and /usr/lib/ozone/scm.init-ed file manually and re-run the script"
         exit 1
       else
         sudo -u ozone /usr/lib/ozone/bin/ozone scm --init
@@ -92,19 +92,29 @@ function ozoneOperation() {
       done
     elif [ $2 = 'start' ]; then
       echo "Starting Ozone SCM"
-      sudo systemctl start ozone-scm
+      #sudo systemctl start ozone-scm
+      sudo -u ozone /usr/lib/ozone/bin/ozone scm --daemon start
       exit $?
     elif [ $2 = 'stop' ]; then
       echo "Stopping Ozone SCM"
-      sudo systemctl stop ozone-scm
+      #sudo systemctl stop ozone-scm
+      sudo -u ozone /usr/lib/ozone/bin/ozone scm --daemon stop
       exit $?
     elif [ $2 = 'status' ]; then
       echo "Checking Ozone SCM status"
-      sudo systemctl status ozone-scm
-      exit $?
+      #sudo systemctl status ozone-scm
+      PID=$(ps -ef | grep -v grep | grep "ozone" | grep 'proc_scm' | awk '{print $2}')
+      if [ -z "$PID" ]; then
+        echo "Ozone SCM is not running"
+        exit 1
+      else
+        echo "Ozone SCM is running with PID: $PID"
+        exit 0
+      fi
     elif [ $2 = 'restart' ]; then
       echo "Restarting Ozone SCM"
-      sudo systemctl restart ozone-scm
+      #sudo systemctl restart ozone-scm
+      sudo -u ozone /usr/lib/ozone/bin/ozone scm --daemon restart
       exit $?
     elif [ $2 = 'enable' ]; then
       echo 'enable ozone-scm service'
@@ -138,19 +148,28 @@ function ozoneOperation() {
       done
     elif [ $2 = 'start' ]; then
       echo "Starting Ozone OM"
-      sudo systemctl start ozone-om
+      #sudo systemctl start ozone-om
+      sudo -u ozone /usr/lib/ozone/bin/ozone om --daemon start
       exit $?
     elif [ $2 = 'stop' ]; then
       echo "Stopping Ozone OM"
-      sudo systemctl stop ozone-om
+      #sudo systemctl stop ozone-om
+      sudo -u ozone /usr/lib/ozone/bin/ozone om --daemon stop
       exit $?
     elif [ $2 = 'status' ]; then
       echo "Checking Ozone OM status"
-      sudo systemctl status ozone-om
-      exit $?
+      PID=$(ps -ef | grep -v grep | grep "ozone" | grep 'proc_om' | awk '{print $2}')
+      if [ -z "$PID" ]; then
+        echo "Ozone SCM is not running"
+        exit 1
+      else
+        echo "Ozone SCM is running with PID: $PID"
+        exit 0
+      fi
     elif [ $2 = 'restart' ]; then
       echo "Restarting Ozone OM"
-      sudo systemctl restart ozone-om
+      #sudo systemctl restart ozone-om
+      sudo -u ozone /usr/lib/ozone/bin/ozone om --daemon restart
       exit $?
     elif [ $2 = 'enable' ]; then
       echo 'enable ozone-om service'
@@ -163,6 +182,54 @@ function ozoneOperation() {
     else
       ozoneUsage
     fi
+  elif [ $1 = 'datanode' ]; then
+    if [ $2 = 'start' ]; then
+      echo "Starting Ozone Datanode"
+      #sudo systemctl start ozone-datanode
+      sudo -u ozone /usr/lib/ozone/bin/ozone datanode --daemon start
+      exit $?
+    elif [ $2 = 'stop' ]; then
+      echo "Stopping Ozone Datanode"
+      #sudo systemctl stop ozone-datanode
+      sudo -u ozone /usr/lib/ozone/bin/ozone datanode --daemon stop
+      exit $?
+    elif [ $2 = 'status' ]; then
+      echo "Checking Ozone Datanode status"
+      PID=$(ps -ef | grep -v grep | grep "ozone" | grep 'proc_datanode' | awk '{print $2}')
+      if [ -z "$PID" ]; then
+        echo "Ozone SCM is not running"
+        exit 1
+      else
+        echo "Ozone SCM is running with PID: $PID"
+        exit 0
+      fi
+    elif [ $2 = 'restart' ]; then
+      echo "Restarting Ozone Datanode"
+      #sudo systemctl restart ozone-datanode
+      sudo -u ozone /usr/lib/ozone/bin/ozone datanode --daemon restart
+      exit $?
+    elif [ $2 = 'enable' ]; then
+      echo 'enable ozone-datanode service'
+      sudo systemctl enable ozone-datanode
+      exit $?
+    elif [ $2 = 'disable' ]; then
+      echo 'disable ozone-datanode service'
+      sudo systemctl disable ozone-datanode
+      exit $?
+    elif [ $2 = 'mkdir' ]; then
+      # hdds.datanode.dirs
+      TMP=$3
+      DIRS=${TMP//,/ }
+      echo "Creating $DIR"
+      for dir in $DIRS; do
+        sudo mkdir -p $dir
+        sudo chown ozone:ozone $dir
+      done
+    else
+      ozoneUsage
+    fi
+  else
+    ozoneUsage
   fi
 }
 
