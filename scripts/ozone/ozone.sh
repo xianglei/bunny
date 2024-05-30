@@ -233,7 +233,12 @@ function ozoneOperation() {
   fi
 }
 
-
+if [ -z $1 ]; then
+  ozoneUsage
+  exit 1
+else
+  ozoneOperation $1 $2 $3
+fi
 
 
 

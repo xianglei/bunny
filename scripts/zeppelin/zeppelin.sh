@@ -98,3 +98,9 @@ function zeppelinOperation() {
     zeppelinUsage
   fi
 }
+
+if [ $# -lt 1 ]; then
+  zeppelinUsage
+else
+  zeppelinOperation $1
+fi
