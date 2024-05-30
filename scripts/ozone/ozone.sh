@@ -93,12 +93,12 @@ function ozoneOperation() {
     elif [ $2 = 'start' ]; then
       echo "Starting Ozone SCM"
       #sudo systemctl start ozone-scm
-      sudo -u ozone /usr/lib/ozone/bin/ozone scm --daemon start
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon start scm
       exit $?
     elif [ $2 = 'stop' ]; then
       echo "Stopping Ozone SCM"
       #sudo systemctl stop ozone-scm
-      sudo -u ozone /usr/lib/ozone/bin/ozone scm --daemon stop
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon stop scm
       exit $?
     elif [ $2 = 'status' ]; then
       echo "Checking Ozone SCM status"
@@ -114,7 +114,7 @@ function ozoneOperation() {
     elif [ $2 = 'restart' ]; then
       echo "Restarting Ozone SCM"
       #sudo systemctl restart ozone-scm
-      sudo -u ozone /usr/lib/ozone/bin/ozone scm --daemon restart
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon restart scm
       exit $?
     elif [ $2 = 'enable' ]; then
       echo 'enable ozone-scm service'
@@ -149,12 +149,12 @@ function ozoneOperation() {
     elif [ $2 = 'start' ]; then
       echo "Starting Ozone OM"
       #sudo systemctl start ozone-om
-      sudo -u ozone /usr/lib/ozone/bin/ozone om --daemon start
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon start om
       exit $?
     elif [ $2 = 'stop' ]; then
       echo "Stopping Ozone OM"
       #sudo systemctl stop ozone-om
-      sudo -u ozone /usr/lib/ozone/bin/ozone om --daemon stop
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon stop om
       exit $?
     elif [ $2 = 'status' ]; then
       echo "Checking Ozone OM status"
@@ -169,7 +169,7 @@ function ozoneOperation() {
     elif [ $2 = 'restart' ]; then
       echo "Restarting Ozone OM"
       #sudo systemctl restart ozone-om
-      sudo -u ozone /usr/lib/ozone/bin/ozone om --daemon restart
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon restart om
       exit $?
     elif [ $2 = 'enable' ]; then
       echo 'enable ozone-om service'
@@ -186,12 +186,12 @@ function ozoneOperation() {
     if [ $2 = 'start' ]; then
       echo "Starting Ozone Datanode"
       #sudo systemctl start ozone-datanode
-      sudo -u ozone /usr/lib/ozone/bin/ozone datanode --daemon start
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon start datanode
       exit $?
     elif [ $2 = 'stop' ]; then
       echo "Stopping Ozone Datanode"
       #sudo systemctl stop ozone-datanode
-      sudo -u ozone /usr/lib/ozone/bin/ozone datanode --daemon stop
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon stop datanode
       exit $?
     elif [ $2 = 'status' ]; then
       echo "Checking Ozone Datanode status"
@@ -206,7 +206,7 @@ function ozoneOperation() {
     elif [ $2 = 'restart' ]; then
       echo "Restarting Ozone Datanode"
       #sudo systemctl restart ozone-datanode
-      sudo -u ozone /usr/lib/ozone/bin/ozone datanode --daemon restart
+      sudo -u ozone /usr/lib/ozone/bin/ozone --daemon restart datanode
       exit $?
     elif [ $2 = 'enable' ]; then
       echo 'enable ozone-datanode service'
