@@ -90,7 +90,7 @@ function ozoneOperation() {
         sudo mkdir -p $dir
         # chown from parent's parent dir
         # ex meta dir is /var/lib/ozone/metadata, then chown from /var/lib/ozone
-        sudo chown -R ozone:ozone $dir/../
+        sudo chown -R ozone:ozone $dir
       done
     elif [ $2 = 'start' ]; then
       echo "Starting Ozone SCM"
@@ -146,7 +146,7 @@ function ozoneOperation() {
       echo "Creating $DIR"
       for dir in $DIRS; do
         sudo mkdir -p $dir
-        sudo chown -R ozone:ozone $dir/../
+        sudo chown -R ozone:ozone $dir
       done
     elif [ $2 = 'start' ]; then
       echo "Starting Ozone OM"
@@ -225,7 +225,7 @@ function ozoneOperation() {
       echo "Creating $DIR"
       for dir in $DIRS; do
         sudo mkdir -p $dir
-        sudo chown -R ozone:ozone $dir/../
+        sudo chown -R ozone:ozone $dir
       done
     else
       ozoneUsage
