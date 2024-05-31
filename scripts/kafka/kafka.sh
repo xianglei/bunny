@@ -81,10 +81,12 @@ function kafkaOperation() {
       sudo mkdir -p $DIR
       sudo chown -R kafka:kafka $DIR
     done
+    exit $?
+  elif [ $1 = 'mkhdfsdir' ]; then
     echo "Create kafka hdfs directory"
     sudo -u hdfs hadoop fs -mkdir -p /user/kafka
     sudo -u hdfs hadoop fs -chown -R kafka:kafka /user/kafka
-    exit $?
+    echo $?
   elif [ $1 = "server" ];then
     if [ $2 = "start" ]; then
         echo "Starting Kafka"
