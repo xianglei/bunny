@@ -3,6 +3,7 @@
 
 from modules.cp_module.cp_headers import *
 from modules.status import *
+from modules.os_dists import *
 import json
 import cherrypy_cors
 from modules.kadm5 import *
@@ -26,6 +27,10 @@ class BunnySysStatus(Logger):
         Logger.__init__(self)
 
     def GET(self):
+        """
+        Retrieve all sys status
+        :return:
+        """
         self._logger.info("Retrieving system status...")
         return json.dumps(retrieve_info(), indent=4, sort_keys=True).encode('utf-8')
 
@@ -36,6 +41,10 @@ class BunnySysCpu(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -43,6 +52,10 @@ class BunnySysCpu(Logger):
         Logger.__init__(self)
 
     def GET(self):
+        """
+        Retrieve cpu status
+        :return:
+        """
         self._logger.info("Retrieving cpu status...")
         return json.dumps(get_cpu_info(), indent=4, sort_keys=True).encode('utf-8')
 
@@ -53,6 +66,10 @@ class BunnySysMemory(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -60,6 +77,10 @@ class BunnySysMemory(Logger):
         Logger.__init__(self)
 
     def GET(self):
+        """
+        Retrieve memory status
+        :return:
+        """
         self._logger.info("Retrieving memory status...")
         return json.dumps(get_memory_info(), indent=4, sort_keys=True).encode('utf-8')
 
@@ -70,6 +91,10 @@ class BunnySysStorage(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -77,6 +102,10 @@ class BunnySysStorage(Logger):
         Logger.__init__(self)
 
     def GET(self):
+        """
+        Retrieve storage status
+        :return:
+        """
         self._logger.info("Retrieving storage status...")
         return json.dumps(get_disk_info(), indent=4, sort_keys=True).encode('utf-8')
 
@@ -87,6 +116,10 @@ class BunnySysNetwork(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -94,6 +127,10 @@ class BunnySysNetwork(Logger):
         Logger.__init__(self)
 
     def GET(self):
+        """
+        Retrieve network status
+        :return:
+        """
         self._logger.info("Retrieving network status...")
         return json.dumps(get_net_if_info(), indent=4, sort_keys=True).encode('utf-8')
 
@@ -104,6 +141,10 @@ class BunnySysInstaller(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -111,6 +152,10 @@ class BunnySysInstaller(Logger):
         Logger.__init__(self)
 
     def GET(self):
+        """
+        Retrieve installer status
+        :return:
+        """
         self._logger.info("Retrieving installer status...")
         return json.dumps(get_installer(), indent=4, sort_keys=True).encode('utf-8')
 
@@ -121,6 +166,10 @@ class BunnySysSystem(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -128,6 +177,10 @@ class BunnySysSystem(Logger):
         Logger.__init__(self)
 
     def GET(self):
+        """
+        Retrieve system status
+        :return:
+        """
         self._logger.info("Retrieving system status...")
         return json.dumps(get_system_info(), indent=4, sort_keys=True).encode('utf-8')
 
@@ -138,6 +191,10 @@ class BunnySysServices(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -146,6 +203,11 @@ class BunnySysServices(Logger):
 
     @cherrypy.tools.accept(media='application/json')
     def POST(self):
+        """
+        Retrieve services status, services should be a list of strings
+        :return:
+        services list with process id
+        """
         self._logger.info("Retrieving services status...")
         cl = int(cherrypy.request.headers['Content-Length'])
         body = json.loads(cherrypy.request.body.read(cl))
@@ -195,6 +257,10 @@ class BunnySysPing(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -211,6 +277,10 @@ class BunnySysService(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 
@@ -219,6 +289,11 @@ class BunnySysService(Logger):
 
     @cherrypy.tools.accept(media='application/json')
     def POST(self):
+        """
+        Retrieve single service status
+        :return:
+        service name and process id
+        """
         self._logger.info("Retrieving single service status...")
         cl = int(cherrypy.request.headers['Content-Length'])
         body = json.loads(cherrypy.request.body.read(cl))
@@ -235,10 +310,35 @@ class BunnySysService(Logger):
             return json.dumps({"service": None}, indent=4, sort_keys=True)
 
 
+@cherrypy.expose()
+class BunnyOsDist(Logger):
+    conf = {
+        '/':
+            {
+                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
+            }
+    }
+
+    def __init__(self):
+        Logger.__init__(self)
+
+    def GET(self):
+        """
+        Retrieve os distribution
+        :return:
+        """
+        self._logger.info("Retrieving os distribution...")
+        return json.dumps(get_os_info(), indent=4, sort_keys=True).encode('utf-8')
+
+
+@cherrypy.expose()
 class BunnyHttpService(Logger):
     def __init__(self):
         Logger.__init__(self)
 
-    @cherrypy.expose()
     def index(self):
         return "Say Hello to little Bunny!".encode('utf-8')

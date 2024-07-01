@@ -46,6 +46,7 @@ class BunnyCherrypyServer(Logger):
         cherrypy.tree.mount(BunnySysNetwork(), '/sys/network', BunnySysNetwork.conf)
         cherrypy.tree.mount(BunnySysInstaller(), '/sys/installer', BunnySysInstaller.conf)
         cherrypy.tree.mount(BunnySysSystem(), '/sys/system', BunnySysSystem.conf)
+        cherrypy.tree.mount(BunnyOsDist(), '/sys/osinfo', BunnyOsDist.conf)
         # POST only
         cherrypy.tree.mount(BunnySysServices(), '/sys/services', BunnySysServices.conf)
         cherrypy.tree.mount(BunnySysPing(), '/sys/ping', BunnySysPing.conf)
