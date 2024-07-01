@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import cherrypy
-from modules.status import *
+from modules.cp_module.cp_headers import *
 import json
 import cherrypy_cors
 from modules.kadm5 import *
@@ -15,6 +14,10 @@ class BunnyKadminPrincipal(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 

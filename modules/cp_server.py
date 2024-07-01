@@ -4,6 +4,8 @@
 from modules.cp_module.cp_sysmonitor import *
 from modules.cp_module.cp_kadmin import *
 from modules.cp_module.cp_websocket import *
+from modules.cp_module.monitors.cp_hdfs import *
+from modules.cp_module.monitors.cp_yarn import *
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 
 
@@ -51,6 +53,25 @@ class BunnyCherrypyServer(Logger):
         cherrypy.tree.mount(BunnySysService(), '/sys/service', BunnySysService.conf)
         cherrypy.tree.mount(BunnyKadminPrincipal(), '/kadmin/principal', BunnyKadminPrincipal.conf)
         cherrypy.tree.mount(BunnyKadminKeytab(), '/kadmin/keytab', BunnyKadminKeytab.conf)
+
+        cherrypy.tree.mount(HDFSJmxNamenodeAllMonitor(), '/mon/hdfs/namenode/all', HDFSJmxNamenodeAllMonitor.conf)
+        cherrypy.tree.mount(HDFSJmxNamenodeWithArgsMonitor(), '/mon/hdfs/namenode', HDFSJmxNamenodeWithArgsMonitor.conf)
+        cherrypy.tree.mount(HDFSJmxDatanodeAllMonitor(), '/mon/hdfs/datanode/all', HDFSJmxDatanodeAllMonitor.conf)
+        cherrypy.tree.mount(HDFSJmxDatanodeWithArgsMonitor(), '/mon/hdfs/datanode', HDFSJmxDatanodeWithArgsMonitor.conf)
+        #cherrypy.tree.mount(HDFSJmxJournalnodeMonitor(), '/mon/hdfs/journalnode', HDFSJmxJournalnodeMonitor.conf)
+        #cherrypy.tree.mount(HDFSJmxNamenodeHAStateMonitor(), '/mon/hdfs/ha', HDFSJmxNamenodeHAStateMonitor.conf)
+        #cherrypy.tree.mount(HDFSJmxNamenodeHAHealthMonitor(), '/mon/hdfs/ha/health', HDFSJmxNamenodeHAHealthMonitor.conf)
+        #cherrypy.tree.mount(HDFSJmxNamenodeHAStateMonitor(), '/mon/hdfs/ha/state', HDFSJmxNamenodeHAStateMonitor.conf)
+        cherrypy.tree.mount(HDFSJmxSecondaryNamenodeAllMonitor(), '/mon/hdfs/secondary/all', HDFSJmxSecondaryNamenodeAllMonitor.conf)
+        cherrypy.tree.mount(HDFSJmxSecondaryNamenodeWithArgsMonitor(), '/mon/hdfs/secondary', HDFSJmxSecondaryNamenodeWithArgsMonitor.conf)
+        cherrypy.tree.mount(HDFSJmxJournalNodeAllMonitor(), '/mon/hdfs/journalnode/all', HDFSJmxJournalNodeAllMonitor.conf)
+        cherrypy.tree.mount(HDFSJmxJournalNodeWithArgsMonitor(), '/mon/hdfs/journalnode', HDFSJmxJournalNodeWithArgsMonitor.conf)
+        cherrypy.tree.mount(YARNJmxResourceManagerAllMonitor(), '/mon/yarn/resourcemanager/all', YARNJmxResourceManagerAllMonitor.conf)
+        cherrypy.tree.mount(YARNJmxResourceManagerWithArgsMonitor(), '/mon/yarn/resourcemanager', YARNJmxResourceManagerWithArgsMonitor.conf)
+        cherrypy.tree.mount(YARNJmxNodeManagerAllMonitor(), '/mon/yarn/nodemanager/all', YARNJmxNodeManagerAllMonitor.conf)
+        cherrypy.tree.mount(YARNJmxNodeManagerWithArgsMonitor(), '/mon/yarn/nodemanager', YARNJmxNodeManagerWithArgsMonitor.conf)
+        cherrypy.tree.mount(YARNJmxHistoryserverAllMonitor(), '/mon/yarn/jobhistoryserver/all', YARNJmxHistoryserverAllMonitor.conf)
+        cherrypy.tree.mount(YARNJmxHistoryserverWithArgsMonitor(), '/mon/yarn/jobhistoryserver', YARNJmxHistoryserverWithArgsMonitor.conf)
         try:
             self._logger.info("Unregistering previous server...")
             cherrypy.server.unsubscribe()

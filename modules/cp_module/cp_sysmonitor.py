@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import cherrypy
+from modules.cp_module.cp_headers import *
 from modules.status import *
 import json
 import cherrypy_cors
@@ -15,6 +15,10 @@ class BunnySysStatus(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+                'tools.sessions.on': True,
+                'tools.response_headers.on': True,
+                'tools.response_headers.headers': [('Content-Type', 'application/json')],
+                'tools.disable_content_length.on': True,
             }
     }
 

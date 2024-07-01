@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from ws4py.websocket import WebSocket
 import threading
 import cherrypy
 from urllib.parse import urlparse, parse_qs
 from modules.utils import *
 import select
-import sys
 
 cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
 
