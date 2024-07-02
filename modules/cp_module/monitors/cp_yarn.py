@@ -2,7 +2,7 @@
 # coding: utf-8
 
 
-from modules.cp_module.cp_headers import *
+import cherrypy
 import json
 from modules.utils import *
 import cherrypy_cors
@@ -11,43 +11,11 @@ cherrypy_cors.install()
 
 
 @cherrypy.expose()
-class YARNJmxResourceManagerAllMonitor(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.popargs('resourcemanager_ip', 'resourcemanager_port')
-    def GET(self, resourcemanager_ip, resourcemanager_port=8088):
-        try:
-            url = f"http://{resourcemanager_ip}:{resourcemanager_port}/jmx"
-            response = requests.get(url)
-            data = response.json()
-            return json.dumps(data)
-        except Exception as e:
-            return json.dumps({'error': str(e)})
-
-
-@cherrypy.expose()
 class YARNJmxResourceManagerWithArgsMonitor(Logger):
     conf = {
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
             }
     }
 
@@ -55,39 +23,25 @@ class YARNJmxResourceManagerWithArgsMonitor(Logger):
         Logger.__init__(self)
 
     @cherrypy.tools.accept(media='application/json')
-    @cherrypy.popargs('resourcemanager_ip', 'resourcemanager_port', 'args')
-    def GET(self, resourcemanager_ip, resourcemanager_port=8088, args='Hadoop:service=ResourceManager,name=RMNMInfo'):
+    # @cherrypy.popargs('resourcemanager_ip', 'resourcemanager_port', 'args')
+    # def GET(self, resourcemanager_ip, resourcemanager_port=8088, args='Hadoop:service=ResourceManager,name=RMNMInfo'):
+    def GET(self, *args, **kwargs):
         try:
-            url = f"http://{resourcemanager_ip}:{resourcemanager_port}/jmx?qry={args}"
-            response = requests.get(url)
-            data = response.json()
-            return json.dumps(data)
-        except Exception as e:
-            return json.dumps({'error': str(e)})
+            if len(args) >= 2:
+                resourcemanager_ip = args[0]
+                resourcemanager_port = args[1]
+            else:
+                raise cherrypy.HTTPError(400, "Missing required parameter: ip and port")
 
-
-@cherrypy.expose()
-class YARNJmxNodeManagerAllMonitor(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.popargs('nodemanager_ip', 'nodemanager_port')
-    def GET(self, nodemanager_ip, nodemanager_port):
-        try:
-            url = f"http://{nodemanager_ip}:{nodemanager_port}/jmx"
-            response = requests.get(url)
+            if len(args) == 3:
+                qry = args[2]
+            else:
+                qry = None
+            if not qry or qry is None:
+                url = f"http://{resourcemanager_ip}:{resourcemanager_port}/jmx"
+            else:
+                url = f"http://{resourcemanager_ip}:{resourcemanager_port}/jmx?qry={qry}"
+            response = requests.get(url, timeout=5)
             data = response.json()
             return json.dumps(data)
         except Exception as e:
@@ -100,10 +54,6 @@ class YARNJmxNodeManagerWithArgsMonitor(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
             }
     }
 
@@ -111,39 +61,25 @@ class YARNJmxNodeManagerWithArgsMonitor(Logger):
         Logger.__init__(self)
 
     @cherrypy.tools.accept(media='application/json')
-    @cherrypy.popargs('nodemanager_ip', 'nodemanager_port', 'args')
-    def GET(self, nodemanager_ip, nodemanager_port, args='Hadoop:service=NodeManager,name=NodeManagerMetrics'):
+    # @cherrypy.popargs('nodemanager_ip', 'nodemanager_port', 'args')
+    # def GET(self, nodemanager_ip, nodemanager_port, args='Hadoop:service=NodeManager,name=NodeManagerMetrics'):
+    def GET(self, *args, **kwargs):
         try:
-            url = f"http://{nodemanager_ip}:{nodemanager_port}/jmx?qry={args}"
-            response = requests.get(url)
-            data = response.json()
-            return json.dumps(data)
-        except Exception as e:
-            return json.dumps({'error': str(e)})
+            if len(args) >= 2:
+                nodemanager_ip = args[0]
+                nodemanager_port = args[1]
+            else:
+                raise cherrypy.HTTPError(400, "Missing required parameter: ip and port")
 
-
-@cherrypy.expose()
-class YARNJmxHistoryserverAllMonitor(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    @cherrypy.tools.accept(media='application/json')
-    @cherrypy.popargs('historyserver_ip', 'historyserver_port')
-    def GET(self, historyserver_ip, historyserver_port=19888):
-        try:
-            url = f"http://{historyserver_ip}:{historyserver_port}/jmx"
-            response = requests.get(url)
+            if len(args) == 3:
+                qry = args[2]
+            else:
+                qry = None
+            if not qry or qry is None:
+                url = f"http://{nodemanager_ip}:{nodemanager_port}/jmx"
+            else:
+                url = f"http://{nodemanager_ip}:{nodemanager_port}/jmx?qry={qry}"
+            response = requests.get(url, timeout=5)
             data = response.json()
             return json.dumps(data)
         except Exception as e:
@@ -156,10 +92,6 @@ class YARNJmxHistoryserverWithArgsMonitor(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
             }
     }
 
@@ -167,11 +99,25 @@ class YARNJmxHistoryserverWithArgsMonitor(Logger):
         Logger.__init__(self)
 
     @cherrypy.tools.accept(media='application/json')
-    @cherrypy.popargs('historyserver_ip', 'historyserver_port', 'args')
-    def GET(self, historyserver_ip, historyserver_port=19888, args='Hadoop:service=JobHistoryServer,name=MetricsSystem,sub=Stats'):
+    # @cherrypy.popargs('historyserver_ip', 'historyserver_port', 'args')
+    # def GET(self, historyserver_ip, historyserver_port=19888, args=None):
+    def GET(self, *args, **kwargs):
         try:
-            url = f"http://{historyserver_ip}:{historyserver_port}/jmx?qry={args}"
-            response = requests.get(url)
+            if len(args) >= 2:
+                historyserver_ip = args[0]
+                historyserver_port = args[1]
+            else:
+                raise cherrypy.HTTPError(400, "Missing required parameter: ip and port")
+
+            if len(args) == 3:
+                qry = args[2]
+            else:
+                qry = None
+            if not qry or qry is None:
+                url = f"http://{historyserver_ip}:{historyserver_port}/jmx"
+            else:
+                url = f"http://{historyserver_ip}:{historyserver_port}/jmx?qry={qry}"
+            response = requests.get(url, timeout=5)
             data = response.json()
             return json.dumps(data)
         except Exception as e:

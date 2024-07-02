@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from modules.cp_module.cp_headers import *
+import cherrypy
 from modules.status import *
 from modules.os_dists import *
 import json
@@ -16,173 +16,48 @@ class BunnySysStatus(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
             }
     }
 
     def __init__(self):
         Logger.__init__(self)
+        self.valid_info = ['sys', 'cpu', 'memory', 'storage', 'network', 'installer', 'system', 'os']
 
-    def GET(self):
+    def GET(self, *args, **kwargs):
         """
         Retrieve all sys status
         :return:
         """
-        self._logger.info("Retrieving system status...")
-        return json.dumps(retrieve_info(), indent=4, sort_keys=True).encode('utf-8')
-
-
-@cherrypy.expose()
-class BunnySysCpu(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    def GET(self):
-        """
-        Retrieve cpu status
-        :return:
-        """
-        self._logger.info("Retrieving cpu status...")
-        return json.dumps(get_cpu_info(), indent=4, sort_keys=True).encode('utf-8')
-
-
-@cherrypy.expose()
-class BunnySysMemory(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    def GET(self):
-        """
-        Retrieve memory status
-        :return:
-        """
-        self._logger.info("Retrieving memory status...")
-        return json.dumps(get_memory_info(), indent=4, sort_keys=True).encode('utf-8')
-
-
-@cherrypy.expose()
-class BunnySysStorage(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    def GET(self):
-        """
-        Retrieve storage status
-        :return:
-        """
-        self._logger.info("Retrieving storage status...")
-        return json.dumps(get_disk_info(), indent=4, sort_keys=True).encode('utf-8')
-
-
-@cherrypy.expose()
-class BunnySysNetwork(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    def GET(self):
-        """
-        Retrieve network status
-        :return:
-        """
-        self._logger.info("Retrieving network status...")
-        return json.dumps(get_net_if_info(), indent=4, sort_keys=True).encode('utf-8')
-
-
-@cherrypy.expose()
-class BunnySysInstaller(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    def GET(self):
-        """
-        Retrieve installer status
-        :return:
-        """
-        self._logger.info("Retrieving installer status...")
-        return json.dumps(get_installer(), indent=4, sort_keys=True).encode('utf-8')
-
-
-@cherrypy.expose()
-class BunnySysSystem(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    def GET(self):
-        """
-        Retrieve system status
-        :return:
-        """
-        self._logger.info("Retrieving system status...")
-        return json.dumps(get_system_info(), indent=4, sort_keys=True).encode('utf-8')
+        if len(args) > 0:
+            if args[0] in self.valid_info:
+                if args[0] == 'cpu':
+                    self._logger.info("Retrieving cpu status...")
+                    return json.dumps(get_cpu_info(), indent=4, sort_keys=True).encode('utf-8')
+                elif args[0] == 'memory':
+                    self._logger.info("Retrieving memory status...")
+                    return json.dumps(get_memory_info(), indent=4, sort_keys=True).encode('utf-8')
+                elif args[0] == 'storage':
+                    self._logger.info("Retrieving storage status...")
+                    return json.dumps(get_disk_info(), indent=4, sort_keys=True).encode('utf-8')
+                elif args[0] == 'network':
+                    self._logger.info("Retrieving network status...")
+                    return json.dumps(get_net_if_info(), indent=4, sort_keys=True).encode('utf-8')
+                elif args[0] == 'installer':
+                    self._logger.info("Retrieving installer status...")
+                    return json.dumps(get_installer(), indent=4, sort_keys=True).encode('utf-8')
+                elif args[0] == 'system':
+                    self._logger.info("Retrieving system status...")
+                    return json.dumps(get_system_info(), indent=4, sort_keys=True).encode('utf-8')
+                elif args[0] == 'os':
+                    self._logger.info("Retrieving os distribution...")
+                    return json.dumps(get_os_info(), indent=4, sort_keys=True).encode('utf-8')
+                else:
+                    raise cherrypy.HTTPError(400, "Invalid info name")
+            else:
+                raise cherrypy.HTTPError(400, "Invalid info type")
+        else:
+            self._logger.info("Retrieving system status...")
+            return json.dumps(retrieve_info(), indent=4, sort_keys=True).encode('utf-8')
 
 
 @cherrypy.expose()
@@ -191,10 +66,6 @@ class BunnySysServices(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
             }
     }
 
@@ -257,10 +128,6 @@ class BunnySysPing(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
             }
     }
 
@@ -277,10 +144,6 @@ class BunnySysService(Logger):
         '/':
             {
                 'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
             }
     }
 
@@ -308,31 +171,6 @@ class BunnySysService(Logger):
                 return json.dumps({"service": proc, "status": False, "pid": -1}, indent=4, sort_keys=True).encode('utf-8')
         else:
             return json.dumps({"service": None}, indent=4, sort_keys=True)
-
-
-@cherrypy.expose()
-class BunnyOsDist(Logger):
-    conf = {
-        '/':
-            {
-                'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-                'tools.sessions.on': True,
-                'tools.response_headers.on': True,
-                'tools.response_headers.headers': [('Content-Type', 'application/json')],
-                'tools.disable_content_length.on': True,
-            }
-    }
-
-    def __init__(self):
-        Logger.__init__(self)
-
-    def GET(self):
-        """
-        Retrieve os distribution
-        :return:
-        """
-        self._logger.info("Retrieving os distribution...")
-        return json.dumps(get_os_info(), indent=4, sort_keys=True).encode('utf-8')
 
 
 @cherrypy.expose()
