@@ -40,6 +40,7 @@ class BunnyCherrypyServer(Logger):
                 'tools.encode.encoding': 'utf-8',
                 'tools.response_headers.on': True,
                 'request.methods_with_bodies': ('POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'SEARCH',),
+                'request.show_tracebacks': True,
                 'tools.response_headers.headers': [
                     ('Content-Type', 'application/json'),
                     ('Access-Control-Allow-Origin', '*'),
@@ -54,6 +55,7 @@ class BunnyCherrypyServer(Logger):
         # ws://10.10.10.13:7181/logs?logfile=/var/log/dnf.log
         cherrypy.tree.mount(BunnyWebsocket(), '/', BunnyWebsocket.conf)
         cherrypy.tree.mount(BunnySysStatus(), '/mon/sys', BunnySysStatus.conf)
+        """
         cherrypy.tree.mount(BunnySysCpu(), '/mon/sys/cpu', BunnySysCpu.conf)
         cherrypy.tree.mount(BunnySysMemory(), '/mon/sys/memory', BunnySysMemory.conf)
         cherrypy.tree.mount(BunnySysStorage(), '/mon/sys/storage', BunnySysStorage.conf)
@@ -61,6 +63,7 @@ class BunnyCherrypyServer(Logger):
         cherrypy.tree.mount(BunnySysInstaller(), '/mon/sys/installer', BunnySysInstaller.conf)
         cherrypy.tree.mount(BunnySysSystem(), '/mon/sys/system', BunnySysSystem.conf)
         cherrypy.tree.mount(BunnyOsDist(), '/mon/sys/osinfo', BunnyOsDist.conf)
+        """
         # POST only
         cherrypy.tree.mount(BunnySysServices(), '/mon/sys/services', BunnySysServices.conf)
         cherrypy.tree.mount(BunnySysPing(), '/mon/sys/ping', BunnySysPing.conf)
@@ -71,6 +74,7 @@ class BunnyCherrypyServer(Logger):
 
         # /mon/hdfs/namenode/192.168.14.12/9870/(optional):Hadoop:service=NameNode,name=NameNodeInfo/
         cherrypy.tree.mount(HDFSJmxNamenodeWithArgsMonitor(), '/mon/hdfs/namenode', HDFSJmxNamenodeWithArgsMonitor.conf)
+        # /mon/hdfs/datanode/192.168.14.13/9864/(optional):Hadoop:service=DataNode,name=DataNodeInfo/
         cherrypy.tree.mount(HDFSJmxDatanodeWithArgsMonitor(), '/mon/hdfs/datanode', HDFSJmxDatanodeWithArgsMonitor.conf)
         #cherrypy.tree.mount(HDFSJmxJournalnodeMonitor(), '/mon/hdfs/journalnode', HDFSJmxJournalnodeMonitor.conf)
         #cherrypy.tree.mount(HDFSJmxNamenodeHAStateMonitor(), '/mon/hdfs/ha', HDFSJmxNamenodeHAStateMonitor.conf)
