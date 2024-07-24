@@ -78,27 +78,27 @@ function flinkOperation() {
     if [ $2 = "start" ]; then
       echo "Starting Flink Job Manager"
       sudo systemctl start flink-jobmanager
-      echo $?
+      exit $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Flink Job Manager"
       sudo systemctl stop flink-jobmanager
-      echo $?
+      exit $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Flink Job Manager"
       sudo systemctl restart flink-jobmanager
-      echo $?
+      exit $?
     elif [ $2 = "enable" ]; then
       echo "Enabling Flink Job Manager"
       sudo systemctl enable flink-jobmanager
-      echo $?
+      exit $?
     elif [ $2 = "disable" ]; then
       echo "Disabling Flink Job Manager"
       sudo systemctl disable flink-jobmanager
-      echo $?
+      exit $?
     elif [ $2 = "status" ]; then
       echo "Checking Flink Job Manager status"
       sudo systemctl status flink-jobmanager
-      echo $?
+      exit $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Showing Flink Job Manager logs"
@@ -116,27 +116,27 @@ function flinkOperation() {
     if [ $2 = "start" ]; then
       echo "Starting Flink Task Manager"
       sudo systemctl start flink-taskmanager
-      echo $?
+      exit $?
     elif [ $2 = "stop" ]; then
       echo "Stopping Flink Task Manager"
       sudo systemctl stop flink-taskmanager
-      echo $?
+      exit $?
     elif [ $2 = "restart" ]; then
       echo "Restarting Flink Task Manager"
       sudo systemctl restart flink-taskmanager
-      echo $?
+      exit $?
     elif [ $2 = "enable" ]; then
       echo "Enabling Flink Task Manager"
       sudo systemctl enable flink-taskmanager
-      echo $?
+      exit $?
     elif [ $2 = "disable" ]; then
       echo "Disabling Flink Task Manager"
       sudo systemctl disable flink-taskmanager
-      echo $?
+      exit $?
     elif [ $2 = "status" ]; then
       echo "Checking Flink Task Manager status"
       sudo systemctl status flink-taskmanager
-      echo $?
+      exit $?
     elif [ $2 = "logs" ]; then
       if [ $3 = "log" ]; then
         echo "Showing Flink Task Manager logs"
