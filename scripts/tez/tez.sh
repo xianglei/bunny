@@ -68,10 +68,11 @@ function tezOperation() {
   if [ $1 = 'initTez' ]; then
     echo "Initializing Tez"
     cd /usr/lib/tez
-    tar zcf tez.tar.gz * --exclude=conf
+    tar zcf /tmp/tez.tar.gz * --exclude=conf
     sudo -u hdfs hdfs dfs -mkdir -p /user/tez/
-    sudo -u hdfs hdfs dfs -put tez.tar.gz /user/tez/
+    sudo -u hdfs hdfs dfs -put /tmp/tez.tar.gz /user/tez/
     sudo -u hdfs hdfs dfs -chown -R hive:hive /user/tez
     sudo -u hdfs hdfs dfs -chmod -R 755 /user/tez
+    sudo rm -f /tmp/tez.tar.gz
   fi
 }

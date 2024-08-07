@@ -10,7 +10,6 @@ JAVA8_HOME_CANDIDATES=(
     '/usr/lib/jdk8-latest'
     '/usr/lib/jvm/java-1.8.0'
     '/usr/lib/jvm/java-1.8.0-oracle'
-    '/usr/lib/jvm/java-1.8.0-oracle'
     '/usr/lib/jvm/jdk-1.8-oracle-aarch64'
     '/usr/lib/jvm/jdk-1.8-oracle-x64'
     '/usr/lib/jvm/jdk-1.8-oracle-x86'
@@ -24,6 +23,8 @@ OPENJAVA8_HOME_CANDIDATES=(
     '/usr/lib/jvm/java-1.8.0-openjdk'
     '/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0'
     '/usr/lib/jvm/adoptopenjdk-8-hotspot'
+    '/usr/lib/jvm/java-8-openjdk-arm64'
+    '/usr/lib/jvm/java-1.8.0-openjdk-arm64'
 )
 
 MISCJAVA_HOME_CANDIDATES=(
