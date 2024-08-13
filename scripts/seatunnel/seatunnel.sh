@@ -91,3 +91,5 @@ function seatunnelOperation() {
     exit 1
   fi
 }
+
+seatunnelOperation $1 $2
