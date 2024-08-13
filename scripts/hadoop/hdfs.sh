@@ -103,7 +103,7 @@ ROLE=$1
 
 
 function hdfsUsage() {
-  echo "Usage: hdfs.sh [namenode|datanode|journalnode|zkfc] [logs|mkdir|format|start|stop|restart|mkhdfsdirs]"
+  echo "Usage: hdfs.sh [namenode|datanode|journalnode|zkfc|httpfs|balancer|initHA] [logs|mkdir|format|start|stop|restart|mkhdfsdirs]"
 }
 
 function hdfsOperation()
@@ -345,7 +345,37 @@ function hdfsOperation()
     else
       echo "Invalid command"
     fi
-  elif [ $1 = "initha" ]; then
+  elif [ $1 = "httpfs" ]; then
+    if [ $2 = "start" ]; then
+      echo "Starting Httpfs"
+      # Start Httpfs
+      sudo systemctl start hadoop-httpfs
+      exit $?
+    elif [ $2 = "stop" ]; then
+      echo "Stopping Httpfs"
+      # Stop Httpfs
+      sudo systemctl stop hadoop-httpfs
+      exit $?
+    elif [ $2 = "restart" ]; then
+      echo "Restarting Httpfs"
+      # Restart Httpfs
+      sudo systemctl restart hadoop-httpfs
+      exit $?
+    elif [ $2 = "logs" ]; then
+      echo "Tailing Httpfs logs"
+      # Tail Httpfs logs
+      sudo -u hdfs tail -n 200 /var/log/hadoop-httpfs/hadoop-httpfs-httpfs-$HOSTNAME.log
+    fi
+  elif [ $1 = "balancer" ]; then
+    if [ $2 = "start" ]; then
+      echo "Starting Balancer"
+      # Start Balancer
+      sudo -u hdfs hdfs balancer
+      exit $?
+    else
+      echo "Invalid command"
+    fi
+  elif [ $1 = "initHA" ]; then
     echo "Initializing High Availability"
     # Initialize High Availability
     : '
