@@ -83,11 +83,11 @@ function prestoOperation(){
         echo "Checking Presto master status"
         systemctl status presto-master
         exit $?
-      elif [ $2 = "enable"]; then
+      elif [ $2 = "enable" ]; then
         echo "Enabling Presto master"
         systemctl enable presto-master
         exit $?
-      elif [ $2 = "disable"]; then
+      elif [ $2 = "disable" ]; then
         echo "Disabling Presto master"
         systemctl disable presto-master
         exit $?
@@ -111,11 +111,11 @@ function prestoOperation(){
         echo "Checking Presto worker status"
         systemctl status presto-worker
         exit $?
-      elif [ $2 = "enable"]; then
+      elif [ $2 = "enable" ]; then
         echo "Enabling Presto worker"
         systemctl enable presto-worker
         exit $?
-      elif [ $2 = "disable"]; then
+      elif [ $2 = "disable" ]; then
         echo "Disabling Presto worker"
         systemctl disable presto-worker
         exit $?
