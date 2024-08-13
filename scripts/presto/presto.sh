@@ -135,3 +135,8 @@ function prestoOperation(){
         echo "Invalid operation"
     fi
 }
+
+
+prestoOperation $1 $2
+
+
