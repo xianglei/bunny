@@ -69,20 +69,20 @@ function seatunnelOperation() {
     exit 1
   fi
   if [ $1 = "start" ]; then
-    systemctl start seatunnel
+    sudo systemctl start seatunnel
   elif [ $1 = "stop" ]; then
-    systemctl stop seatunnel
+    sudo systemctl stop seatunnel
   elif [ $1 = "status" ]; then
-    systemctl status seatunnel
+    sudo systemctl status seatunnel
   elif [ $1 = "restart" ]; then
-    systemctl restart seatunnel
+    sudo systemctl restart seatunnel
   elif [ $1 = "enable" ]; then
-    systemctl enable seatunnel
+    sudo systemctl enable seatunnel
   elif [ $1 = "disable" ]; then
-    systemctl disable seatunnel
+    sudo systemctl disable seatunnel
   elif [ $1 = "mkdir" ]; then
-    mkdir -p $2
-    chown -R seatunnel:seatunnel $2
+    sudo mkdir -p $2
+    sudo chown -R seatunnel:seatunnel $2
   elif [ $1 = "mkhdfsdir" ]; then
     sudo -u hdfs hdfs dfs -mkdir -p $2
     sudo -u hdfs hdfs dfs -chown seatunnel:seatunnel $2

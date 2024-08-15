@@ -69,27 +69,27 @@ function prestoOperation(){
     if [ $1 = "master" ]; then
       if [ $2 = "start" ]; then
         echo "Starting Presto master"
-        systemctl start presto-master
+        sudo systemctl start presto-master
         exit $?
       elif [ $2 = "stop" ]; then
         echo "Stopping Presto master"
-        systemctl stop presto-master
+        sudo systemctl stop presto-master
         exit $?
       elif [ $2 = "restart" ]; then
         echo "Restarting Presto master"
-        systemctl restart presto-master
+        sudo systemctl restart presto-master
         exit $?
       elif [ $2 = "status" ]; then
         echo "Checking Presto master status"
-        systemctl status presto-master
+        sudo systemctl status presto-master
         exit $?
       elif [ $2 = "enable" ]; then
         echo "Enabling Presto master"
-        systemctl enable presto-master
+        sudo systemctl enable presto-master
         exit $?
       elif [ $2 = "disable" ]; then
         echo "Disabling Presto master"
-        systemctl disable presto-master
+        sudo systemctl disable presto-master
         exit $?
       else
         echo "Invalid operation"
@@ -97,27 +97,27 @@ function prestoOperation(){
     elif [ $1 = "worker" ]; then
       if [ $2 = "start" ]; then
         echo "Starting Presto worker"
-        systemctl start presto-worker
+        sudo systemctl start presto-worker
         exit $?
       elif [ $2 = "stop" ]; then
         echo "Stopping Presto worker"
-        systemctl stop presto-worker
+        sudo systemctl stop presto-worker
         exit $?
       elif [ $2 = "restart" ]; then
         echo "Restarting Presto worker"
-        systemctl restart presto-worker
+        sudo systemctl restart presto-worker
         exit $?
       elif [ $2 = "status" ]; then
         echo "Checking Presto worker status"
-        systemctl status presto-worker
+        sudo systemctl status presto-worker
         exit $?
       elif [ $2 = "enable" ]; then
         echo "Enabling Presto worker"
-        systemctl enable presto-worker
+        sudo systemctl enable presto-worker
         exit $?
       elif [ $2 = "disable" ]; then
         echo "Disabling Presto worker"
-        systemctl disable presto-worker
+        sudo systemctl disable presto-worker
         exit $?
       else
         echo "Invalid operation"
