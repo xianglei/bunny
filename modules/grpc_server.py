@@ -242,6 +242,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                 if checksum_local != request.checksum:
                     self._return_code = self.CODE[2]
                     self._logger.error('File checksum not equally')
+                    os.remove(tmp_filename)
                     return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File checksum error')
 
                 self._logger.debug("send: change file mode: {}".format(request.access_modes))
@@ -272,6 +273,7 @@ class FileService(api_pb2_grpc.FileServiceServicer, Logger):
                 if checksum_local != request.checksum:
                     self._return_code = self.CODE[2]
                     self._logger.error('File checksum not equally')
+                    os.remove(tmp_filename)
                     return api_pb2.FileResponse(id=request.id, status=self._return_code, message='File checksum error')
 
                 self._logger.debug("send: change file mode: {}".format(request.access_modes))
