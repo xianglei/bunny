@@ -156,6 +156,14 @@ function flinkOperation() {
     sudo -u hdfs hdfs dfs -mkdir -p /user/flink/ha
     sudo -u hdfs hdfs dfs -chown -R flink:flink /user/flink
     sudo -u hdfs hdfs dfs -chmod -R 777 /user/flink/ha
+
+    sudo -u hdfs hdfs dfs -mkdir -p /user/flink/checkpoints
+    sudo -u hdfs hdfs dfs -chown -R flink:flink /user/flink/checkpoints
+    sudo -u hdfs hdfs dfs -chmod -R 777 /user/flink/checkpoints
+
+    sudo -u hdfs hdfs dfs -mkdir -p /user/flink/savepoints
+    sudo -u hdfs hdfs dfs -chown -R flink:flink /user/flink/savepoints
+    sudo -u hdfs hdfs dfs -chmod -R 777 /user/flink/savepoints
   elif [ $1 = "initLinks" ]; then
     sudo ln -sf /usr/lib/hadoop/lib/* /usr/lib/flink/lib/
     sudo ln -sf /usr/lib/hadoop-hdfs/* /usr/lib/flink/lib/
@@ -168,5 +176,11 @@ function flinkOperation() {
   fi
 }
 
+if [ -z $1 ]; then
+  flinkUsage
+  exit 1
+else
+  flinkOperation $1 $2 $3
+fi
 
 
